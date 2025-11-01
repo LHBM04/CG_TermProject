@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.26)
-project(CG_TermProject LANGUAGES CXX)
+project(CG_TermProject LANGUAGES C CXX)
+
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,9 +27,12 @@ add_executable(CG_TermProject
         Sources/Framework/Core/Graphics.h
         Sources/Framework/Core/Window.cpp
         Sources/Framework/Core/Window.h
-        Sources/Framework/Core/WindowSpecification.h
+
         Sources/Game/Main.cpp
 )
+
+target_precompile_headers(CG_TermProject PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/Sources/PCH.h")
+target_include_directories(CG_TermProject PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(CG_TermProject PRIVATE assimp::assimp)
 target_link_libraries(CG_TermProject PRIVATE glad::glad)
