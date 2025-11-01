@@ -1,7 +1,7 @@
 #include "Window.h"
 
-Window::Window(const WindowSpecification &specification_) noexcept
-        : specification(specification_)
+Window::Window(const Window::Specification& specification_) noexcept
+    : specification(specification_)
 {
     if (!glfwInit())
     {
@@ -15,16 +15,16 @@ Window::Window(const WindowSpecification &specification_) noexcept
     glfwWindowHint(GLFW_DECORATED, specification.decorated ? GLFW_TRUE : GLFW_FALSE);
     glfwWindowHint(GLFW_RESIZABLE, specification.resizable ? GLFW_TRUE : GLFW_FALSE);
 
-    int width = specification.width;
-    int height = specification.height;
-    GLFWmonitor *monitor = nullptr;
+    int          width   = specification.width;
+    int          height  = specification.height;
+    GLFWmonitor* monitor = nullptr;
 
     if (specification.fullscreen)
     {
-        monitor = glfwGetPrimaryMonitor();
-        const GLFWvidmode *videoMode = glfwGetVideoMode(monitor);
-        width = videoMode->width;
-        height = videoMode->height;
+        monitor                      = glfwGetPrimaryMonitor();
+        const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
+        width                        = videoMode->width;
+        height                       = videoMode->height;
     }
 
     window = glfwCreateWindow(width, height, specification.title, monitor, nullptr);
@@ -47,4 +47,10 @@ Window::~Window() noexcept
         glfwDestroyWindow(window);
         window = nullptr;
     }
+}
+
+void Window::Update() noexcept
+{
+    glfwPollEvents();
+    glfwSwapBuffers(window);
 }
