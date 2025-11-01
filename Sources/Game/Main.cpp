@@ -2,6 +2,9 @@
 
 int main()
 {
-    Application::Initialize();
+    Application::Specification specification{};
+    specification.name = "Game Application";
+
+    Application::Initialize(specification);
     Application::Run();
 }
