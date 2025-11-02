@@ -1,0 +1,95 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: Configure (Debug)",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "call \"D:\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && cmake --preset debug -D CMAKE_EXPORT_COMPILE_COMMANDS=ON"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "C:\\Windows\\System32\\cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "problemMatcher": [
+                "$gcc",
+                "$msCompile"
+            ],
+            "detail": "Configure CMake debug preset with MSVC env"
+        },
+        {
+            "label": "CMake: Configure (Release)",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "call \"D:\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && cmake --preset release -D CMAKE_EXPORT_COMPILE_COMMANDS=ON"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "C:\\Windows\\System32\\cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "problemMatcher": [
+                "$gcc",
+                "$msCompile"
+            ],
+            "detail": "Configure CMake release preset with MSVC env"
+        },
+        {
+            "label": "CMake: Build (Debug)",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "call \"D:\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && \"D:\\JetBrains\\CLion\\bin\\cmake\\win\\x64\\bin\\cmake.exe\" --build \"D:\\Game Projects\\CG_TermProject\\Build\\debug\" --target CG_TermProject -j 18"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "C:\\Windows\\System32\\cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "detail": "Build Debug with MSVC environment"
+        },
+        {
+            "label": "CMake: Build (Release)",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "call \"D:\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && \"D:\\JetBrains\\CLion\\bin\\cmake\\win\\x64\\bin\\cmake.exe\" --build \"D:\\Game Projects\\CG_TermProject\\Build\\release\" --target CG_TermProject -j 18"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "C:\\Windows\\System32\\cmd.exe",
+                    "args": [
+                        "/c"
+                    ]
+                }
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "detail": "Build Release with MSVC environment"
+        }
+    ]
+}
