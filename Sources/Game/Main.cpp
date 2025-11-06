@@ -7,4 +7,6 @@ int main()
 
     Application::Initialize(specification);
     Application::Run();
+
+    return 0;
 }

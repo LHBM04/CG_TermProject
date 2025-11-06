@@ -23,13 +23,13 @@ find_package(spdlog        CONFIG REQUIRED)
 add_executable(CG_TermProject
         Sources/Framework/Core/Application.cpp
         Sources/Framework/Core/Application.h
-        Sources/Framework/Core/Graphics.cpp
-        Sources/Framework/Core/Graphics.h
-        Sources/Framework/Core/Window.cpp
-        Sources/Framework/Core/Window.h
+        Sources/Framework/Core/Input.cpp
+        Sources/Framework/Core/Input.h
+        Sources/Framework/Core/Time.cpp
+        Sources/Framework/Core/Time.h
 
         Sources/Game/Main.cpp
-)
+ "Sources/Framework/Core/Input.h" )
 
 target_precompile_headers(CG_TermProject PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/Sources/PCH.h")
 target_include_directories(CG_TermProject PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
