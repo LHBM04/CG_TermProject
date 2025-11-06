@@ -1,56 +1,36 @@
-#ifndef GUARD_PCH_H
-#define GUARD_PCH_H
+#pragma once
 
-#include <algorithm>
 #include <array>
-#include <cassert>
-#include <chrono>
-#include <cmath>
-#include <concepts>
-#include <cstdint>
-#include <exception>
-#include <filesystem>
-#include <fstream>
-#include <functional>
-#include <iomanip>
-#include <iostream>
-#include <limits>
-#include <list>
-#include <map>
 #include <memory>
-#include <optional>
-#include <queue>
-#include <random>
-#include <set>
-#include <sstream>
+#include <stack>
 #include <string>
 #include <string_view>
-#include <thread>
-#include <tuple>
-#include <type_traits>
-#include <typeindex>
-#include <typeinfo>
-#include <unordered_map>
-#include <unordered_set>
-#include <utility>
-#include <variant>
 #include <vector>
+#include <stack>
 
-#include <glad/glad.h>
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#include <windowsx.h>
+
+#include <GL/glew.h>
+#include <GL/glext.h>
+#include <GL/GLU.h>
 
 #define GLFW_INCLUDE_NONE
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <glfw/glfw3.h>
 #include <glfw/glfw3native.h>
 
-#include <glm/ext.hpp>
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <AL/al.h>
-#include <AL/alc.h>
+#ifdef _DEBUG
+	#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#else
+	#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+#endif
 
 #include <spdlog/spdlog.h>
-
-#endif // !GUARD_PCH_H
