@@ -1,7 +1,7 @@
 ﻿{
   "dependencies": [
     "assimp",
-    "glew",
+    "glad",
     "glfw3",
     "glm",
     {

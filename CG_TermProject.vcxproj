@@ -31,6 +31,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Sources\Core\Objects\Components\MeshRenderer.h" />
     <ClCompile Include="Sources\Core\Time.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -43,11 +44,21 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Sources\Objects\GameObject.cpp" />
+    <ClCompile Include="Sources\Objects\Object.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Sources\PCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Sources\Rendering\Camera.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Sources\Rendering\Mesh.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Sources\Scenes\Scene.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -71,8 +82,16 @@
   <ItemGroup>
     <ClInclude Include="Sources\Core\Application.h" />
     <ClInclude Include="Sources\Core\Input.h" />
+    <ClInclude Include="Sources\Core\Objects\Components\Component.h" />
+    <ClInclude Include="Sources\Core\Objects\Components\Renderer.h" />
+    <ClInclude Include="Sources\Core\Objects\Components\Transform.h" />
     <ClInclude Include="Sources\Core\Time.h" />
+    <ClInclude Include="Sources\Math.h" />
+    <ClInclude Include="Sources\Objects\GameObject.h" />
+    <ClInclude Include="Sources\Objects\Object.h" />
     <ClInclude Include="Sources\PCH.h" />
+    <ClInclude Include="Sources\Rendering\Camera.h" />
+    <ClInclude Include="Sources\Rendering\Mesh.h" />
     <ClInclude Include="Sources\Scenes\Scene.h" />
     <ClInclude Include="Sources\Scenes\SceneManager.h" />
     <ClInclude Include="Sources\Scenes\TestScene.h" />

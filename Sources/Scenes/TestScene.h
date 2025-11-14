@@ -30,8 +30,5 @@ protected:
 	virtual void OnExit() noexcept override;
 
 private:
-    /**
-     * @brief 테스트용 오브젝트.
-     */
-    GLUquadric *testObject;
+
 };

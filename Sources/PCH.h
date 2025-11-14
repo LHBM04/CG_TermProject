@@ -5,6 +5,9 @@
 #include <stack>
 #include <string>
 #include <string_view>
+#include <concepts>
+#include <typeindex>
+#include <typeinfo>
 #include <vector>
 #include <stack>
 
@@ -13,9 +16,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include <GL/glew.h>
-#include <GL/glext.h>
-#include <GL/GLU.h>
+#include <glad/glad.h>
 
 #define GLFW_INCLUDE_NONE
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -34,3 +35,5 @@
 #endif
 
 #include <spdlog/spdlog.h>
+
+#include "Math.h"

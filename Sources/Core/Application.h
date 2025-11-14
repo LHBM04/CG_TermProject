@@ -18,17 +18,17 @@ public:
     enum class WindowMode : unsigned char
     {
         /**
-         * @brief 
+         * @brief 창 모드.
          */
         Windowed,
 
         /**
-         * @brief 
+         * @brief 전체 화면.
          */
         FullScreen,
 
         /**
-         * @brief 
+         * @brief 테두리 없는 창 모드.
          */
         Borderless
     };

@@ -5,14 +5,13 @@
 
 TestScene::TestScene() noexcept
     : Scene("TestScene")
-    , testObject(gluNewQuadric())
 {
    
 }
 
 TestScene::~TestScene() noexcept
 {
-    gluDeleteQuadric(testObject);
+    //gluDeleteQuadric(testObject);
 }
 
 void TestScene::OnEnter() noexcept
@@ -30,7 +29,7 @@ void TestScene::OnUpdate() noexcept
 
 void TestScene::OnRender() noexcept
 {
-    gluSphere(testObject, 1.0f, 32, 32);
+    
 }
 
 void TestScene::OnExit() noexcept

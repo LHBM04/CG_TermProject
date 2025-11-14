@@ -93,14 +93,9 @@ bool Application::Initialize(const Application::Specification& specification_) n
     glfwMakeContextCurrent(const_cast<GLFWwindow*>(window));
     glfwSwapInterval(specification.sholudVSync ? 1 : 0);
 
-    // if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
-    // {
-    //     SPDLOG_CRITICAL("Failed to initialize GLAD");
-    //     return false;
-    // }
-    if (glewInit() != GLEW_OK)
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
-        SPDLOG_CRITICAL("Failed to initialize GLEW");
+        SPDLOG_CRITICAL("Failed to initialize GLAD");
         return false;
     }
 
