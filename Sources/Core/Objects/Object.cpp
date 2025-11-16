@@ -1,6 +1,6 @@
 #include "Object.h"
 
-#include "../Core/Objects/Components/Component.h"
+#include "Components/Component.h"
 
 Object::~Object() noexcept
 {

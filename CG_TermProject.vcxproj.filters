@@ -27,10 +27,10 @@
     <ClCompile Include="Sources\Rendering\Mesh.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Objects\GameObject.cpp">
+    <ClCompile Include="Sources\Core\Objects\GameObject.cpp">
       <Filter>Core\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Objects\Object.cpp">
+    <ClCompile Include="Sources\Core\Objects\Object.cpp">
       <Filter>Core\Objects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -61,12 +61,6 @@
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Math.h" />
-    <ClInclude Include="Sources\Objects\GameObject.h">
-      <Filter>Core\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Objects\Object.h">
-      <Filter>Core\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Core\Objects\Components\Renderer.h">
       <Filter>Core\Objects\Components</Filter>
     </ClInclude>
@@ -75,6 +69,12 @@
     </ClInclude>
     <ClInclude Include="Sources\Core\Objects\Components\Transform.h">
       <Filter>Core\Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Core\Objects\GameObject.h">
+      <Filter>Core\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Core\Objects\Object.h">
+      <Filter>Core\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
