@@ -33,9 +33,6 @@
     <ClCompile Include="Sources\Objects\Object.cpp">
       <Filter>Core\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Core\Objects\Components\MeshRenderer.h">
-      <Filter>Core\Objects\Components</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Core\Application.h">
