@@ -2,13 +2,14 @@
 
 void Time::Initialize() noexcept
 {
-    lastTime = static_cast<float>(glfwGetTime());
+    currentTime = static_cast<float>(glfwGetTime());
+    lastTime    = currentTime;
 }
 
 void Time::Update() noexcept
 {
-    currentTime = static_cast<float>(glfwGetTime());
     lastTime    = currentTime;
+    currentTime = static_cast<float>(glfwGetTime());
 }
 
 volatile float Time::timeScale = 1.0f;

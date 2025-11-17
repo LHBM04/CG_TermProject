@@ -129,17 +129,18 @@ int Application::Run() noexcept
         Time::Update();
         
         static float fixedUpdateTime = 0.0f;
-        fixedUpdateTime += Time::GetDeltaTime();
+        fixedUpdateTime += Time::GetDeltaTime(); // 문제 1: GetDeltaTime() 사용
 
+        // 문제 2: fixedDeltaTime을 가변 시간인 GetUnscaledDeltaTime()으로 설정
         if (const float fixedDeltaTime = Time::GetUnscaledDeltaTime(); fixedDeltaTime > 0.0f)
         {
             while (fixedUpdateTime >= fixedDeltaTime)
             {
-                // SceneManager::GetActiveScene()->FixedUpdate(fixedDeltaTimeTime);
+                // SceneManager::GetActiveScene()->FixedUpdate(fixedDeltaTimeTime); // (Typo: fixedDeltaTimeTime)
                 fixedUpdateTime -= fixedDeltaTime;
             }
 
-            fixedUpdateTime = 0.0f;
+            fixedUpdateTime = 0.0f; // 문제 3: 남은 시간을 버림
         }
 
         SceneManager::Update();
