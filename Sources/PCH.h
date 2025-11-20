@@ -10,6 +10,7 @@
 #include <typeinfo>
 #include <vector>
 #include <stack>
+#include <random>
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX

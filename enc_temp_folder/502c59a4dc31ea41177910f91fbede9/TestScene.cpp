@@ -113,6 +113,7 @@ void TestScene::OnEnter() noexcept
             map.push_back(new Cube(Vector3(i * 2.1f,0.0f,j * 2.1f), Vector3(0.0f, 0.5f, 0.0f)));
         }
     }
+
     
     light = new Light(Vector3(3.0f, 5.0f, 0.0f));
 }

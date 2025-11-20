@@ -33,6 +33,9 @@
     <ClCompile Include="Sources\Core\Objects\Object.cpp">
       <Filter>Core\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Rendering\Cube.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Core\Application.h">
@@ -76,6 +79,15 @@
     <ClInclude Include="Sources\Core\Objects\Object.h">
       <Filter>Core\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Rendering\Light.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Rendering\Cube.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Rendering\OBB.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -93,5 +105,13 @@
     <Filter Include="Core\Objects\Components">
       <UniqueIdentifier>{c0ed0fdf-4b24-49a9-b4d3-7014e3e619c8}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vertex.glsl">
+      <Filter>Scenes</Filter>
+    </None>
+    <None Include="fragment.glsl">
+      <Filter>Scenes</Filter>
+    </None>
   </ItemGroup>
 </Project>
