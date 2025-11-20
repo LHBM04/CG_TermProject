@@ -8,11 +8,9 @@ class Light
 {
 public:
     Light(Vector3 pos_, Vector3 color_ = Vector3(1.0f, 1.0f, 1.0f))
-        : box(new Cube())
-        , pos(pos_)
+        : pos(pos_)
         , color(color_)
     {
-        box->move(pos);
     }
     void turnOn()
     {
@@ -26,13 +24,11 @@ public:
     void move(Vector3 v)
     {
         pos += v;
-        box->move(v);
     }
 
     void teleport(Vector3 v)
     {
         pos = v;
-        box->teleport(v);
     }
 
     void applyLight(GLuint shaderProgram)
@@ -42,14 +38,9 @@ public:
 
         int lightColorLocation = glGetUniformLocation(shaderProgram, "lightColor");
         glUniform3f(lightColorLocation, color.x, color.y, color.z);
-
-        box->Draw(shaderProgram);
     }
 
 private:
-    // 조명이 어디 있는지 보기 위한 작은 큐브
-    Cube*     box;
-
     Vector3   pos;
     Vector3   color;
 };

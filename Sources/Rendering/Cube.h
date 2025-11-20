@@ -25,8 +25,18 @@ public:
     {
         return sqrt(pow(dir.x, 2) + pow(dir.y, 2) + pow(dir.z, 2));
     }
+    void lock()
+    {
+        isStatic = true;
+    }
+    void unlock()
+    {
+        isStatic = false;
+    }
 
     void move(glm::vec3 v);
+    void rotate(float theta, glm::vec3 axis);
+
     void teleport(glm::vec3 v);
     void changeColor(glm::vec3 color);
 
@@ -52,14 +62,17 @@ private:
     Vector3 pos = Vector3(0.0f,0.0f,0.0f);
     Vector3 radius = Vector3(1.0f);
 
-    // 이동하려는 방향 ( 속도 포함 ).
+    // 회전
+    glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+
+    // 이동하려는 방향. 속도 포함
     Vector3 dir = Vector3(0.0f, 0.0f, 0.0f);
     
     // 중력
     const Vector3 gravity = Vector3(0.0f, -9.8f, 0.0f);
 
     // 큐브의 반발 계수
-    const float cor = 0.8f;
+    const float cor = 0.3f;
 
     // 움직이지 않는 큐브인지
     bool isStatic = false;

@@ -103,17 +103,18 @@ void TestScene::OnEnter() noexcept
 
     cam   = new Camera();
     cube  = new Cube();
-    cube->move(Vector3(0.0f, 3.0f, 0.0f));
+    cube->move(Vector3(0.0f, 5.0f, 0.0f));
 
     for (int i{-3}; i < 3; ++i)
     {
         for (int j{-3}; j < 3; ++j)
         {
             // 겹쳐서 그리니까 충돌감지하는 선이 그릴 때 잘 안보여서 좀 띄움 (고치기)
-            map.push_back(new Cube(Vector3(i * 2.1f,0.0f,j * 2.1f), Vector3(0.0f, 0.5f, 0.0f)));
+            map.push_back(new Cube(Vector3(i * 2.0f,0.0f,j * 2.0f), Vector3(0.0f, 0.5f, 0.0f)));
         }
     }
-    
+    map.push_back(new Cube(Vector3(2.0f, 2.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f)));
+
     light = new Light(Vector3(3.0f, 5.0f, 0.0f));
 }
 
@@ -160,9 +161,17 @@ void TestScene::OnUpdate() noexcept
     }
     else
     {
-        if (Input::IsKeyPressed(GLFW_KEY_U))
+        if (Input::IsKeyPressed(GLFW_KEY_SPACE))
         {
-            cube->move(Vector3(0.0f, 10.0f, 0.0f));
+            cube->teleport(Vector3(0.0f, 5.0f, 0.0f));
+        }
+        else if (Input::IsKeyPressed(GLFW_KEY_Q))
+        {
+            cube->rotate(10.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+        }
+        else if (Input::IsKeyPressed(GLFW_KEY_E))
+        {
+            cube->rotate(-10.0f, glm::vec3(0.0f, 0.0f, 1.0f));
         }
     }
 

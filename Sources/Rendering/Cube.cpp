@@ -1,5 +1,6 @@
 #include "Cube.h"
 #include "../Core/Time.h"
+#include <iostream>
 
 Cube::Cube(glm::vec3 pos_, glm::vec3 color)
 {
@@ -81,23 +82,25 @@ void Cube::move(glm::vec3 v)
     obb->move(v);
 }
 
+void Cube::rotate(float theta, glm::vec3 axis)
+{
+    obb->rotate(theta, axis);
+    glm::quat q = glm::angleAxis(glm::radians(theta), glm::normalize(axis));
+    rotation    = q * rotation;
+}
+
 void Cube::checkCollisions(Cube*& target)
 {
     // target과 obb충돌검사
     if (obb->testOBBOBB_SAT(*target->obb, mtv))
     {
-        // 충돌 시 이동 방향을 나타내는 dir이 반사됨
-        // 방향을 mtv로 바꿔야 되는데 mtv가 매우 작은 값이라 어떻게 할 지 생각중
-        dir = -dir * cor;
+        glm::vec3 normal  = glm::normalize(mtv);
+        float     dotProd = glm::dot(dir, normal);
+
+        dir               = glm::normalize(dir - (1.0f + cor) * dotProd * normal);
 
         // 충돌했으면 일단 서로 안 충돌할 정도로만 밀어냄
         move(mtv);
-
-        // 충돌 후 이동할 방향의 길이가 매우 작으면 붙은 것으로 판단하게 함
-        if (getLength() <= 0.02f)
-        {
-            isStatic = true;
-        }
     }
 }
 
@@ -137,6 +140,7 @@ void Cube::Draw(GLuint shaderProgram)
     glBindVertexArray(VAO);
 
     glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
+    model *= glm::mat4_cast(rotation);
 
     glm::mat4 rot4(1.0f);
     rot4[0] = glm::vec4(glm::vec3(radius.x, 0.0f, 0.0f), 0.0f);
