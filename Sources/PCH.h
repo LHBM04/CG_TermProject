@@ -29,6 +29,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <entt/entt.hpp>
+
 #ifdef _DEBUG
 	#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #else
