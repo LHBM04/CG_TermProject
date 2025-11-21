@@ -36,6 +36,11 @@ public:
 
     void move(glm::vec3 v);
     void rotate(float theta, glm::vec3 axis);
+    void resize(glm::vec3 radius_)
+    {
+        radius = radius_;
+        obb->resize(radius_);
+    }
 
     void teleport(glm::vec3 v);
     void changeColor(glm::vec3 color);

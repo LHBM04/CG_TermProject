@@ -55,6 +55,11 @@ public:
         pos = v;
     }
 
+    void resize(glm::vec3 v)
+    {
+        radius = v;
+    }
+
     void rotate(float theta, glm::vec3 axis)
     {
         glm::mat4 rotMat = glm::rotate(glm::mat4(1.0f), glm::radians(theta), axis);
@@ -144,7 +149,7 @@ public:
         rot4[2] = glm::vec4(rot[2], 0.0f);
 
         glm::mat4 model =
-                glm::translate(glm::mat4(1.0f), pos) * rot4 * glm::scale(glm::mat4(1.0f), radius * 2.0f);
+                glm::translate(glm::mat4(1.0f), pos) * rot4 * glm::scale(glm::mat4(1.0f), radius);
         GLuint    modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -161,14 +166,14 @@ private:
 
     const glm::vec3 cubeVertices[8] =
     {
-            {-0.5f, -0.5f, -0.5f},
-            {0.5f, -0.5f, -0.5f},
-            {0.5f, 0.5f, -0.5f},
-            {-0.5f, 0.5f, -0.5f},
-            {-0.5f, -0.5f, 0.5f},
-            {0.5f, -0.5f, 0.5f},
-            {0.5f, 0.5f, 0.5f},
-            {-0.5f, 0.5f, 0.5f},
+            {-1.0f, -1.0f, -1.0f},
+            { 1.0f, -1.0f, -1.0f},
+            { 1.0f,  1.0f, -1.0f},
+            {-1.0f,  1.0f, -1.0f},
+            {-1.0f, -1.0f,  1.0f},
+            { 1.0f, -1.0f,  1.0f},
+            { 1.0f,  1.0f,  1.0f},
+            {-1.0f,  1.0f,  1.0f}
     };
 
     const unsigned int cubeEdges[12][2] =

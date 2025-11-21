@@ -94,13 +94,13 @@ void Cube::checkCollisions(Cube*& target)
     // target과 obb충돌검사
     if (obb->testOBBOBB_SAT(*target->obb, mtv))
     {
+        // 충돌했으면 일단 서로 안 충돌할 정도로만 밀어냄
+        move(mtv);
+
         glm::vec3 normal  = glm::normalize(mtv);
         float     dotProd = glm::dot(dir, normal);
 
-        dir               = glm::normalize(dir - (1.0f + cor) * dotProd * normal);
-
-        // 충돌했으면 일단 서로 안 충돌할 정도로만 밀어냄
-        move(mtv);
+        dir               = dir - (1.0f + cor) * dotProd * normal;
     }
 }
 
@@ -124,10 +124,7 @@ void Cube::Update()
     else
     {
         dir += gravity * Time::GetDeltaTime();
-
-        pos = Vector3(pos.x + (dir.x * Time::GetDeltaTime()),
-                      pos.y + (dir.y * Time::GetDeltaTime()),
-                      pos.z + (dir.z * Time::GetDeltaTime()));
+        pos += dir * Time::GetDeltaTime();
         obb->teleport(pos);
     }
 }
@@ -139,15 +136,12 @@ void Cube::Draw(GLuint shaderProgram)
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
 
+    // pos로 이동, rotation으로 회전, radius를 통한 스케일링을 통해 모델링 변환
     glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
     model *= glm::mat4_cast(rotation);
 
-    glm::mat4 rot4(1.0f);
-    rot4[0] = glm::vec4(glm::vec3(radius.x, 0.0f, 0.0f), 0.0f);
-    rot4[1] = glm::vec4(glm::vec3(0.0f, radius.y, 0.0f), 0.0f);
-    rot4[2] = glm::vec4(glm::vec3(0.0f, 0.0f, radius.z), 0.0f);
-
-    model *= rot4;
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), radius);
+    model *= scale;
 
     GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));

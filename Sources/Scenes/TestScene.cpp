@@ -110,10 +110,10 @@ void TestScene::OnEnter() noexcept
         for (int j{-3}; j < 3; ++j)
         {
             // 겹쳐서 그리니까 충돌감지하는 선이 그릴 때 잘 안보여서 좀 띄움 (고치기)
-            map.push_back(new Cube(Vector3(i * 2.0f,0.0f,j * 2.0f), Vector3(0.0f, 0.5f, 0.0f)));
+            map.push_back(new Cube(Vector3(i * 2.05f,0.0f,j * 2.05f), Vector3(0.0f, 0.5f, 0.0f)));
         }
     }
-    map.push_back(new Cube(Vector3(2.0f, 2.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f)));
+    map.push_back(new Cube(Vector3(3.0f, 2.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f)));
 
     light = new Light(Vector3(3.0f, 5.0f, 0.0f));
 }
@@ -173,16 +173,18 @@ void TestScene::OnUpdate() noexcept
         {
             cube->rotate(-10.0f, glm::vec3(0.0f, 0.0f, 1.0f));
         }
+        else if (Input::IsKeyPressed(GLFW_KEY_T))
+        {
+            cube->resize(glm::vec3(0.5f,0.5f,0.5f));
+        }
     }
-
-    cube->Update();
 
     // 지금 인자로 맵의 모든 박스랑 충돌검사해서 맵이 크면 버벅일 듯
     for (int i{}; i < map.size(); ++i)
     {
         cube->checkCollisions(map[i]);
     }
-    
+    cube->Update();
 }
 
 void TestScene::OnRender() noexcept
