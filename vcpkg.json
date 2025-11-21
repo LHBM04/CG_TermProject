@@ -13,6 +13,8 @@
       ]
     },
     "imguizmo",
+    "entt",
+    "stb",
     "nameof",
     "spdlog",
     "openal-soft",
