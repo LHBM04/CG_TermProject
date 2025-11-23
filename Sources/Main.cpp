@@ -1,8 +1,6 @@
-#include <memory>
+#include "Core/Application.h"
 
-#include "../Framework/Core/Application.h"
-#include "../Framework/Scene/SceneManager.h"
-
+#include "Scenes/SceneManager.h"
 #include "Scenes/TestScene.h"
 
 int main(int, char**) 
@@ -19,9 +17,8 @@ int main(int, char**)
         return -1;
     }
 
-    SceneManager::AddScene("Test Scene 1", std::make_unique<TestScene>());
-    SceneManager::AddScene("Test Scene 2", std::make_unique<TestScene>());
-    SceneManager::LoadScene("Test Scene 1");
+    SceneManager::AddScene<TestScene>();
+    SceneManager::LoadScene("TestScene");
 
     return Application::Run();
 }

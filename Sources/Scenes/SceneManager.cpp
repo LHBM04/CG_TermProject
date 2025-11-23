@@ -2,16 +2,6 @@
 
 #include "Scene.h"
 
-void SceneManager::AddScene(std::string_view name_, std::unique_ptr<Scene> scene_) noexcept
-{
-	if (scenes.contains(name_.data()))
-	{
-        return;
-	}
-
-	scenes.insert(std::make_pair(name_, std::move(scene_)));
-}
-
 void SceneManager::LoadScene(std::string_view name_) noexcept
 {
 	if (activeScene)
@@ -20,8 +10,15 @@ void SceneManager::LoadScene(std::string_view name_) noexcept
         lastScenes.push(activeScene);
     }
 
-	activeScene = scenes[name_.data()].get();
-    activeScene->Enter();
+	for (const auto& scene : scenes)
+	{
+		if (scene->name == name_)
+		{
+            activeScene = scene.get();
+			activeScene->Enter();
+			return;
+        }
+	}
 }
 
 void SceneManager::UnloadScene() noexcept
@@ -53,7 +50,7 @@ void SceneManager::Render() noexcept
 	}
 }
 
-std::unordered_map<std::string, std::unique_ptr<Scene>> SceneManager::scenes{};
+std::vector<std::shared_ptr<Scene>> SceneManager::scenes{};
 
 std::stack<Scene*> SceneManager::lastScenes{};
 

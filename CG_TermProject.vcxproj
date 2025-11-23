@@ -98,6 +98,7 @@
     <ClInclude Include="Sources\Core\Objects\GameObject.h" />
     <ClInclude Include="Sources\Core\Objects\Object.h" />
     <ClInclude Include="Sources\Core\Time.h" />
+    <ClInclude Include="Sources\Math.h" />
     <ClInclude Include="Sources\PCH.h" />
     <ClInclude Include="Sources\Rendering\Camera.h" />
     <ClInclude Include="Sources\Rendering\Cube.h" />
@@ -107,6 +108,10 @@
     <ClInclude Include="Sources\Scenes\Scene.h" />
     <ClInclude Include="Sources\Scenes\SceneManager.h" />
     <ClInclude Include="Sources\Scenes\TestScene.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fragment.glsl" />
+    <None Include="vertex.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

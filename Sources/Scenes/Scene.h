@@ -15,6 +15,13 @@ class Scene
 
 public:
     /**
+     * @brief 생성자.
+     * 
+     * @param name_ 해당 월드의 이름.
+     */
+    Scene(std::string_view name_) noexcept;
+
+    /**
      * @brief 소멸자.
      */
     virtual ~Scene() noexcept;
@@ -62,12 +69,7 @@ protected:
 
 private:
     /**
-     * @brief 해당 씬의 엔티티-컴포넌트 시스템 레지스트리.
+     * @brief 해당 월드의 이름.
      */
-    entt::registry entities;
-
-    /**
-     * @brief 해당 씬의 인터페이스용 엔티티-컴포넌트 시스템 레지스트리.
-     */
-    entt::registry interfaces;
+    std::string name;
 };

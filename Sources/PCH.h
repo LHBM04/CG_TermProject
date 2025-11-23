@@ -11,7 +11,6 @@
 #include <vector>
 #include <stack>
 #include <random>
-#include <unordered_map>
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -37,7 +36,5 @@
 #endif
 
 #include <spdlog/spdlog.h>
-#include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
 
-#include <entt/entt.hpp>
+#include "Math.h"
