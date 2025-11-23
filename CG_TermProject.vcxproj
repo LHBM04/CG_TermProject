@@ -87,8 +87,11 @@
     <ClInclude Include="Sources\Core\Application.h" />
     <ClInclude Include="Sources\Core\Input.h" />
     <ClInclude Include="Sources\Core\Time.h" />
+<<<<<<< Updated upstream
     <ClInclude Include="Sources\Entity.h" />
     <ClInclude Include="Sources\Math.h" />
+=======
+>>>>>>> Stashed changes
     <ClInclude Include="Sources\PCH.h" />
     <ClInclude Include="Sources\Rendering\Camera.h" />
     <ClInclude Include="Sources\Rendering\Cube.h" />
@@ -102,12 +105,15 @@
     <ClInclude Include="Sources\Scenes\TestScene.h" />
     <ClInclude Include="Sources\World.h" />
   </ItemGroup>
+<<<<<<< Updated upstream
   <ItemGroup>
     <None Include="fragment.glsl" />
     <None Include="Resources\Shaders\Fragment.frag" />
     <None Include="Resources\Shaders\Vertex.vert" />
     <None Include="vertex.glsl" />
   </ItemGroup>
+=======
+>>>>>>> Stashed changes
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
