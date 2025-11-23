@@ -1,10 +1,5 @@
 #include "Scene.h"
 
-Scene::Scene(std::string_view name_) noexcept
-    : name(name_)
-{
-}
-
 Scene::~Scene() noexcept
 {
 }
