@@ -1,185 +1,96 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Sources\Core\Application.cpp">
-      <Filter>Sources\Framework\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Core\Time.cpp">
-      <Filter>Sources\Framework\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Core\Input.cpp">
-      <Filter>Sources\Framework\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Scenes\Scene.cpp">
-      <Filter>Sources\Framework\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Scenes\SceneManager.cpp">
-      <Filter>Sources\Framework\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Scenes\TestScene.cpp">
-      <Filter>Sources\Framework\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Rendering\Camera.cpp">
-      <Filter>Sources\Framework\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Rendering\Mesh.cpp">
-      <Filter>Sources\Framework\Rendering</Filter>
-    </ClCompile>
-<<<<<<< Updated upstream
-=======
-    <ClCompile Include="Sources\Core\Objects\GameObject.cpp">
-      <Filter>Sources\Framework\Core\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Core\Objects\Object.cpp">
-      <Filter>Sources\Framework\Core\Objects</Filter>
-    </ClCompile>
->>>>>>> Stashed changes
-    <ClCompile Include="Sources\Rendering\Cube.cpp">
-      <Filter>Sources\Framework\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\PCH.cpp">
-      <Filter>Sources\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Main.cpp">
-      <Filter>Sources\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\World.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Sources\Core\Application.h">
-      <Filter>Sources\Framework\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Core\Input.h">
-      <Filter>Sources\Framework\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Core\Time.h">
-      <Filter>Sources\Framework\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Scenes\Scene.h">
-      <Filter>Sources\Framework\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Scenes\SceneManager.h">
-      <Filter>Sources\Framework\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Scenes\TestScene.h">
-      <Filter>Sources\Framework\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Rendering\Camera.h">
-      <Filter>Sources\Framework\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Rendering\Mesh.h">
-      <Filter>Sources\Framework\Rendering</Filter>
-    </ClInclude>
-<<<<<<< Updated upstream
-=======
-    <ClInclude Include="Sources\Core\Objects\Components\Renderer.h">
-      <Filter>Sources\Framework\Core\Objects\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Core\Objects\Components\Component.h">
-      <Filter>Sources\Framework\Core\Objects\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Core\Objects\Components\Transform.h">
-      <Filter>Sources\Framework\Core\Objects\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Core\Objects\GameObject.h">
-      <Filter>Sources\Framework\Core\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Core\Objects\Object.h">
-      <Filter>Sources\Framework\Core\Objects</Filter>
-    </ClInclude>
->>>>>>> Stashed changes
-    <ClInclude Include="Sources\Rendering\Light.h">
-      <Filter>Sources\Framework\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Rendering\Cube.h">
-      <Filter>Sources\Framework\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Rendering\OBB.h">
-      <Filter>Sources\Framework\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\PCH.h">
-      <Filter>Sources\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Resources\Resources.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Components\Transform.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Scenes\NewScene.h">
-      <Filter>Sources\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Entity.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\World.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Sources">
-      <UniqueIdentifier>{d074ce0e-949c-4a33-8f51-b54c585f757d}</UniqueIdentifier>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{69065039-ca9d-48be-ac4a-0c916e6be3bc}</UniqueIdentifier>
     </Filter>
-<<<<<<< Updated upstream
-    <Filter Include="Sources\Core">
-      <UniqueIdentifier>{3ef03f68-7e98-4656-92b2-67ac43823aeb}</UniqueIdentifier>
+    <Filter Include="Framework\Scene">
+      <UniqueIdentifier>{2075bd66-3eff-4d1d-be0f-c0372c78760c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Rendering">
-      <UniqueIdentifier>{59e0b36b-5a1f-4164-ab72-f52da85e46ce}</UniqueIdentifier>
+    <Filter Include="Framework\Core">
+      <UniqueIdentifier>{53e743f7-94bc-4729-b8ed-f36280058f46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Scenes">
-      <UniqueIdentifier>{b1937bac-b6d2-4e55-a393-fbea1bae795c}</UniqueIdentifier>
+    <Filter Include="Framework\Rendering">
+      <UniqueIdentifier>{072979c4-00ac-4525-a215-1d6998b7f7a1}</UniqueIdentifier>
     </Filter>
-=======
->>>>>>> Stashed changes
-    <Filter Include="Resources">
-      <UniqueIdentifier>{68888ef1-a1de-4713-ad1e-660994471bf2}</UniqueIdentifier>
+    <Filter Include="Game">
+      <UniqueIdentifier>{0e556172-af10-4373-9a78-b8e8dbab70c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resources\Shaders">
-      <UniqueIdentifier>{bdf97122-50f1-4e76-8433-876f27920a8c}</UniqueIdentifier>
-    </Filter>
-<<<<<<< Updated upstream
-    <Filter Include="Resources\Meshes">
-      <UniqueIdentifier>{191b64a0-62dc-41f9-91c5-dda845240f3c}</UniqueIdentifier>
+    <Filter Include="Game\Scenes">
+      <UniqueIdentifier>{45f2b704-19b7-49cc-81b2-12bfdd9f527c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vertex.glsl">
-      <Filter>Sources\Scenes</Filter>
-    </None>
-    <None Include="fragment.glsl">
-      <Filter>Sources\Scenes</Filter>
-    </None>
-    <None Include="Resources\Shaders\Vertex.vert">
-      <Filter>Resources\Shaders</Filter>
-    </None>
-    <None Include="Resources\Shaders\Fragment.frag">
-      <Filter>Resources\Shaders</Filter>
-    </None>
-=======
-    <Filter Include="Sources\Framework">
-      <UniqueIdentifier>{40854e52-2e98-4adf-a3d5-f5e9c64a950b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Framework\Core">
-      <UniqueIdentifier>{3ef03f68-7e98-4656-92b2-67ac43823aeb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Framework\Core\Objects">
-      <UniqueIdentifier>{23525b6c-a21b-462f-a428-886ba9267e98}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Framework\Core\Objects\Components">
-      <UniqueIdentifier>{c0ed0fdf-4b24-49a9-b4d3-7014e3e619c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Framework\Rendering">
-      <UniqueIdentifier>{59e0b36b-5a1f-4164-ab72-f52da85e46ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Framework\Scenes">
-      <UniqueIdentifier>{b1937bac-b6d2-4e55-a393-fbea1bae795c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Game">
-      <UniqueIdentifier>{7cc0c8be-c34d-4248-b435-7f4a99584d1f}</UniqueIdentifier>
-    </Filter>
->>>>>>> Stashed changes
+    <ClCompile Include="Sources\Framework\PCH.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Scene\Scene.cpp">
+      <Filter>Framework\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Scene\SceneManager.cpp">
+      <Filter>Framework\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\Application.cpp">
+      <Filter>Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\Input.cpp">
+      <Filter>Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Core\Time.cpp">
+      <Filter>Framework\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Rendering\Camera.cpp">
+      <Filter>Framework\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Rendering\Cube.cpp">
+      <Filter>Framework\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Framework\Rendering\Mesh.cpp">
+      <Filter>Framework\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Scenes\TestScene.cpp">
+      <Filter>Game\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Game\Main.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Framework\PCH.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Scene\Scene.h">
+      <Filter>Framework\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Scene\SceneManager.h">
+      <Filter>Framework\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Application.h">
+      <Filter>Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Input.h">
+      <Filter>Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Core\Time.h">
+      <Filter>Framework\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Rendering\Camera.h">
+      <Filter>Framework\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Rendering\Cube.h">
+      <Filter>Framework\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Rendering\Light.h">
+      <Filter>Framework\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Rendering\Mesh.h">
+      <Filter>Framework\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Framework\Rendering\OBB.h">
+      <Filter>Framework\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Game\Scenes\TestScene.h">
+      <Filter>Game\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
