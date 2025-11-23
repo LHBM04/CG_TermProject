@@ -4,9 +4,6 @@
     <Filter Include="Framework">
       <UniqueIdentifier>{69065039-ca9d-48be-ac4a-0c916e6be3bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Framework\Scene">
-      <UniqueIdentifier>{2075bd66-3eff-4d1d-be0f-c0372c78760c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Framework\Core">
       <UniqueIdentifier>{53e743f7-94bc-4729-b8ed-f36280058f46}</UniqueIdentifier>
     </Filter>
@@ -19,16 +16,22 @@
     <Filter Include="Game\Scenes">
       <UniqueIdentifier>{45f2b704-19b7-49cc-81b2-12bfdd9f527c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Objects">
+      <UniqueIdentifier>{20e7f055-77b9-41eb-96b9-673e3d06e5e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Level">
+      <UniqueIdentifier>{2075bd66-3eff-4d1d-be0f-c0372c78760c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Framework\PCH.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Scene\Scene.cpp">
-      <Filter>Framework\Scene</Filter>
+      <Filter>Framework\Level</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Scene\SceneManager.cpp">
-      <Filter>Framework\Scene</Filter>
+      <Filter>Framework\Level</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Framework\Core\Application.cpp">
       <Filter>Framework\Core</Filter>
@@ -60,10 +63,10 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Scene\Scene.h">
-      <Filter>Framework\Scene</Filter>
+      <Filter>Framework\Level</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Scene\SceneManager.h">
-      <Filter>Framework\Scene</Filter>
+      <Filter>Framework\Level</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Framework\Core\Application.h">
       <Filter>Framework\Core</Filter>
