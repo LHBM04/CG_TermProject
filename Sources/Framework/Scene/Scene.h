@@ -40,6 +40,8 @@ public:
     void Exit() noexcept;
 
 protected:
+    void CreateEntity();
+
     /**
      * @brief 
      */
