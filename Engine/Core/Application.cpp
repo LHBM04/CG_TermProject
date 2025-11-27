@@ -1,10 +1,21 @@
 #include "Application.h"
 
+#include <glad/glad.h>
+
+#define GLFW_INCLUDE_NONE
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
+
+#include <spdlog/spdlog.h>
+
 #include "Input.h"
 #include "Time.h"
 
-#include "../Scenes/Scene.h"
-#include "../Scenes/SceneManager.h"
+#include "../Rendering/Shader.h"
+
+#include "../Level/Scene.h"
+#include "../Level/SceneManager.h"
 
 bool Application::Initialize(const Application::Specification& specification_) noexcept
 {
@@ -115,6 +126,9 @@ bool Application::Initialize(const Application::Specification& specification_) n
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
 #endif
+
+    Shader::Initialize();
+    // Shader::Use();
 
 	return true;
 }

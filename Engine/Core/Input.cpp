@@ -114,6 +114,6 @@ glm::vec2 Input::lastMousePosition = glm::vec2(0.0f);
 
 glm::vec2 Input::nowMousePosition = glm::vec2(0.0f);
 
-volatile float Input::lastScrollOffset = 0.0f;
+float Input::lastScrollOffset = 0.0f;
 
-volatile float Input::nowScrollOffset = 0.0f;
+float Input::nowScrollOffset = 0.0f;

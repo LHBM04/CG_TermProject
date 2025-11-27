@@ -1,6 +1,12 @@
 #pragma once
 
-#include "../PCH.h"
+#include <array>
+#include <cstddef>
+
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
+
+#include <glm/glm.hpp>
 
 class Application;
 
@@ -14,6 +20,23 @@ class Input final
     friend class Application;
 
 public:
+#pragma region Deleted Functions
+    Input() = delete;
+    ~Input() = delete;
+
+    Input(const Input&) = delete;
+    Input& operator=(const Input&) = delete;
+
+    Input(Input&&) = delete;
+    Input& operator=(Input&&) = delete;
+
+    void* operator new(std::size_t) = delete;
+    void* operator new[](std::size_t) = delete;
+    void  operator delete(void*) = delete;
+    void  operator delete[](void*) = delete;
+
+#pragma endregion
+
     /**
      * @brief 지정한 키가 눌렸는지 여부를 반환합니다.
      * 
@@ -204,12 +227,12 @@ private:
     /**
      * @brief 이전 프레임에서의 스크롤 값.
      */
-    static volatile float lastScrollOffset;
+    static float lastScrollOffset;
 
     /**
      * @brief 현재 프레임에서의 스크롤 값.
      */
-    static volatile float nowScrollOffset;
+    static float nowScrollOffset;
 };
 
 inline bool Input::IsKeyPressed(int key_) noexcept

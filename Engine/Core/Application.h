@@ -1,6 +1,9 @@
 #pragma once
 
-#include "../PCH.h"
+#include <cstddef>
+#include <string>
+
+struct GLFWwindow;
 
 /**
  * @class Application
@@ -66,6 +69,23 @@ public:
         bool sholudVSync;
     };
 
+#pragma region Deleted Functions
+    Application()  = delete;
+    ~Application() = delete;
+
+    Application(const Application&)            = delete;
+    Application& operator=(const Application&) = delete;
+
+    Application(Application&&)            = delete;
+    Application& operator=(Application&&) = delete;
+
+    void* operator new(std::size_t)     = delete;
+    void* operator new[](std::size_t) = delete;
+    void operator delete(void*)   = delete;
+    void operator delete[](void*) = delete;
+
+#pragma endregion
+
     /**
      * @brief 네이티브 윈도우 핸들을 반환합니다.
      * 
@@ -94,21 +114,6 @@ public:
      * @brief 애플리케이션을 종료합니다.
      */
     static void Quit() noexcept;
-
-private:
-    Application()  = delete;
-    ~Application() = delete;
-
-    Application(const Application&)            = delete;
-    Application& operator=(const Application&) = delete;
-
-    Application(Application&&)            = delete;
-    Application& operator=(Application&&) = delete;
-
-    void* operator new(size_t)     = delete;
-    void* operator new[](size_t)   = delete;
-    void operator delete(void*)   = delete;
-    void operator delete[](void*) = delete;
 
 private:
     /**

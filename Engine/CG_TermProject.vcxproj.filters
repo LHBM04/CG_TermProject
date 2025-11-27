@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{e99f3b4e-5298-4298-b2b5-9b34036e8e18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Level">
+      <UniqueIdentifier>{918fef40-e397-48f1-a364-dbda26ed3869}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{62c61eae-f415-41ac-8fb3-3092dc35fb95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Level\Audio">
+      <UniqueIdentifier>{fc0d0d61-946e-4082-8685-fcab99338901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Level\Entities">
+      <UniqueIdentifier>{5cd53461-28da-494e-81e5-ca0247401475}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\Application.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Input.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Time.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Level\Scene.cpp">
+      <Filter>Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\Shader.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Level\SceneManager.cpp">
+      <Filter>Level</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\Application.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Input.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Time.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Level\Scene.h">
+      <Filter>Level</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\Shader.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Level\SceneManager.h">
+      <Filter>Level</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

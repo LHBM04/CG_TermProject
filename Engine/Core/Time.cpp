@@ -1,5 +1,7 @@
 #include "Time.h"
 
+#include <GLFW/glfw3.h>
+
 void Time::Initialize() noexcept
 {
     currentTime = static_cast<float>(glfwGetTime());
