@@ -44,6 +44,10 @@ public:
     {
         return rot;
     }
+    const glm::vec3 getNormal()
+    {
+        return rot[1];
+    }
 
     void move(glm::vec3 v)
     {

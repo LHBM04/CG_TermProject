@@ -70,9 +70,15 @@ private:
     // 회전
     glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 
-    // 이동하려는 방향. 속도 포함
+    // 이동하려는 방향. 속도 포함하고 있는데 분리해야됨
     Vector3 dir = Vector3(0.0f, 0.0f, 0.0f);
-    
+
+    // 속도를 나타내는 glm::vec3 두기
+    // 질량도 만들기
+    float friction       = 0.1f; // 동적 마찰 계수 (dynamic friction)
+    float staticFriction = 0.3f; // 정지 마찰 계수 (static friction)
+    float mass           = 1.0f;
+
     // 중력
     const Vector3 gravity = Vector3(0.0f, -9.8f, 0.0f);
 
