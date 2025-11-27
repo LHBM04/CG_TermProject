@@ -19,20 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\Application.cpp" />
-    <ClCompile Include="Core\Input.cpp" />
-    <ClCompile Include="Core\Time.cpp" />
     <ClCompile Include="Level\Scene.cpp" />
     <ClCompile Include="Level\SceneManager.cpp" />
     <ClCompile Include="Rendering\Shader.cpp" />
+    <ClCompile Include="Sources\Core\Application.cpp" />
+    <ClCompile Include="Sources\Core\Input.cpp" />
+    <ClCompile Include="Sources\Core\Time.cpp" />
+    <ClCompile Include="Sources\Core\Window.cpp" />
+    <ClCompile Include="Sources\Level\AudioSource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\Application.h" />
-    <ClInclude Include="Core\Input.h" />
-    <ClInclude Include="Core\Time.h" />
     <ClInclude Include="Level\Scene.h" />
     <ClInclude Include="Level\SceneManager.h" />
     <ClInclude Include="Rendering\Shader.h" />
+    <ClInclude Include="Sources\Core\Application.h" />
+    <ClInclude Include="Sources\Core\Input.h" />
+    <ClInclude Include="Sources\Core\Renderer.h" />
+    <ClInclude Include="Sources\Core\Time.h" />
+    <ClInclude Include="Sources\Core\Window.h" />
+    <ClInclude Include="Sources\Level\AudioClip.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -40,7 +45,7 @@
     <ProjectGuid>{c1d3edba-d51c-4390-a59b-881c21a377e0}</ProjectGuid>
     <RootNamespace>CGTermProject</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Engine</ProjectName>
+    <ProjectName>CG_TermProject</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

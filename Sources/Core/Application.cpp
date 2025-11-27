@@ -127,7 +127,7 @@ bool Application::Initialize(const Application::Specification& specification_) n
     }
 #endif
 
-    Shader::Initialize();
+    // Shader::Initialize();
     // Shader::Use();
 
 	return true;

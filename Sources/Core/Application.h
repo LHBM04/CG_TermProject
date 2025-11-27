@@ -2,8 +2,10 @@
 
 #include <cstddef>
 #include <string>
+#include <memory>
 
-struct GLFWwindow;
+#include "Window.h"
+#include "Renderer.h"
 
 /**
  * @class Application
@@ -14,29 +16,6 @@ class Application
 {
 public:
     /**
-     * @enum WindowMode
-     *
-     * @brief 윈도우가 가질 수 있는 상태를 정의합니다.
-     */
-    enum class WindowMode : unsigned char
-    {
-        /**
-         * @brief 창 모드.
-         */
-        Windowed,
-
-        /**
-         * @brief 전체 화면.
-         */
-        FullScreen,
-
-        /**
-         * @brief 테두리 없는 창 모드.
-         */
-        Borderless
-    };
-
-    /**
      * @struct Specification
      * 
      * @brief 애플리케이션의 사양을 정의합니다.
@@ -46,27 +25,12 @@ public:
         /**
          * @brief 애플리케이션 이름.
          */
-        std::string name;
+        const char* name;
 
         /**
-         * @brief 애플리케이션 창 너비.
+         * @brief 
          */
-        int width;
-
-        /**
-         * @brief 애플리케이션 창 높이.
-         */
-        int height;
-
-        /**
-         * @brief 전체 화면 모드 사용 여부.
-         */
-        WindowMode screenMode;
-
-        /**
-         * @brief 수직 동기화 활성화 여부.
-         */
-        bool sholudVSync;
+        Window::Specification windowSpec;
     };
 
 #pragma region Deleted Functions
@@ -124,7 +88,12 @@ private:
     /**
      * @brief 애플리케이션의 윈도우 핸들.
      */
-    static volatile GLFWwindow* window;
+    static std::unique_ptr<Window> window;
+
+    /**
+     * @brief 애플리케이션의 랜더러 핸들.
+     */
+    static std::unique_ptr<Renderer> renderer;
 };
 
 inline GLFWwindow* const Application::GetNativeWindow() noexcept

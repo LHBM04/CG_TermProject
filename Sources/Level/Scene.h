@@ -1,7 +1,11 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include <entt/entt.hpp>
 
+class Camera;
 class SceneManager;
 
 /**
@@ -40,7 +44,17 @@ public:
     void Exit() noexcept;
 
 protected:
-    void CreateEntity();
+    /**
+     * @brief 카메라를 추가합니다.
+     *
+     * @param camera_ 추가할 카메라
+     */
+    void Emplace(std::unique_ptr<Camera> camera_) noexcept;
+
+    /**
+     * @brief 객체를 추가합니다.
+     */
+    void Emplace() noexcept;
 
     /**
      * @brief 
@@ -63,6 +77,11 @@ protected:
     virtual void OnExit() noexcept;
 
 private:
+    /**
+     * @brief 해당 Scene의 카메라들.
+     */
+    std::vector<std::unique_ptr<Camera>> cameras;
+
     /**
      * @brief 해당 씬의 엔티티-컴포넌트 시스템 레지스트리.
      */
