@@ -18,6 +18,7 @@
     "nameof",
     "spdlog",
     "openal-soft",
+    "drlibs",
     "nlohmann-json"
   ]
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -19,25 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Level\Scene.cpp" />
-    <ClCompile Include="Level\SceneManager.cpp" />
-    <ClCompile Include="Rendering\Shader.cpp" />
-    <ClCompile Include="Sources\Core\Application.cpp" />
-    <ClCompile Include="Sources\Core\Input.cpp" />
-    <ClCompile Include="Sources\Core\Time.cpp" />
-    <ClCompile Include="Sources\Core\Window.cpp" />
-    <ClCompile Include="Sources\Level\AudioSource.h" />
+    <ClInclude Include="Sources\Framework\Application.h" />
+    <ClInclude Include="Sources\Framework\Audio.h" />
+    <ClInclude Include="Sources\Framework\Common.h" />
+    <ClInclude Include="Sources\Framework\FileSystem.h" />
+    <ClInclude Include="Sources\Framework\SceneManagement.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Level\Scene.h" />
-    <ClInclude Include="Level\SceneManager.h" />
-    <ClInclude Include="Rendering\Shader.h" />
-    <ClInclude Include="Sources\Core\Application.h" />
-    <ClInclude Include="Sources\Core\Input.h" />
-    <ClInclude Include="Sources\Core\Renderer.h" />
-    <ClInclude Include="Sources\Core\Time.h" />
-    <ClInclude Include="Sources\Core\Window.h" />
-    <ClInclude Include="Sources\Level\AudioClip.h" />
+    <ClCompile Include="Sources\Framework\Common.cpp" />
+    <ClCompile Include="Sources\Main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -62,7 +52,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
