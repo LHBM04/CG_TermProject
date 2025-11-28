@@ -36,6 +36,7 @@ public:
 
     void move(glm::vec3 v);
     void rotate(float theta, glm::vec3 axis);
+    void rotate(float theta, glm::vec3 axis, glm::vec3 pivot);
     void resize(glm::vec3 radius_)
     {
         radius = radius_;

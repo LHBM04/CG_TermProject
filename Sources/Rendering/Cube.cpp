@@ -89,11 +89,32 @@ void Cube::rotate(float theta, glm::vec3 axis)
     rotation    = q * rotation;
 }
 
+void Cube::rotate(float theta, glm::vec3 axis, glm::vec3 pivot)
+{
+    if (glm::dot(axis, axis) < 1e-8f)
+        return;
+
+    glm::vec3 center   = glm::vec3(pos.x, pos.y, pos.z);
+    glm::vec3 toCenter = center - pivot;
+
+    glm::mat4 R         = glm::rotate(glm::mat4(1.0f), glm::radians(theta), glm::normalize(axis));
+    glm::vec3 rotated   = glm::vec3(R * glm::vec4(toCenter, 0.0f));
+    glm::vec3 newCenter = pivot + rotated;
+
+    pos = Vector3(newCenter.x, newCenter.y, newCenter.z);
+    obb->teleport(newCenter);
+
+    obb->rotate(theta, axis);
+    glm::quat q = glm::angleAxis(glm::radians(theta), glm::normalize(axis));
+    rotation    = q * rotation;
+}
+
 void Cube::checkCollisions(Cube*& target)
 {
     // target과 obb충돌검사
     if (obb->testOBBOBB_SAT(*target->obb, mtv))
     {
+        target->changeColor(glm::vec3(1.0f, 0.0f, 0.0f));
         // 충돌했으면 일단 서로 안 충돌할 정도로만 밀어냄
         move(mtv);
 
@@ -101,6 +122,12 @@ void Cube::checkCollisions(Cube*& target)
         float     dotProd = glm::dot(dir, normal);
 
         dir               = dir - (1.0f + cor) * dotProd * normal;
+
+        //SPDLOG_INFO("{}, {}, {}", dir.x, dir.y, dir.z);
+    }
+    else
+    {
+        target->changeColor(glm::vec3(0.0f, 0.5f, 0.0f));
     }
 }
 

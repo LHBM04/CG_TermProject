@@ -105,15 +105,19 @@ void TestScene::OnEnter() noexcept
     cube  = new Cube();
     cube->move(Vector3(0.0f, 5.0f, 0.0f));
 
-    for (int i{-3}; i < 3; ++i)
+    for (int i{}; i < 5; ++i)
     {
-        for (int j{-3}; j < 3; ++j)
-        {
-            // 겹쳐서 그리니까 충돌감지하는 선이 그릴 때 잘 안보여서 좀 띄움 (고치기)
-            map.push_back(new Cube(Vector3(i * 2.05f,0.0f,j * 2.05f), Vector3(0.0f, 0.5f, 0.0f)));
-        }
+        map.push_back(new Cube(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f)));
     }
-    map.push_back(new Cube(Vector3(3.0f, 2.0f, 0.0f), Vector3(0.0f, 0.5f, 0.0f)));
+    map[0]->resize(glm::vec3(10.0f, 0.1f, 10.0f));
+    map[1]->resize(glm::vec3(0.5f, 3.0f, 10.0f));
+    map[1]->move(glm::vec3(-10.0f, 0.0f, 0.0f));
+    map[2]->resize(glm::vec3(0.5f, 3.0f, 10.0f));
+    map[2]->move(glm::vec3(10.0f, 0.0f, 0.0f));
+    map[3]->resize(glm::vec3(10.0f, 3.0f, 0.5f));
+    map[3]->move(glm::vec3(0.0f, 0.0f, -10.0f));
+    map[4]->resize(glm::vec3(10.0f, 3.0f, 0.5f));
+    map[4]->move(glm::vec3(0.0f, 0.0f, 10.0f));
 
     light = new Light(Vector3(3.0f, 5.0f, 0.0f));
 }
@@ -179,7 +183,29 @@ void TestScene::OnUpdate() noexcept
         }
     }
 
-    // 지금 인자로 맵의 모든 박스랑 충돌검사해서 맵이 크면 버벅일 듯
+    glm::vec2 mousedelta = Input::GetMousePositionDelta();
+    if (mousedelta.x > 0)
+    {
+        for (auto& m : map)
+            m->rotate(-1.0f, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    }
+    else if (mousedelta.x < 0)
+    {
+        for (auto& m : map)
+            m->rotate(1.0f, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    }
+
+    if (mousedelta.y > 0)
+    {
+        for (auto& m : map)
+            m->rotate(-1.0f, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    }
+    else if (mousedelta.y < 0)
+    {
+        for (auto& m : map)
+            m->rotate(1.0f, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    }
+
     for (int i{}; i < map.size(); ++i)
     {
         cube->checkCollisions(map[i]);
