@@ -25,14 +25,6 @@ public:
     {
         return sqrt(pow(dir.x, 2) + pow(dir.y, 2) + pow(dir.z, 2));
     }
-    void lock()
-    {
-        isStatic = true;
-    }
-    void unlock()
-    {
-        isStatic = false;
-    }
 
     void move(glm::vec3 v);
     void rotate(float theta, glm::vec3 axis);
@@ -47,9 +39,14 @@ public:
     void changeColor(glm::vec3 color);
 
     void Update();
-    void checkCollisions(Cube*& target);
+    void checkCollisions(Cube* target);
 
     void Draw(GLuint shaderProgram);
+
+    void setDirScale(float s)
+    {
+        dirScale = s;
+    }
 
 private:
     GLuint VAO = 0, VBO = 0, EBO = 0;
@@ -74,18 +71,9 @@ private:
     // 이동하려는 방향. 속도 포함하고 있는데 분리해야됨
     Vector3 dir = Vector3(0.0f, 0.0f, 0.0f);
 
-    // 속도를 나타내는 glm::vec3 두기
-    // 질량도 만들기
-    float friction       = 0.1f; // 동적 마찰 계수 (dynamic friction)
-    float staticFriction = 0.3f; // 정지 마찰 계수 (static friction)
-    float mass           = 1.0f;
-
     // 중력
     const Vector3 gravity = Vector3(0.0f, -9.8f, 0.0f);
 
     // 큐브의 반발 계수
     const float cor = 0.3f;
-
-    // 움직이지 않는 큐브인지
-    bool isStatic = false;
 };

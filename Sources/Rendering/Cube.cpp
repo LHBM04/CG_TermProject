@@ -109,21 +109,20 @@ void Cube::rotate(float theta, glm::vec3 axis, glm::vec3 pivot)
     rotation    = q * rotation;
 }
 
-void Cube::checkCollisions(Cube*& target)
+void Cube::checkCollisions(Cube* target)
 {
     // target과 obb충돌검사
     if (obb->testOBBOBB_SAT(*target->obb, mtv))
     {
-        target->changeColor(glm::vec3(1.0f, 0.0f, 0.0f));
         // 충돌했으면 일단 서로 안 충돌할 정도로만 밀어냄
         move(mtv);
 
         glm::vec3 normal  = glm::normalize(mtv);
         float     dotProd = glm::dot(dir, normal);
 
-        dir               = dir - (1.0f + cor) * dotProd * normal;
+        dir = dir - (1.0f + cor) * dotProd * normal;
 
-        //SPDLOG_INFO("{}, {}, {}", dir.x, dir.y, dir.z);
+        target->changeColor(glm::vec3(1.0f, 0.0f, 0.0f));
     }
     else
     {
@@ -147,13 +146,10 @@ void Cube::changeColor(glm::vec3 color)
 
 void Cube::Update()
 {
-    if (isStatic) return;
-    else
-    {
-        dir += gravity * Time::GetDeltaTime();
-        pos += dir * Time::GetDeltaTime();
-        obb->teleport(pos);
-    }
+    float dt = Time::GetDeltaTime();
+    dir += gravity * dt;
+    pos += dir * dt;
+    obb->teleport(pos);
 }
 
 void Cube::Draw(GLuint shaderProgram)
