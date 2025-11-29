@@ -109,6 +109,25 @@ void Cube::rotate(float theta, glm::vec3 axis, glm::vec3 pivot)
     rotation    = q * rotation;
 }
 
+void Cube::rotateLocal(float theta, glm::vec3 axis)
+{
+    glm::vec3 local;
+    if (axis == glm::vec3(1.0f, 0.0f, 0.0f))
+    {
+        local = rotation * glm::vec3(1.0f, 0.0f, 0.0f);
+    }
+    else if (axis == glm::vec3(0.0f, 1.0f, 0.0f))
+    {
+        local = rotation * glm::vec3(0.0f, 1.0f, 0.0f);
+    }
+    else if (axis == glm::vec3(0.0f, 0.0f, 1.0f))
+    {
+        local = rotation * glm::vec3(0.0f, 0.0f, 1.0f);
+    }
+
+    rotation = glm::angleAxis(glm::radians(theta), local) * rotation;
+}
+
 void Cube::checkCollisions(Cube* target)
 {
     // target과 obb충돌검사

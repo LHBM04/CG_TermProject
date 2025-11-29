@@ -23,6 +23,9 @@ private:
     // 중앙의 맵
     std::vector<Cube*> map;
 
+    glm::quat labyrinthRotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+    glm::vec3 pivot = glm::vec3(0.0f, 0.0f, 0.0f);
+
     // x축 회전을 보여주는 외부 틀
     std::vector<Cube*> XaxisFrame;
 

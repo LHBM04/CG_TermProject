@@ -11,6 +11,7 @@ Labyrinth::Labyrinth()
                 map.push_back(new Cube());
                 map.back()->setTexture(wood_texture3);
                 map.back()->move(glm::vec3(float(i), 1.0f, float(j)));
+                map.back()->resize(glm::vec3(0.5f, 0.5f, 0.5f));
             }
         }
     }
@@ -118,16 +119,16 @@ void Labyrinth::Xrotate(float theta)
     else if (rotatedAmountX + theta < -maxRotationX)
         return;
 
-    Xhandle[0]->rotate(theta, glm::vec3(1.0f, 0.0f, 0.0f));
-    for (auto& xf : XaxisFrame)
-    {
-        xf->rotate(theta, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    }
-    for (auto& m : map)
-    {
-        m->rotate(theta, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    }
+    glm::vec3 axis = glm::normalize(labyrinthRotation * glm::vec3(1.0f, 0.0f, 0.0f));
 
+    Xhandle[0]->rotate(theta, axis);
+
+    for (auto& xf : XaxisFrame)
+        xf->rotate(theta, axis, pivot);
+    for (auto& m : map)
+        m->rotate(theta, axis, pivot);
+
+    labyrinthRotation = glm::angleAxis(glm::radians(theta), axis) * labyrinthRotation;
     rotatedAmountX += theta;
 }
 
@@ -138,46 +139,30 @@ void Labyrinth::Zrotate(float theta)
     else if (rotatedAmountZ + theta < -maxRotationZ)
         return;
 
-    Zhandle[0]->rotate(theta, glm::vec3(0.0f, 0.0f, 1.0f));
-    for (auto& zf : ZaxisFrame)
-    {
-        zf->rotate(theta, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    }
-    for (auto& m : map)
-    {
-        m->rotate(theta, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    }
+    glm::vec3 axis = glm::normalize(labyrinthRotation * glm::vec3(0.0f, 0.0f, 1.0f));
 
+    Zhandle[0]->rotate(theta, axis);
+    for (auto& zf : ZaxisFrame)
+        zf->rotate(theta, axis, pivot);
+    for (auto& m : map)
+        m->rotate(theta, axis, pivot);
+
+    labyrinthRotation = glm::angleAxis(glm::radians(theta), axis) * labyrinthRotation;
     rotatedAmountZ += theta;
 }
 
 void Labyrinth::draw(GLuint shader)
 {
     for (const auto& m : map)
-    {
         m->Draw(shader);
-    }
-
     for (const auto& b : base)
-    {
         b->Draw(shader);
-    }
-
     for (const auto& xh : Xhandle)
-    {
         xh->Draw(shader);
-    }
     for (const auto& zh : Zhandle)
-    {
         zh->Draw(shader);
-    }
-
-    for (auto& xf : XaxisFrame)
-    {
+    for (const auto& xf : XaxisFrame)
         xf->Draw(shader);
-    }
-    for (auto& zf : ZaxisFrame)
-    {
+    for (const auto& zf : ZaxisFrame)
         zf->Draw(shader);
-    }
 }

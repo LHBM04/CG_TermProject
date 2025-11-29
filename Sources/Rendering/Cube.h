@@ -30,11 +30,16 @@ public:
     {
         return sqrt(pow(dir.x, 2) + pow(dir.y, 2) + pow(dir.z, 2));
     }
+    const glm::quat getRot()
+    {
+        return rotation;
+    }
 
     void move(glm::vec3 v);
     void teleport(glm::vec3 v);
     void rotate(float theta, glm::vec3 axis);
     void rotate(float theta, glm::vec3 axis, glm::vec3 pivot);
+    void rotateLocal(float theta, glm::vec3 axis);
 
     void resize(glm::vec3 radius_)
     {
