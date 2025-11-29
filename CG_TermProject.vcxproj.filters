@@ -88,6 +88,9 @@
     <ClInclude Include="Sources\Rendering\OBB.h">
       <Filter>Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Rendering\stb_image.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -113,5 +116,16 @@
     <None Include="fragment.glsl">
       <Filter>Scenes</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Sources\Rendering\wood_texture1.png">
+      <Filter>Rendering</Filter>
+    </Image>
+    <Image Include="Sources\Rendering\wood_texture2.png">
+      <Filter>Rendering</Filter>
+    </Image>
+    <Image Include="Sources\Rendering\wood_texture3.png">
+      <Filter>Rendering</Filter>
+    </Image>
   </ItemGroup>
 </Project>

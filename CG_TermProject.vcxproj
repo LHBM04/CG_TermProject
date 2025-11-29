@@ -105,6 +105,7 @@
     <ClInclude Include="Sources\Rendering\Light.h" />
     <ClInclude Include="Sources\Rendering\Mesh.h" />
     <ClInclude Include="Sources\Rendering\OBB.h" />
+    <ClInclude Include="Sources\Rendering\stb_image.h" />
     <ClInclude Include="Sources\Scenes\Scene.h" />
     <ClInclude Include="Sources\Scenes\SceneManager.h" />
     <ClInclude Include="Sources\Scenes\TestScene.h" />
@@ -112,6 +113,11 @@
   <ItemGroup>
     <None Include="fragment.glsl" />
     <None Include="vertex.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Sources\Rendering\wood_texture1.png" />
+    <Image Include="Sources\Rendering\wood_texture2.png" />
+    <Image Include="Sources\Rendering\wood_texture3.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

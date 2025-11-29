@@ -6,16 +6,17 @@
 struct Vertex
 {
     glm::vec3 pos;
-    glm::vec3 color;
     glm::vec3 normal;
+    glm::vec2 texture;
 };
 
 class Cube
 {
 public:
-    Cube(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f));
+    Cube(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), const char* str = "wood_texture1.png");
     
     void initBuffer();
+    void initTexture();
 
     const glm::vec3 getPos()
     {
@@ -27,6 +28,7 @@ public:
     }
 
     void move(glm::vec3 v);
+    void teleport(glm::vec3 v);
     void rotate(float theta, glm::vec3 axis);
     void rotate(float theta, glm::vec3 axis, glm::vec3 pivot);
     void resize(glm::vec3 radius_)
@@ -35,21 +37,16 @@ public:
         obb->resize(radius_);
     }
 
-    void teleport(glm::vec3 v);
-    void changeColor(glm::vec3 color);
-
     void Update();
     void checkCollisions(Cube* target);
 
     void Draw(GLuint shaderProgram);
 
-    void setDirScale(float s)
-    {
-        dirScale = s;
-    }
-
 private:
     GLuint VAO = 0, VBO = 0, EBO = 0;
+    unsigned int              texture;
+    BITMAPINFO*               bmp;
+    GLsizei                   width, height, numberOfChannel;
 
     std::vector<Vertex>       vertices;
     std::vector<unsigned int> index;
