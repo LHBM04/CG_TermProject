@@ -1,22 +1,25 @@
 #pragma once
 
+// Standard
+#include <array>
 #include <cstddef>
+#include <cstdint>
+#include <format>
+#include <list>
+#include <map>
+#include <memory>
+#include <new>
+#include <queue>
+#include <set>
+#include <stack>
+#include <stdexcept>
 #include <string>
 #include <string_view>
-#include <format>
-#include <memory>
-
-#include <glad/glad.h>
-
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
-
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
-
-#include <spdlog/spdlog.h>
+#include <type_traits>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 #define STATIC_CLASS(type)                      \
 	public:                                     \
@@ -34,65 +37,95 @@
         void operator delete(void*) = delete;   \
         void operator delete[](void*) = delete; \
 
-class Logger final
+#pragma region Standards
+using i8    = std::int8_t;
+using i16   = std::int16_t;
+using i32   = std::int32_t;
+using i64   = std::int64_t;
+using u8    = std::uint8_t;
+using u16   = std::uint16_t;
+using u32   = std::uint32_t;
+using u64   = std::uint64_t;
+using f32   = float;
+using f64   = double;
+using usize = std::size_t;
+using ssize = std::ptrdiff_t;
+#pragma endregion
+
+#pragma region Containers(Collections)
+using String = std::string;
+using StringView = std::string_view;
+
+using WString = std::wstring;
+using WStringView = std::wstring_view;
+
+template <typename TItem>
+using List = std::vector<TItem>;
+
+template <typename TItem>
+using Queue = std::queue<TItem>;
+
+template <typename TItem>
+using Stack = std::stack<TItem>;
+
+template <typename TItem>
+using LinkedList = std::list<TItem>;
+
+template <typename TItem, usize Size>
+using Array = std::array<TItem, Size>;
+
+template <typename TItem>
+using Set = std::set<TItem>;
+
+template <typename TItem>
+using HashSet = std::unordered_set<TItem>;
+
+template <typename TKey, typename TValue>
+using Map = std::map<TKey, TValue>;
+
+template <typename TKey, typename TValue>
+using HashMap = std::unordered_map<TKey, TValue>;
+#pragma endregion
+
+#pragma region Smart Pointer
+template <typename T>
+using Unique = std::unique_ptr<T>;
+
+/**
+ * @brief 스코프를 생성합니다.
+ * 
+ * @tparam T       생성할 인스턴스의 타입
+ * @tparam ...Args 생성할 인스턴스의 인자
+ * 
+ * @param ...args_ 생성할 인스턴스의 인자
+ * 
+ * @return Unique<T> 지정한 타입의 스코프
+ */
+template <typename T, typename... Args>
+inline constexpr Unique<T> MakeUnique(Args&& ... args_)
 {
-    STATIC_CLASS(Logger)
+    return std::make_unique<T>(std::forward<Args>(args_)...);
+}
 
-public:
-    template<typename... Args>
-    static void Trace(std::string_view message_, Args... args_) noexcept
-    {
-        Log(Level::Trace, std::vformat(message_, std::make_format_args(args_...)));
-    }
+template<typename T>
+using Shared = std::shared_ptr<T>;
 
-    template <typename... Args>
-    static void Info(std::string_view message_, Args... args_) noexcept
-    {
-        Log(Level::Info, std::vformat(message_, std::make_format_args(args_...)));
-    }
+/**
+ * @brief 레퍼런스를 생성합니다.
+ *
+ * @tparam T       생성할 인스턴스의 타입
+ * @tparam ...Args 생성할 인스턴스의 인자
+ *
+ * @param ...args_ 생성할 인스턴스의 인자
+ *
+ * @return Shared<T> 지정한 타입의 레퍼런스
+ */
+template <typename T, typename... Args>
+inline constexpr Shared<T> MakeShared(Args&&... args_)
+{
+    return std::make_shared<T>(std::forward<Args>(args_)...);
+}
 
-    template <typename... Args>
-    static void Warning(std::string_view message_, Args... args_) noexcept
-    {
-        Log(Level::Warning, std::vformat(message_, std::make_format_args(args_...)));
-    }
-
-    template <typename... Args>
-    static void Error(std::string_view message_, Args... args_) noexcept
-    {
-        Log(Level::Error, std::vformat(message_, std::make_format_args(args_...)));
-    }
-
-    template <typename... Args>
-    static void Critical(std::string_view message_, Args... args_) noexcept
-    {
-        Log(Level::Critical, std::vformat(message_, std::make_format_args(args_...)));
-    }
-
-private:
-    enum class Level : unsigned char
-    {
-        Trace,
-        Info,
-        Warning,
-        Error,
-        Critical,
-    };
-
-    static void Initialize() noexcept;
-
-    static void Log(Level level_, std::string_view message_) noexcept;
-
-    static std::shared_ptr<spdlog::logger> s_CoreLogger
-};
-
-using Vector2Float = glm::vec2;
-using Vector2Int   = glm::ivec2;
-
-using Vector3Float = glm::vec3;
-using Vector3Int   = glm::ivec3;
-
-using Vector4Float = glm::vec4;
-using Vector4Int   = glm::ivec4;
-
-using Matrix4x4	= glm::mat4;
+template <typename T>
+using Weak = std::weak_ptr<T>;
+#pragma endregion

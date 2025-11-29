@@ -1,14 +1,169 @@
 #pragma once
-#pragma once
 
-class Application
+#include <windows.h>
+#include <windowsx.h>
+
+// GLAD
+#include <glad/glad.h>
+
+// GLFW
+#define GLFW_INCLUDE_NONE
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
+
+#include "Common.h"
+#include "Math.h"
+
+/**
+ * @class Application
+ *
+ * @brief 애플리케이션을 정의합니다.
+ */
+class Application final
 {
+    STATIC_CLASS(Application)
+
 public:
-	struct Specification
-	{
-        const char* name;
-		int width;
-		int height;
-		bool fullscreen = false;
+    /**
+     * @enum WindowMode
+     *
+     * @brief 윈도우가 가질 수 있는 상태를 정의합니다.
+     */
+    enum class WindowMode : unsigned char
+    {
+        /**
+         * @brief 창 모드.
+         */
+        Windowed,
+
+        /**
+         * @brief 전체 화면.
+         */
+        FullScreen,
+
+        /**
+         * @brief 테두리 없는 창 모드.
+         */
+        Borderless
     };
+
+	struct Specification final
+	{
+        /**
+         * @brief 애플리케이션 이름.
+         */
+        String name;
+
+		/**
+         * @brief 애플리케이션 창 너비.
+		 */
+		i32 width;
+
+		/**
+		 * @brief 애플리케이션 창 높이.
+         */
+        i32 height;
+
+		/**
+         * @brief 전체 화면 모드 사용 여부.
+         */
+        WindowMode screenMode;
+
+        /**
+         * @brief 수직 동기화 활성화 여부.
+         */
+        bool sholudVSync;
+    };
+
+    /**
+     * @brief 애플리케이션을 초기화합니다.
+     *
+     * @param specification_ 애플리케이션 사양.
+     *
+     * @return bool 초기화 성공 여부.
+     */
+    static bool Initialize(const Application::Specification& specification_) noexcept;
+
+    /**
+     * @brief 애플리케이션을 실행합니다.
+
+     * @return int 애플리케이션의 종료 코드.
+     */
+    static i32 Run() noexcept;
+
+    /**
+     * @brief 애플리케이션을 종료합니다.
+     */
+    static void Quit() noexcept;
+
+    /**
+     * @brief 애플리케이션의 윈도우 핸들을 반환합니다.
+     *
+     * @return GLFWwindow* 애플리케이션의 윈도우 핸들.
+     */
+    [[nodiscard]]
+    static inline GLFWwindow* GetNativeHandle() noexcept
+    {
+        return window;
+    }
+
+    /**
+     * @brief 애플리케이션 이름을 반환합니다.
+     * 
+     * @return char* 애플리케이션 이름.
+     */
+    [[nodiscard]]
+    static char* GetName() noexcept
+    {
+        return specification.name.data();
+    }
+
+    /**
+     * @brief 
+     * 
+     * @return 
+     */
+    [[nodiscard]]
+    static inline i64 GetWidth() noexcept
+    {
+        return specification.width;
+    }
+
+    /**
+     * @brief 
+     * 
+     * @return 
+     */
+    [[nodiscard]]
+    static inline i64 GetHeight() noexcept
+    {
+        return specification.height;
+    }
+
+private:
+    /**
+     * @brief 애플리케이션 상태를 업데이트합니다.
+     */
+    static void Update() noexcept;
+
+    /**
+     * @brief 애플리케이션을 렌더링합니다.
+     */
+    static void Render() noexcept;
+
+    /**
+     * @brief 애플리케이션의 사양.
+     */
+    static Specification specification;
+
+    /**
+     * @brief 애플리케이션의 윈도우 핸들.
+     */
+    static GLFWwindow* window;
+
+    /**
+     * @brief 클리어 컬러.
+     */
+    static FVector3 clearColor;
 };

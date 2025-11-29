@@ -19,15 +19,40 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\EditScene.h" />
     <ClInclude Include="Sources\Framework\Application.h" />
     <ClInclude Include="Sources\Framework\Audio.h" />
     <ClInclude Include="Sources\Framework\Common.h" />
+    <ClInclude Include="Sources\Framework\Editor.h" />
+    <ClInclude Include="Sources\Framework\Objects.h" />
     <ClInclude Include="Sources\Framework\FileSystem.h" />
-    <ClInclude Include="Sources\Framework\SceneManagement.h" />
+    <ClInclude Include="Sources\Framework\Rendering.h" />
+    <ClInclude Include="Sources\Framework\Input.h" />
+    <ClInclude Include="Sources\Framework\Logger.h" />
+    <ClInclude Include="Sources\Framework\Math.h" />
+    <ClInclude Include="Sources\Framework\Resources.h" />
+    <ClInclude Include="Sources\Framework\Scene.h" />
+    <ClInclude Include="Sources\Framework\Time.h" />
+    <ClInclude Include="Sources\Framework\UI.h" />
+    <ClInclude Include="Sources\Framework\Utilities.h" />
+    <ClInclude Include="Sources\GameScene.h" />
+    <ClInclude Include="Sources\TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Framework\Common.cpp" />
+    <ClCompile Include="Sources\EditScene.cpp" />
+    <ClCompile Include="Sources\Framework\Application.cpp" />
+    <ClCompile Include="Sources\Framework\Editor.cpp" />
+    <ClCompile Include="Sources\Framework\Objects.cpp" />
+    <ClCompile Include="Sources\Framework\Input.cpp" />
+    <ClCompile Include="Sources\Framework\Logger.cpp" />
+    <ClCompile Include="Sources\Framework\Rendering.cpp" />
+    <ClCompile Include="Sources\Framework\Resources.cpp" />
+    <ClCompile Include="Sources\Framework\Scene.cpp" />
+    <ClCompile Include="Sources\Framework\Time.cpp" />
+    <ClCompile Include="Sources\Framework\UI.cpp" />
+    <ClCompile Include="Sources\GameScene.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
+    <ClCompile Include="Sources\TitleScene.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

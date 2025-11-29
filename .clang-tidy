@@ -15,9 +15,13 @@ Checks: >
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-macro-usage
 
-WarningsAsErrors: 'clang-analyzer-*'
+WarningsAsErrors: >
+  clang-analyzer-*
 
 CheckOptions:
+  # ------------------
+  # Naming rules (explicit)
+  # ------------------
   - key: readability-identifier-naming.ClassCase
     value: CamelCase
   - key: readability-identifier-naming.StructCase
@@ -37,16 +41,37 @@ CheckOptions:
   - key: readability-identifier-naming.VariableCase
     value: camelBack
 
+  # 이름 길이 제한 명확히 비활성화 (짧은 변수명 OK)
+  - key: readability-identifier-naming.MinimumLength
+    value: 0
+  - key: readability-identifier-naming.MinimumIdentifierNameLength
+    value: 0
+  - key: readability-identifier-naming.IgnoreMainLikeFunctions
+    value: 1
+
+  # ------------------
+  # Virtual destructor 명시
+  # ------------------
   - key: cppcoreguidelines-explicit-virtual-functions.CheckExplicitVirtualDestructor
     value: 1
+
+  # ------------------
+  # const-return-type 규칙 명시
+  # ------------------
   - key: readability-const-return-type.IgnoreMacros
     value: 0
   - key: readability-const-return-type.WarnOnConstReturn
     value: 1
 
+  # ------------------
+  # Header 내 정의 검사
+  # ------------------
   - key: misc-definitions-in-headers.IgnoreHeaderFiles
     value: 0
 
+  # ------------------
+  # auto 사용 제한 완화
+  # ------------------
   - key: modernize-use-auto.MinTypeNameLength
     value: 99
 

@@ -8,7 +8,7 @@ public:
      * @param path_ 
      * @return 
      */
-    static AudioClip* Create(std::string_view path_);
+    static AudioClip* Create();
 };
 
 class AudioSource
