@@ -46,7 +46,7 @@ Cube::Cube(const char* str, glm::vec3 pos_)
         20,21,22,22,23,20
     };
     pos    = pos_;
-    obb    = new OBB(pos_, glm::vec3(1.0f), glm::mat3(1.0f));
+    obb    = new OBB(pos_, glm::vec3(1.0f));
 
     initBuffer();
 

@@ -185,27 +185,40 @@ void TestScene::OnUpdate() noexcept
         }
     }
 
-    glm::vec2 mousedelta = Input::GetMousePositionDelta();
+    /*glm::vec2 mousedelta = Input::GetMousePositionDelta();
     if (mousedelta.x > 0)
     {
-        for (auto& m : map)
-            m->rotate(-1.0f, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        labyrinth->Xrotate(0.2f);
     }
     else if (mousedelta.x < 0)
     {
-        for (auto& m : map)
-            m->rotate(1.0f, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        labyrinth->Xrotate(-0.2f);
     }
 
     if (mousedelta.y > 0)
     {
-        for (auto& m : map)
-            m->rotate(-1.0f, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        labyrinth->Zrotate(0.2f);
     }
     else if (mousedelta.y < 0)
     {
-        for (auto& m : map)
-            m->rotate(1.0f, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        labyrinth->Zrotate(-0.2f);
+    }*/
+
+    if (Input::IsKeyHeld(GLFW_KEY_J))
+    {
+        labyrinth->Zrotate(-0.2f);
+    }
+    else if (Input::IsKeyHeld(GLFW_KEY_L))
+    {
+        labyrinth->Zrotate(0.2f);
+    }
+    else if (Input::IsKeyHeld(GLFW_KEY_I))
+    {
+        labyrinth->Xrotate(0.2f);
+    }
+    else if (Input::IsKeyHeld(GLFW_KEY_K))
+    {
+        labyrinth->Xrotate(-0.2f);
     }
 
     for (int i{}; i < map.size(); ++i)

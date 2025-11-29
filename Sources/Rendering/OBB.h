@@ -5,10 +5,9 @@
 class OBB
 {
 public:
-    OBB(glm::vec3 center_, glm::vec3 half_, glm::mat3 rot_)
+    OBB(glm::vec3 center_, glm::vec3 half_)
         : pos(center_)
         , radius(half_)
-        , rot(rot_)
     {
         initWireCube();
     }
@@ -42,11 +41,11 @@ public:
     }
     const glm::mat3 getRot()
     {
-        return rot;
+        return glm::mat3_cast(rotation);
     }
     const glm::vec3 getNormal()
     {
-        return rot[1];
+        return glm::mat3_cast(rotation)[1];
     }
 
     void move(glm::vec3 v)
@@ -66,8 +65,8 @@ public:
 
     void rotate(float theta, glm::vec3 axis)
     {
-        glm::mat4 rotMat = glm::rotate(glm::mat4(1.0f), glm::radians(theta), axis);
-        rot = glm::mat3(rotMat) * rot;
+        glm::quat q = glm::angleAxis(glm::radians(theta), glm::normalize(axis));
+        rotation    = q * rotation;
     }
 
     glm::vec3 safeNormalize(const glm::vec3& v)
@@ -80,9 +79,10 @@ public:
 
     float projectedRadius(const glm::vec3& axis)
     {
-        return radius.x * fabs(glm::dot(axis, rot[0]))
-            + radius.y * fabs(glm::dot(axis, rot[1]))
-            + radius.z * fabs(glm::dot(axis, rot[2]));
+        glm::mat3 rotMat = glm::mat3_cast(rotation);
+        return radius.x * fabs(glm::dot(axis, rotMat[0]))
+            + radius.y * fabs(glm::dot(axis, rotMat[1]))
+            + radius.z * fabs(glm::dot(axis, rotMat[2]));
     }
 
     bool testOBBOBB_SAT(const OBB& target, glm::vec3& outMTV)
@@ -93,17 +93,20 @@ public:
 
         glm::vec3 d = pos - target.pos;
 
+        glm::mat3 rotMat      = glm::mat3_cast(rotation);
+        glm::mat3 targetRot   = glm::mat3_cast(target.rotation);
+
         std::vector<glm::vec3> axes;
         axes.reserve(15);
         for (int i{}; i < 3; ++i)
-            axes.push_back(target.rot[i]);
+            axes.push_back(targetRot[i]);
         for (int i{}; i < 3; ++i)
-            axes.push_back(rot[i]);
+            axes.push_back(rotMat[i]);
         for (int i{}; i < 3; ++i)
         {
             for (int j{}; j < 3; ++j)
             {
-                glm::vec3 ax = glm::cross(target.rot[i], rot[j]);
+                glm::vec3 ax = glm::cross(targetRot[i], rotMat[j]);
                 if (glm::length(ax) > EPS)
                 {
                     axes.push_back(safeNormalize(ax));
@@ -117,9 +120,9 @@ public:
             if (glm::length(axis) < EPS)
                 continue;
 
-            float rA = target.radius.x * fabs(glm::dot(axis, target.rot[0])) 
-                + target.radius.y * fabs(glm::dot(axis, target.rot[1])) 
-                + target.radius.z * fabs(glm::dot(axis, target.rot[2]));
+            float rA = target.radius.x * fabs(glm::dot(axis, targetRot[0])) 
+                + target.radius.y * fabs(glm::dot(axis, targetRot[1])) 
+                + target.radius.z * fabs(glm::dot(axis, targetRot[2]));
             float rB      = projectedRadius(axis);
             float dist    = fabs(glm::dot(axis, d));
             float overlap = (rA + rB) - dist;
@@ -147,13 +150,11 @@ public:
     {
         glUseProgram(shaderProgram);
 
-        glm::mat4 rot4(1.0f);
-        rot4[0] = glm::vec4(rot[0], 0.0f);
-        rot4[1] = glm::vec4(rot[1], 0.0f);
-        rot4[2] = glm::vec4(rot[2], 0.0f);
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
+        model *= glm::mat4_cast(rotation);
+        glm::mat4 scale = glm::scale(glm::mat4(1.0f), radius);
+        model *= scale;
 
-        glm::mat4 model =
-                glm::translate(glm::mat4(1.0f), pos) * rot4 * glm::scale(glm::mat4(1.0f), radius);
         GLuint    modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -162,9 +163,12 @@ public:
     }
 
 private: 
+
     glm::vec3 pos;
+
     glm::vec3 radius;
-    glm::mat3 rot;
+
+    glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 
     GLuint vao, vbo, ebo;
 
