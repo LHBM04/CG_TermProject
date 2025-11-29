@@ -2,7 +2,8 @@
 
 Labyrinth::Labyrinth()
 {
-    base    = new Cube("Sources/Rendering/wood_texture4.png");
+    base.push_back(new Cube());
+    base[0]->setTexture(wood_texture4);
 
     Xhandle.reserve(4);
     Xhandle.push_back(new Cube("Sources/Rendering/handle.png"));
@@ -15,6 +16,9 @@ Labyrinth::Labyrinth()
     Zhandle.push_back(new Cube("Sources/Rendering/handle_bar.png")); 
     Zhandle.push_back(new Cube("Sources/Rendering/handle_bar.png"));
     Zhandle.push_back(new Cube("Sources/Rendering/handle_bar.png"));
+
+    XaxisFrame.reserve(4);
+    ZaxisFrame.reserve(4);
     for (int i{}; i < 4; ++i)
     {
         XaxisFrame.push_back(new Cube("Sources/Rendering/wood_texture2.png"));
@@ -22,8 +26,8 @@ Labyrinth::Labyrinth()
     }
 
     // 밑바닥 작업
-    base->resize(glm::vec3(10.0f, 0.5f, 10.0f));
-    base->move(glm::vec3(0.0f, -5.0f, 0.0f));
+    base[0]->resize(glm::vec3(10.0f, 0.5f, 10.0f));
+    base[0]->move(glm::vec3(0.0f, -5.0f, 0.0f));
 
     // x축 핸들 작업
     Xhandle[0]->resize(glm::vec3(0.5f, 1.0f, 1.0f));
@@ -113,7 +117,10 @@ void Labyrinth::Zrotate(float theta)
 
 void Labyrinth::draw(GLuint shader)
 {
-    base->Draw(shader);
+    for (const auto& b : base)
+    {
+        b->Draw(shader);
+    }
 
     for (const auto& xh : Xhandle)
     {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../PCH.h"
+#include "../Rendering/TextureLoader.h"
 #include "Cube.h"
 
 class Labyrinth
@@ -25,7 +26,7 @@ private:
     std::vector<Cube*> Zhandle;
 
     // 바닥
-    Cube* base;
+    std::vector<Cube*> base;
 
     // 일정 회전 이상은 금지용
     float rotatedAmountX = 0.0f;
@@ -33,4 +34,13 @@ private:
 
     float rotatedAmountZ = 0.0f;
     float maxRotationZ = 10.0f;
+
+    // 텍스쳐 매핑 이미지
+    GLsizei width, height, numberOfChannel;
+    GLuint  wood_texture1 = TextureLoader::LoadTexture("wood_texture1.png", width, height, numberOfChannel);
+    GLuint  wood_texture2 = TextureLoader::LoadTexture("wood_texture2.png", width, height, numberOfChannel);
+    GLuint  wood_texture3 = TextureLoader::LoadTexture("wood_texture3.png", width, height, numberOfChannel);
+    GLuint  wood_texture4 = TextureLoader::LoadTexture("wood_texture4.png", width, height, numberOfChannel);
+    GLuint  handle        = TextureLoader::LoadTexture("handle.png", width, height, numberOfChannel);
+    GLuint  handle_bar    = TextureLoader::LoadTexture("handle_bar.png", width, height, numberOfChannel);
 };

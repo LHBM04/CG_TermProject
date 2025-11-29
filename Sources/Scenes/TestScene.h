@@ -5,6 +5,7 @@
 #include "../Rendering/Labyrinth.h"
 #include "../Rendering/Light.h"
 #include "../Rendering/Camera.h"
+#include "../Rendering/TextureLoader.h"
 
 #include "Scene.h"
 
@@ -50,4 +51,12 @@ private:
     Labyrinth* labyrinth;
     std::vector<Cube*> map;
     Light*	light;
+
+    GLsizei width, height, numberOfChannel;
+    GLuint  wood_texture1 = TextureLoader::LoadTexture("wood_texture1.png", width, height, numberOfChannel);
+    GLuint  wood_texture2 = TextureLoader::LoadTexture("wood_texture2.png", width, height, numberOfChannel);
+    GLuint  wood_texture3 = TextureLoader::LoadTexture("wood_texture3.png", width, height, numberOfChannel);
+    GLuint  wood_texture4 = TextureLoader::LoadTexture("wood_texture4.png", width, height, numberOfChannel);
+    GLuint  handle = TextureLoader::LoadTexture("handle.png", width, height, numberOfChannel);
+    GLuint  handle_bar = TextureLoader::LoadTexture("handle_bar.png", width, height, numberOfChannel);
 };

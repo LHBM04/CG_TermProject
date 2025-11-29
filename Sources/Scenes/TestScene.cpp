@@ -102,22 +102,22 @@ void TestScene::OnEnter() noexcept
     SPDLOG_INFO("Entered TestScene.");
 
     cam   = new Camera();
+    cam->rotate(45.0f);
+
     cube = new Cube();
     cube->move(Vector3(0.0f, 5.0f, 0.0f));
+    cube->resize(glm::vec3(0.5f, 0.5f, 0.5f));
 
-    for (int i{}; i < 5; ++i)
+    for (int i{ -7 }; i <= 7; ++i)
     {
-        map.push_back(new Cube());
+        for (int j{-7}; j <= 7; ++j)
+        {
+            map.push_back(new Cube());
+            map.back()->move(glm::vec3(float(i), 0.0f, float(j)));
+        }
     }
-    map[0]->resize(glm::vec3(10.0f, 0.1f, 10.0f));
-    map[1]->resize(glm::vec3(0.5f, 3.0f, 10.0f));
-    map[1]->move(glm::vec3(-10.0f, 0.0f, 0.0f));
-    map[2]->resize(glm::vec3(0.5f, 3.0f, 10.0f));
-    map[2]->move(glm::vec3(10.0f, 0.0f, 0.0f));
-    map[3]->resize(glm::vec3(10.0f, 3.0f, 0.5f));
-    map[3]->move(glm::vec3(0.0f, 0.0f, -10.0f));
-    map[4]->resize(glm::vec3(10.0f, 3.0f, 0.5f));
-    map[4]->move(glm::vec3(0.0f, 0.0f, 10.0f));
+
+    for (int i{-7}; i <= 7; ++i)
 
     light = new Light(Vector3(3.0f, 5.0f, 0.0f));
 
@@ -238,12 +238,12 @@ void TestScene::OnRender() noexcept
 
     light->applyLight(shaderProgramID);
 
-    //cube->Draw(shaderProgramID);
+    cube->Draw(shaderProgramID);
 
     labyrinth->draw(shaderProgramID);
 
-    //for (const auto& m : map)
-        //m->Draw(shaderProgramID);
+    for (const auto& m : map)
+        m->Draw(shaderProgramID);
 }
 
 void TestScene::OnExit() noexcept

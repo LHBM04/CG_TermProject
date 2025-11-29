@@ -1,10 +1,7 @@
 #include "Cube.h"
 #include "../Core/Time.h"
-#include <iostream>
-#include <filesystem>
-#include "TextureLoader.h"
 
-Cube::Cube(const char* str, glm::vec3 pos_)
+Cube::Cube(glm::vec3 pos_)
 {
     vertices = 
     {
@@ -49,8 +46,6 @@ Cube::Cube(const char* str, glm::vec3 pos_)
     obb    = new OBB(pos_, glm::vec3(1.0f));
 
     initBuffer();
-
-    texture = TextureLoader::LoadTexture(str, width, height, numberOfChannel);
 }
 
 void Cube::initBuffer()

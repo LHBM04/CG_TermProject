@@ -6,7 +6,7 @@ Camera::Camera() noexcept
     , aspectRatio(1.7777f)
     , nearPlane(0.1f)
     , farPlane(100.0f) 
-    , pos       (glm::vec3(20.0f, 20.0f, 20.0f))
+    , pos       (glm::vec3(-1.0f, 20.0f, 1.0f))
     , direction (glm::vec3(0.0f, 0.0f, 0.0f))
     , up        (glm::vec3(0.0f, 1.0f, 0.0f))
 {

@@ -13,9 +13,14 @@ struct Vertex
 class Cube
 {
 public:
-    Cube(const char* str = "Sources/Rendering/wood_texture1.png", glm::vec3 pos_ = glm::vec3(0.0f, 0.0f, 0.0f));
+    Cube(glm::vec3 pos_ = glm::vec3(0.0f, 0.0f, 0.0f));
     
     void initBuffer();
+
+    void setTexture(GLuint textureID)
+    {
+        texture = textureID;
+    }
 
     const glm::vec3 getPos()
     {
@@ -45,8 +50,6 @@ public:
 private:
     GLuint VAO = 0, VBO = 0, EBO = 0;
     unsigned int              texture;
-    BITMAPINFO*               bmp;
-    GLsizei                   width, height, numberOfChannel;
 
     std::vector<Vertex>       vertices;
     std::vector<unsigned int> index;
