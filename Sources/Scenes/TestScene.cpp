@@ -92,8 +92,6 @@ TestScene::~TestScene() noexcept
 {
     delete cam;
     delete cube;
-    for (auto& b : map)
-        delete b;
     delete light;
 }
 
@@ -105,17 +103,9 @@ void TestScene::OnEnter() noexcept
     cam->rotate(45.0f);
 
     cube = new Cube();
+    cube->setTexture(handle);
     cube->move(Vector3(0.0f, 5.0f, 0.0f));
     cube->resize(glm::vec3(0.5f, 0.5f, 0.5f));
-
-    for (int i{ -7 }; i <= 7; ++i)
-    {
-        for (int j{-7}; j <= 7; ++j)
-        {
-            map.push_back(new Cube());
-            map.back()->move(glm::vec3(float(i), 0.0f, float(j)));
-        }
-    }
 
     for (int i{-7}; i <= 7; ++i)
 
@@ -185,7 +175,7 @@ void TestScene::OnUpdate() noexcept
         }
     }
 
-    /*glm::vec2 mousedelta = Input::GetMousePositionDelta();
+    glm::vec2 mousedelta = Input::GetMousePositionDelta();
     if (mousedelta.x > 0)
     {
         labyrinth->Xrotate(0.2f);
@@ -202,7 +192,7 @@ void TestScene::OnUpdate() noexcept
     else if (mousedelta.y < 0)
     {
         labyrinth->Zrotate(-0.2f);
-    }*/
+    }
 
     if (Input::IsKeyHeld(GLFW_KEY_J))
     {
@@ -221,9 +211,9 @@ void TestScene::OnUpdate() noexcept
         labyrinth->Xrotate(-0.2f);
     }
 
-    for (int i{}; i < map.size(); ++i)
+    for (int i{}; i < labyrinth->getMap().size(); ++i)
     {
-        cube->checkCollisions(map[i]);
+        cube->checkCollisions(labyrinth->getMap()[i]);
     }
     cube->Update();
 }
@@ -241,9 +231,6 @@ void TestScene::OnRender() noexcept
     cube->Draw(shaderProgramID);
 
     labyrinth->draw(shaderProgramID);
-
-    for (const auto& m : map)
-        m->Draw(shaderProgramID);
 }
 
 void TestScene::OnExit() noexcept

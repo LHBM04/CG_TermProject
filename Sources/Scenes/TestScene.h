@@ -49,14 +49,13 @@ private:
 	Camera* cam;
     Cube*	cube;
     Labyrinth* labyrinth;
-    std::vector<Cube*> map;
     Light*	light;
 
     GLsizei width, height, numberOfChannel;
-    GLuint  wood_texture1 = TextureLoader::LoadTexture("wood_texture1.png", width, height, numberOfChannel);
-    GLuint  wood_texture2 = TextureLoader::LoadTexture("wood_texture2.png", width, height, numberOfChannel);
-    GLuint  wood_texture3 = TextureLoader::LoadTexture("wood_texture3.png", width, height, numberOfChannel);
-    GLuint  wood_texture4 = TextureLoader::LoadTexture("wood_texture4.png", width, height, numberOfChannel);
-    GLuint  handle = TextureLoader::LoadTexture("handle.png", width, height, numberOfChannel);
-    GLuint  handle_bar = TextureLoader::LoadTexture("handle_bar.png", width, height, numberOfChannel);
+    GLuint  wood_texture1 = TextureLoader::LoadTexture("Sources/Rendering/wood_texture1.png", width, height, numberOfChannel);
+    GLuint  wood_texture2 = TextureLoader::LoadTexture("Sources/Rendering/wood_texture2.png", width, height, numberOfChannel);
+    GLuint  wood_texture3 = TextureLoader::LoadTexture("Sources/Rendering/wood_texture3.png", width, height, numberOfChannel);
+    GLuint  wood_texture4 = TextureLoader::LoadTexture("Sources/Rendering/wood_texture4.png", width, height, numberOfChannel);
+    GLuint  handle = TextureLoader::LoadTexture("Sources/Rendering/handle.png", width, height, numberOfChannel);
+    GLuint  handle_bar = TextureLoader::LoadTexture("Sources/Rendering/handle_bar.png", width, height, numberOfChannel);
 };

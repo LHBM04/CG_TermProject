@@ -2,27 +2,55 @@
 
 Labyrinth::Labyrinth()
 {
+    for (int i{-7}; i <= 7; ++i)
+    {
+        for (int j{-7}; j <= 7; ++j)
+        {
+            if (i == -7 || i == 7 || j == -7 || j == 7)
+            {
+                map.push_back(new Cube());
+                map.back()->setTexture(wood_texture3);
+                map.back()->move(glm::vec3(float(i), 1.0f, float(j)));
+            }
+        }
+    }
+    map.push_back(new Cube());
+    map.back()->setTexture(wood_texture3);
+    map.back()->resize(glm::vec3(7.5f, 0.0f, 7.5f));
+
     base.push_back(new Cube());
     base[0]->setTexture(wood_texture4);
 
     Xhandle.reserve(4);
-    Xhandle.push_back(new Cube("Sources/Rendering/handle.png"));
-    Xhandle.push_back(new Cube("Sources/Rendering/handle_bar.png"));
-    Xhandle.push_back(new Cube("Sources/Rendering/handle_bar.png"));
-    Xhandle.push_back(new Cube("Sources/Rendering/handle_bar.png"));
+    Xhandle.push_back(new Cube());
+    Xhandle[0]->setTexture(handle);
+    Xhandle.push_back(new Cube());
+    Xhandle.push_back(new Cube());
+    Xhandle.push_back(new Cube());
+    for (int i{ 1 }; i < 4; ++i)
+    {
+        Xhandle[i]->setTexture(handle_bar);
+    }
 
     Zhandle.reserve(4);
-    Zhandle.push_back(new Cube("Sources/Rendering/handle.png"));
-    Zhandle.push_back(new Cube("Sources/Rendering/handle_bar.png")); 
-    Zhandle.push_back(new Cube("Sources/Rendering/handle_bar.png"));
-    Zhandle.push_back(new Cube("Sources/Rendering/handle_bar.png"));
+    Zhandle.push_back(new Cube());
+    Zhandle[0]->setTexture(handle);
+    Zhandle.push_back(new Cube()); 
+    Zhandle.push_back(new Cube());
+    Zhandle.push_back(new Cube());
+    for (int i{1}; i < 4; ++i)
+    {
+        Zhandle[i]->setTexture(handle_bar);
+    }
 
     XaxisFrame.reserve(4);
     ZaxisFrame.reserve(4);
     for (int i{}; i < 4; ++i)
     {
-        XaxisFrame.push_back(new Cube("Sources/Rendering/wood_texture2.png"));
-        ZaxisFrame.push_back(new Cube("Sources/Rendering/wood_texture1.png"));
+        XaxisFrame.push_back(new Cube());
+        XaxisFrame[i]->setTexture(wood_texture2);
+        ZaxisFrame.push_back(new Cube());
+        ZaxisFrame[i]->setTexture(wood_texture1);
     }
 
     // 밑바닥 작업
@@ -95,6 +123,10 @@ void Labyrinth::Xrotate(float theta)
     {
         xf->rotate(theta, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     }
+    for (auto& m : map)
+    {
+        m->rotate(theta, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    }
 
     rotatedAmountX += theta;
 }
@@ -111,12 +143,21 @@ void Labyrinth::Zrotate(float theta)
     {
         zf->rotate(theta, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     }
+    for (auto& m : map)
+    {
+        m->rotate(theta, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    }
 
     rotatedAmountZ += theta;
 }
 
 void Labyrinth::draw(GLuint shader)
 {
+    for (const auto& m : map)
+    {
+        m->Draw(shader);
+    }
+
     for (const auto& b : base)
     {
         b->Draw(shader);
