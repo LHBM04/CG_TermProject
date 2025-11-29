@@ -36,6 +36,12 @@
     <ClCompile Include="Sources\Rendering\Cube.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Rendering\TextureLoader.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Rendering\Labyrinth.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Core\Application.h">
@@ -91,6 +97,12 @@
     <ClInclude Include="Sources\Rendering\stb_image.h">
       <Filter>Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Rendering\TextureLoader.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Rendering\Labyrinth.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -125,6 +137,15 @@
       <Filter>Rendering</Filter>
     </Image>
     <Image Include="Sources\Rendering\wood_texture3.png">
+      <Filter>Rendering</Filter>
+    </Image>
+    <Image Include="Sources\Rendering\wood_texture4.png">
+      <Filter>Rendering</Filter>
+    </Image>
+    <Image Include="Sources\Rendering\handle.png">
+      <Filter>Rendering</Filter>
+    </Image>
+    <Image Include="Sources\Rendering\handle_bar.png">
       <Filter>Rendering</Filter>
     </Image>
   </ItemGroup>

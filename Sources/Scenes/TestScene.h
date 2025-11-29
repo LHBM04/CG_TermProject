@@ -2,6 +2,7 @@
 
 #include "../PCH.h"
 #include "../Rendering/Cube.h"
+#include "../Rendering/Labyrinth.h"
 #include "../Rendering/Light.h"
 #include "../Rendering/Camera.h"
 
@@ -46,6 +47,7 @@ private:
 
 	Camera* cam;
     Cube*	cube;
+    Labyrinth* labyrinth;
     std::vector<Cube*> map;
     Light*	light;
 };

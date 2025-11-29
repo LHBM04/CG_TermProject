@@ -2,10 +2,9 @@
 #include "../Core/Time.h"
 #include <iostream>
 #include <filesystem>
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "TextureLoader.h"
 
-Cube::Cube(glm::vec3 pos_, const char* str)
+Cube::Cube(const char* str, glm::vec3 pos_)
 {
     vertices = 
     {
@@ -50,7 +49,8 @@ Cube::Cube(glm::vec3 pos_, const char* str)
     obb    = new OBB(pos_, glm::vec3(1.0f), glm::mat3(1.0f));
 
     initBuffer();
-    initTexture();
+
+    texture = TextureLoader::LoadTexture(str, width, height, numberOfChannel);
 }
 
 void Cube::initBuffer()
@@ -79,61 +79,6 @@ void Cube::initBuffer()
     // index 연결하기
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, index.size() * sizeof(unsigned int), index.data(), GL_STATIC_DRAW);
-}
-
-void Cube::initTexture()
-{
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    // 래핑
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    // 먼저 경로/존재 여부 로깅
-    const char* relPath = "Sources/Rendering/wood_texture1.png";
-    std::cout << "[Texture] cwd: " << std::filesystem::current_path().string() << std::endl;
-    std::cout << "[Texture] try: " << relPath
-              << " exists: " << (std::filesystem::exists(relPath) ? "true" : "false") << std::endl;
-
-    stbi_set_flip_vertically_on_load(1);
-    unsigned char* data = stbi_load(relPath, &width, &height, &numberOfChannel, 0);
-    if (!data)
-    {
-        std::cerr << "[Texture] load failed: " << relPath
-                  << " reason: " << (stbi_failure_reason() ? stbi_failure_reason() : "unknown") << std::endl;
-
-        // 폴백 1x1 텍스처(레벨0만) 생성 -> 베이스 레벨 정의
-        const unsigned char white[4] = { 255, 255, 255, 255 };
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // 밉맵 없음
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, white);
-        return;
-    }
-
-    // 성공 시: 밉맵 필터
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    GLenum externalFormat = GL_RGB;
-    GLenum internalFormat = GL_RGB8;
-    if (numberOfChannel == 1) { externalFormat = GL_RED;  internalFormat = GL_R8;    }
-    else if (numberOfChannel == 3) { externalFormat = GL_RGB;  internalFormat = GL_RGB8;  }
-    else if (numberOfChannel == 4) { externalFormat = GL_RGBA; internalFormat = GL_RGBA8; }
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, externalFormat, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    int levels = 1 + static_cast<int>(std::floor(std::log2(std::max(width, height))));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, levels - 1);
-
-    stbi_image_free(data);
 }
 
 void Cube::move(glm::vec3 v)

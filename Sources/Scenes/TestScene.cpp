@@ -102,12 +102,12 @@ void TestScene::OnEnter() noexcept
     SPDLOG_INFO("Entered TestScene.");
 
     cam   = new Camera();
-    cube = new Cube(glm::vec3(0.0f, 0.0f, 0.0f));
+    cube = new Cube();
     cube->move(Vector3(0.0f, 5.0f, 0.0f));
 
     for (int i{}; i < 5; ++i)
     {
-        map.push_back(new Cube(Vector3(0.0f, 0.0f, 0.0f)));
+        map.push_back(new Cube());
     }
     map[0]->resize(glm::vec3(10.0f, 0.1f, 10.0f));
     map[1]->resize(glm::vec3(0.5f, 3.0f, 10.0f));
@@ -120,6 +120,8 @@ void TestScene::OnEnter() noexcept
     map[4]->move(glm::vec3(0.0f, 0.0f, 10.0f));
 
     light = new Light(Vector3(3.0f, 5.0f, 0.0f));
+
+    labyrinth = new Labyrinth();
 }
 
 void TestScene::OnUpdate() noexcept
@@ -223,10 +225,12 @@ void TestScene::OnRender() noexcept
 
     light->applyLight(shaderProgramID);
 
-    cube->Draw(shaderProgramID);
+    //cube->Draw(shaderProgramID);
 
-    for (const auto& m : map)
-        m->Draw(shaderProgramID);
+    labyrinth->draw(shaderProgramID);
+
+    //for (const auto& m : map)
+        //m->Draw(shaderProgramID);
 }
 
 void TestScene::OnExit() noexcept

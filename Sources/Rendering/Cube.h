@@ -13,10 +13,9 @@ struct Vertex
 class Cube
 {
 public:
-    Cube(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), const char* str = "wood_texture1.png");
+    Cube(const char* str = "Sources/Rendering/wood_texture1.png", glm::vec3 pos_ = glm::vec3(0.0f, 0.0f, 0.0f));
     
     void initBuffer();
-    void initTexture();
 
     const glm::vec3 getPos()
     {
