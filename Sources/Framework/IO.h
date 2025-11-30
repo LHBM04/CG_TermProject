@@ -83,8 +83,6 @@ public:
      */
     static void Move(std::string_view sourceFileName, std::string_view destFileName) noexcept;
 
-    // --- 읽기/쓰기 편의 기능 (C# 스타일) ---
-
     /**
      * @brief 텍스트 파일을 열어 모든 내용을 문자열로 읽어옵니다.
      */
@@ -146,8 +144,6 @@ public:
      * @brief 현재 디렉토리를 반환합니다.
      */
     static std::string GetCurrentDirectory() noexcept;
-
-    // --- 검색 기능 ---
 
     /**
      * @brief 지정된 디렉토리 내의 파일 이름(경로 포함) 목록을 반환합니다.
