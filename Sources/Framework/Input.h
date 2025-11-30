@@ -1,14 +1,13 @@
 #pragma once
 
 #include "Common.h"
-#include "Math.h"
 
 /**
  * @enum Keyboard
  * 
  * @brief 키 코드를 정의합니다.
  */
-enum class Keyboard : u16
+enum class Keyboard : unsigned short
 {
     Space      = 32,
     Apostrophe = 39, /* ' */
@@ -143,14 +142,14 @@ enum class Keyboard : u16
 /**
  * @brief 애플리케이션에서 처리할 수 있는 키의 최대 개수.
  */
-static constexpr u64 MAX_KEYS = static_cast<u64>(Keyboard::Menu) + 1;
+static constexpr std::size_t MAX_KEYS = static_cast<std::size_t>(Keyboard::Menu) + 1;
 
 /**
  * @enum Mouse
  *
  * @brief 마우스 버튼 코드를 정의합니다.
  */
-enum class Mouse : u8
+enum class Mouse : unsigned char
 {
     Button0 = 0,
     Button1 = 1,
@@ -170,20 +169,20 @@ enum class Mouse : u8
 /**
  * @brief 애플리케이션에서 처리할 수 있는 마우스 버튼의 최대 개수.
  */
-static constexpr u64 MAX_BUTTONS = static_cast<u64>(Mouse::Button7) + 1;
+static constexpr std::size_t MAX_BUTTONS = static_cast<std::size_t>(Mouse::Button7) + 1;
 
 class Application;
 
 /**
- * @class Input
+ * @class InputManager
  *
  * @brief 입력 관련 기능을 정의합니다.
  */
-class Input final
+class InputManager final
 {
     friend class Application;
 
-    STATIC_CLASS(Input)
+    STATIC_CLASS(InputManager)
 
 public:
     /**
@@ -270,7 +269,7 @@ public:
      * @return glm::vec2 현재 마우스 위치
      */
     [[nodiscard]]
-    static inline FVector2 GetMousePosition() noexcept
+    static inline glm::fvec2 GetMousePosition() noexcept
     {
         return nowMousePosition;
     }
@@ -281,7 +280,7 @@ public:
      * @return glm::vec2 마우스 위치의 변화량
      */
     [[nodiscard]]
-    static inline FVector2 GetMousePositionDelta() noexcept
+    static inline glm::fvec2 GetMousePositionDelta() noexcept
     {
         return nowMousePosition - lastMousePosition;
     }
@@ -292,7 +291,7 @@ public:
      * @return float 마우스 스크롤 오프셋 값
      */
     [[nodiscard]]
-    static inline f32 GetScrollOffset() noexcept
+    static inline float GetScrollOffset() noexcept
     {
         return nowScrollOffset;
     }
@@ -303,12 +302,17 @@ public:
      * @return float 마우스 스크롤의 변화량
      */
     [[nodiscard]]
-    static inline f32 GetScrollOffsetDelta() noexcept
+    static inline float GetScrollOffsetDelta() noexcept
     {
         return nowScrollOffset - lastScrollOffset;
     }
 
 private:
+    /**
+     * @brief 입력 상태를 초기화합니다.
+     */
+    static void Initialize(GLFWwindow* const window_) noexcept;
+
     /**
      * @brief 입력 상태를 업데이트합니다.
      */
@@ -322,7 +326,7 @@ private:
      * @param action_   키 액션
      * @param mods_     키 상태
      */
-    static void OnKeyInteracted(i32 key_, i32 scancode_, i32 action_, i32 mods_) noexcept;
+    static void OnKeyInteracted(GLFWwindow* const window_, int key_, int scancode_, int action_, int mods_) noexcept;
 
     /**
      * @brief 마우스 버튼 상호작용이 발생했을 때 호출됩니다.
@@ -331,7 +335,7 @@ private:
      * @param action_ 버튼 액션
      * @param mods_   버튼 상태
      */
-    static void OnMouseButtonInteracted(i32 button_, i32 action_, i32 mods_) noexcept;
+    static void OnMouseButtonInteracted(GLFWwindow* const window_, int button_, int action_, int mods_) noexcept;
 
     /**
      * @brief 마우스 이동이 발생했을 때 호출됩니다.
@@ -339,7 +343,7 @@ private:
      * @param x_ 마우스 X 좌표
      * @param y_ 마우스 Y 좌표
      */
-    static void OnMouseMoved(f64 x_, f64 y_) noexcept;
+    static void OnMouseMoved(GLFWwindow* const window_, double x_, double y_) noexcept;
 
     /**
      * @brief 마우스 스크롤이 발생했을 때 호출됩니다.
@@ -347,47 +351,47 @@ private:
      * @param x_ 마우스 X 좌표
      * @param y_ 마우스 Y 좌표
      */
-    static void OnMouseScrolled(f64 x_, f64 y_) noexcept;
+    static void OnMouseScrolled(GLFWwindow* const window_, double x_, double y_) noexcept;
 
     /**
      * @brief 키 최대 개수.
      */
-    static constexpr u64 MAX_KEYS = MAX_KEYS;
+    static constexpr std::size_t MAX_KEYS = MAX_KEYS;
 
     /**
      * @brief 버튼 최대 개수.
      */
-    static constexpr u64 MAX_BUTTONS = MAX_BUTTONS;
+    static constexpr std::size_t MAX_BUTTONS = MAX_BUTTONS;
 
     /**
      * @brief 이전 프레임에서의 키 상태.
      */
-    static HashMap<Keyboard, bool> lastKeyStates;
+    static std::unordered_map<Keyboard, bool> lastKeyStates;
 
     /**
      * @brief 현재 프레임에서의 키 상태.
      */
-    static HashMap<Keyboard, bool> nowKeyStates;
+    static std::unordered_map<Keyboard, bool> nowKeyStates;
 
     /**
      * @brief 이전 프레임에서의 마우스 버튼 상태.
      */
-    static HashMap<Mouse, bool> lastMouseButtonStates;
+    static std::unordered_map<Mouse, bool> lastMouseButtonStates;
 
     /**
      * @brief 현재 프레임에서의 마우스 버튼 상태.
      */
-    static HashMap<Mouse, bool> nowMouseButtonStates;
+    static std::unordered_map<Mouse, bool> nowMouseButtonStates;
 
     /**
      * @brief 이전 프레임에서의 마우스 위치.
      */
-    static FVector2 lastMousePosition;
+    static glm::fvec2 lastMousePosition;
 
     /**
      * @brief 현재 프레임에서의 마우스 위치.
      */
-    static FVector2 nowMousePosition;
+    static glm::fvec2 nowMousePosition;
 
     /**
      * @brief 이전 프레임에서의 스크롤 값.

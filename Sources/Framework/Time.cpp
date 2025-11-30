@@ -1,16 +1,19 @@
 #include "Time.h"
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-
-void Time::Update() noexcept
+void TimeManager::Initialize() noexcept
 {
-	lastTime    = currentTime;
-	currentTime = static_cast<f32>(glfwGetTime());
+	lastTime    = 0.0f;
+	currentTime = static_cast<std::float_t>(glfwGetTime());
 }
 
-float Time::timeScale = 1.0f;
+void TimeManager::Update() noexcept
+{
+	lastTime    = currentTime;
+	currentTime = static_cast<std::float_t>(glfwGetTime());
+}
 
-float Time::lastTime = 0.0f;
+float TimeManager::timeScale = 1.0f;
 
-float Time::currentTime = 0.0f;
+float TimeManager::lastTime = 0.0f;
+
+float TimeManager::currentTime = 0.0f;

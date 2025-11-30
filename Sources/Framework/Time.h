@@ -5,15 +5,15 @@
 class Application;
 
 /**
- * @class Time
+ * @class TimeManager
  *
  * @brief 시간 관련 동작을 정의합니다.
  */
-class Time final
+class TimeManager final
 {
     friend class Application;
 
-    STATIC_CLASS(Time)
+    STATIC_CLASS(TimeManager)
 public:
     /**
      * @brief 시간 배율을 반환합니다.
@@ -21,7 +21,20 @@ public:
      * @return float 시간 배율.
      */
     [[nodiscard]]
-    static inline f32 GetTimeScale() noexcept;
+    static inline float GetTimeScale() noexcept
+    {
+        return timeScale;
+    }
+
+    /**
+     * @brief 시간 배율을 설정합니다.
+     *
+     * @param value_ 설정할 시간 배율.
+     */
+    static inline void SetTimeScale(const float value_) noexcept
+    {
+        timeScale = value_;
+    }
 
     /**
      * @brief 델타 타임(이전 프레임과 현재 프레임 사이의 시간 간격)을 초 단위로 반환합니다.
@@ -29,7 +42,10 @@ public:
      * @return float 델타 타임(초 단위).
      */
     [[nodiscard]]
-    static inline f32 GetDeltaTime() noexcept;
+    static inline float GetDeltaTime() noexcept
+    {
+        return (currentTime - lastTime) * timeScale;
+    }
 
     /**
      * @brief 시간 배율이 적용되지 않은 델타 타임을 초 단위로 반환합니다.
@@ -37,16 +53,39 @@ public:
      * @return float 시간 배율이 적용되지 않은 델타 타임(초 단위).
      */
     [[nodiscard]]
-    static inline f32 GetUnscaledDeltaTime() noexcept;
+    static inline float GetUnscaledDeltaTime() noexcept
+    {
+        return currentTime - lastTime;
+    }
 
     /**
-     * @brief 시간 배율을 설정합니다.
+     * @brief 고정 델타 타임을 반환합니다.
      *
-     * @param value_ 설정할 시간 배율.
+     * @return float 고정 델타 타임.
      */
-    static inline void SetTimeScale(f32 value_) noexcept;
+    [[nodiscard]]
+    static inline float GetFixedDeltaTime() noexcept
+    {
+        return 1.0f / 60.0f;
+    }
+
+    /**
+     * @brief 시간 배율이 적용되지 않은 고정 델타 타임을 반환합니다.
+     *
+     * @return float 시간 배율이 적용되지 않은 고정 델타 타임.
+     */
+    [[nodiscard]]
+    static inline float GetFixedUnscaledDeltaTime() noexcept
+    {
+        return 1.0f / 60.0f;
+    }
 
 private:
+    /**
+     * @brief 
+     */
+    static void Initialize() noexcept;
+
     /**
      * @brief 시간을 업데이트합니다.
      */
@@ -55,35 +94,15 @@ private:
     /**
      * @brief 시간 배율.
      */
-    static f32 timeScale;
+    static float timeScale;
 
     /**
      * @brief 이전 프레임의 시간.
      */
-    static f32 lastTime;
+    static float lastTime;
 
     /**
      * @brief 현재 프레임의 시간.
      */
-    static f32 currentTime;
+    static float currentTime;
 };
-
-inline f32 Time::GetTimeScale() noexcept
-{
-    return timeScale;
-}
-
-inline f32 Time::GetDeltaTime() noexcept
-{
-    return (currentTime - lastTime) * timeScale;
-}
-
-inline f32 Time::GetUnscaledDeltaTime() noexcept
-{
-    return currentTime - lastTime;
-}
-
-inline void Time::SetTimeScale(f32 value_) noexcept
-{
-    timeScale = value_;
-}

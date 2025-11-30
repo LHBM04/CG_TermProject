@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Common.h"
-
-class Camera;
-class Object;
+#include "Rendering.h"
+#include "Objects.h"
 
 /**
  * @class Scene
@@ -14,37 +13,32 @@ class Scene
 {
 public:
     /**
-     * @brief 생성자.
-     */
-    Scene() noexcept;
-
-    /**
      * @brief 소멸자.
      */
     virtual ~Scene() noexcept;
 
     /**
-     * @brief 월드에 진입할 때 호출됩니다.
+     * @brief 해당 씬에 입장합니다.
      */
     void Enter() noexcept;
 
     /**
-     * @brief 매 프레임마다 호출됩니다.
+     * @brief 해당 씬을 매 프레임마다 갱신합니다.
      */
     void Update() noexcept;
 
     /**
-     * @brief 고정 프레임마다 호출됩니다.
+     * @brief 해당 씬을 고정 프레임마다 갱신합니다.
      */
     void FixedUpdate() noexcept;
 
     /**
-     * @brief 매 프레임마다 렌더링할 때 호출됩니다.
+     * @brief 해당 씬을 렌더링합니다.
      */
     void Render() noexcept;
 
     /**
-     * @brief 월드에서 나갈 때 호출됩니다.
+     * @brief 해당 씬에서 퇴장합니다.
      */
     void Exit() noexcept;
 
@@ -52,9 +46,12 @@ protected:
     /**
      * @brief 해당 씬에 엔티티를 배치합니다.
      * 
+     * @param name_ 배치할 엔티티의 이름
+     * @param tag_  배치할 엔티티의 태그
+     * 
      * @return 배치된 엔티티
      */
-    Object* Emplace() noexcept;
+    Object* Emplace(std::string_view name_, std::string_view tag_) noexcept;
 
     /**
      * @brief 씬에서 엔티티를 제거합니다.
@@ -64,35 +61,45 @@ protected:
     void Remove(Object entity) noexcept;
 
     /**
-     * @brief
+     * @brief 해당 씬에 입장할 때 호출됩니다.
      */
-    virtual void OnEnter() noexcept = 0;
+    virtual void OnEnter() noexcept
+    {
+    }
 
     /**
-     * @brief
+     * @brief 해당 씬을 매 프레임마다 갱신할 때 호출됩니다.
      */
-    virtual void OnUpdate() noexcept = 0;
+    virtual void OnUpdate() noexcept
+    {
+    }
 
     /**
-     * @brief 
+     * @brief 해당 씬을 고정 프레임마다 갱신할 때 호출됩니다.
      */
-    virtual void OnFixedUpdate() noexcept = 0;
+    virtual void OnFixedUpdate() noexcept
+    {
+    }
 
     /**
-     * @brief
+     * @brief 해당 씬을 렌더링할 때 호출됩니다.
      */
-    virtual void OnRender() noexcept = 0;
+    virtual void OnRender() noexcept
+    {
+    }
 
     /**
-     * @brief
+     * @brief 해당 씬에서 퇴장할 때 호출됩니다.
      */
-    virtual void OnExit() noexcept = 0;
+    virtual void OnExit() noexcept
+    {
+    }
 
 private:
     /**
-     * @brief 모든 엔티티와 컴포넌트 데이터를 저장하는 저장소.
+     * @brief 해당 씬에 배치된 모든 오브젝트.
      */
-    List<Unique<Object>> objects;
+    std::vector<std::unique_ptr<Object>> objects;
 };
 
 /**
@@ -111,21 +118,21 @@ public:
      * @param name_  추가할 씬의 이름
      * @param scene_ 추가할 씬
      */
-    static void AddScene(const String& name_, Unique<Scene> scene_) noexcept;
+    static void AddScene(std::string_view name_, std::unique_ptr<Scene> scene_) noexcept;
 
     /**
      * @brief 씬을 제거합니다.
      * 
      * @param name_ 제거할 씬의 이름.
      */
-    static void RemoveScene(const String& name_) noexcept;
+    static void RemoveScene(std::string_view name_) noexcept;
 
     /**
      * @brief 씬을 로드합니다.
      * 
      * @param name_ 로드할 씬의 이름.
      */
-    static void LoadScene(const String& name_) noexcept;
+    static void LoadScene(std::string_view name_) noexcept;
 
     /**
      * @brief 씬을 언로드합니다.
@@ -147,7 +154,7 @@ private:
     /**
      * @brief 씬들을 저장하는 맵.
      */
-    static Map<String, Unique<Scene>> scenes;
+    static std::unordered_map<std::string, std::unique_ptr<Scene>> scenes;
 
     /**
      * @brief 현재 로드된 씬.

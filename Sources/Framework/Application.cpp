@@ -1,12 +1,8 @@
 #include "Application.h"
 
-#include <imgui.h>
-#include <imgui_impl_opengl3.h>
-#include <imgui_impl_glfw.h>
-
+#include "Debug.h"
 #include "Input.h"
-#include "Logger.h"
-#include "Scene.h"
+#include "Scenes.h"
 #include "Time.h"
 
 bool Application::Initialize(const Specification& specification_) noexcept
@@ -29,7 +25,7 @@ bool Application::Initialize(const Specification& specification_) noexcept
 
 	switch (specification.screenMode)
     {
-        case WindowMode::Windowed:
+        case Application::WindowMode::Windowed:
         {
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
             glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
@@ -39,7 +35,7 @@ bool Application::Initialize(const Specification& specification_) noexcept
 
             break;
         }
-        case WindowMode::FullScreen:
+        case Application::WindowMode::FullScreen:
         {
             GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 
@@ -61,7 +57,7 @@ bool Application::Initialize(const Specification& specification_) noexcept
 
             break;
         }
-        case WindowMode::Borderless:
+        case Application::WindowMode::Borderless:
         {
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
             glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
@@ -86,69 +82,26 @@ bool Application::Initialize(const Specification& specification_) noexcept
     glfwMakeContextCurrent(const_cast<GLFWwindow*>(window));
     glfwSwapInterval(specification.sholudVSync ? 1 : 0);
 
-    glfwSetKeyCallback(window, [](GLFWwindow*, i32 key_, i32 scancode_, i32 action_, i32 mods_) { 
-        Input::OnKeyInteracted(key_, scancode_, action_, mods_); 
-    });
-    glfwSetMouseButtonCallback(window,[](GLFWwindow*, i32 button_, i32 action_, i32 mods_) {
-        Input::OnMouseButtonInteracted(button_, action_, mods_);
-    });
-    glfwSetCursorPosCallback(window, [](GLFWwindow*, f64 x_, f64 y_) {
-        Input::OnMouseMoved(x_, y_);
-    });
-    glfwSetScrollCallback(window, [](GLFWwindow*, f64 x_, f64 y_) {
-        Input::OnMouseScrolled(x_, y_);
-    });
-
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
         SPDLOG_CRITICAL("Failed to initialize GLAD");
         return false;
     }
 
-#if defined(DEBUG) || defined(_DEBUG)
-    int flags = 0;
-    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
-    {
-        glEnable(GL_DEBUG_OUTPUT);
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        glDebugMessageCallback([](GLenum        source,
-                                  GLenum        type,
-                                  GLuint        id,
-                                  GLenum        severity,
-                                  GLsizei       length,
-                                  const GLchar* message,
-                                  const void*   userParam) { Logger::Error("GL DEBUG MESSAGE: {}", message); },
-                               nullptr);
-        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-    }
-#endif
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // 키보드 제어 허용
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // 도킹 허용 (Docking 브랜치 사용 중이므로 필수)
-
-    // 2. 스타일 설정
-    ImGui::StyleColorsDark();
-
-    // 3. 백엔드 초기화 (Platform: GLFW, Renderer: OpenGL3)
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 450");
+    InputManager::Initialize(window); 
+    TimeManager::Initialize();
 
     return true;
 }
 
-i32 Application::Run() noexcept
+int Application::Run() noexcept
 {
     while (!glfwWindowShouldClose(const_cast<GLFWwindow*>(window)))
     {
         glfwPollEvents();
 
-        Time::Update();
-        Input::Update();
+        InputManager::Update();
+        TimeManager::Update();
 
         Update();
         Render();
@@ -171,9 +124,9 @@ void Application::Update() noexcept
     }
 
     static float fixedUpdateTime = 0.0f;
-    fixedUpdateTime += Time::GetDeltaTime();
+    fixedUpdateTime += TimeManager::GetDeltaTime();
 
-    if (const float fixedDeltaTime = Time::GetUnscaledDeltaTime(); fixedDeltaTime > 0.0f)
+    if (const float fixedDeltaTime = TimeManager::GetUnscaledDeltaTime(); fixedDeltaTime > 0.0f)
     {
         while (fixedUpdateTime >= fixedDeltaTime)
         {
@@ -197,14 +150,7 @@ void Application::Render() noexcept
         return;
     }
 
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
     activeScene->Render();
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(const_cast<GLFWwindow*>(window));
 }
@@ -213,4 +159,4 @@ Application::Specification Application::specification;
 
 GLFWwindow* Application::window = nullptr;
 
-FVector3 Application::clearColor = FVector3(0.1f, 0.1f, 0.1f);
+glm::fvec3 Application::clearColor = glm::fvec3(0.1f, 0.1f, 0.1f);

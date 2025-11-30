@@ -1,23 +1,108 @@
 #pragma once
 
 #include "Common.h"
-#include "Scene.h"
 
+class Component;
 class Object;
 
+/**
+ * @brief 지정한 타입이 Component에서 파생되었는지 여부를 검사합니다.
+ */
+template <typename TComponent>
+concept FromComponent = std::derived_from<TComponent, Component>;
+
+/**
+ * @brief 지정한 타입이 Object에서 파생되었는지 여부를 검사합니다.
+ */
+template <typename TObject>
+concept FromObject = std::derived_from<TObject, Object>;
+
+/**
+ * @class Component
+ *
+ * @brief 컴포넌트를 정의합니다.
+ */
 class Component
 {
-    friend class Object;
-
 public:
+    /**
+     * @brief 생성자.
+     * 
+     * @param owner_ 해당 컴포넌트의 오너 엔티티
+     */
+    Component(Object* const owner_);
+
     /**
      * @brief 소멸자.
      */
-    virtual ~Component() noexcept = default;
+    virtual ~Component() noexcept;
+
+    /**
+     * @brief 해당 컴포넌트가 생성될 때 호출됩니다.
+     */
+    virtual void Awake()
+    {
+    }
+
+    /**
+     * @brief 해당 컴포넌트가 활성화될 때 호출됩니다.
+     */
+    virtual void OnEnabled()
+    {
+    }
+
+    /**
+     * @brief 활성화된 상태에서 첫 번째 Update 실행 직전에 호출됩니다.
+     */
+    virtual void Start()
+    {
+    }
+
+    /**
+     * @brief 매 프레임마다 호출됩니다.
+     */
+    virtual void Update()
+    {
+    }
+
+    /**
+     * @brief 고정된 시간 간격마다 호출됩니다. (물리 연산 등에 사용)
+     */
+    virtual void FixedUpdate()
+    {
+    }
+
+    /**
+     * @brief 모든 Update가 끝난 후 호출됩니다. (카메라 이동 등에 사용)
+     */
+    virtual void LateUpdate()
+    {
+    }
+
+    /**
+     * @brief 렌더링 시 호출됩니다.
+     */
+    virtual void Render()
+    {
+    }
+    
+    /**
+     * @brief 해당 컴포넌트가 비활성화될 때 호출됩니다.
+     */
+    virtual void OnDisabled()
+    {
+    }
+
+    /**
+     * @brief 컴포넌트가 파괴될 때 호출됩니다.
+     */
+    virtual void OnDestroy()
+    {
+    }
 
     /**
      * @brief 해당 컴포넌트의 오너 엔티티를 반환합니다.
-     * 
+     *
      * @return Object* 해당 컴포넌트의 오너 엔티티
      */
     [[nodiscard]]
@@ -28,7 +113,7 @@ public:
 
     /**
      * @brief 컴포넌트의 활성화 여부를 반환합니다.
-     * 
+     *
      * @return bool 해당 컴포넌트의 활성화 여부
      */
     [[nodiscard]]
@@ -39,17 +124,45 @@ public:
 
     /**
      * @brief 컴포넌트의 활성화 여부를 설정합니다.
-     * 
+     *
      * @param enabled_ 해당 컴포넌트의 활성화 여부
      */
     inline void SetEnabled(bool enabled_) noexcept
     {
         isEnabled = enabled_;
+
+        if (isEnabled)
+        {
+            OnEnabled();
+        }
+        else
+        {
+            OnDisabled();
+        }
+    }
+
+    /**
+     * @brief 해당 컴포넌트가 Start되었는지 여부를 반환합니다.
+     *
+     * @return bool 해당 컴포넌트가 Start되었는지 여부
+     */
+    [[nodiscard]]
+    inline bool IsStarted() const noexcept
+    {
+        return isStarted;
+    }
+
+    /**
+     * @brief 해당 컴포넌트가 Start되었음을 설정합니다.
+     */
+    inline void SetStarted() noexcept
+    {
+        isStarted = true; 
     }
 
     /**
      * @brief 해당 컴포넌트를 파괴해야 하는지 여부를 반환합니다.
-     * 
+     *
      * @bool 해당 컴포넌트를 파괴해야 하는지 여부
      */
     [[nodiscard]]
@@ -68,64 +181,20 @@ public:
 
 protected:
     /**
-     * @brief 컴포넌트가 생성될 때 호출됩니다. (초기화)
-     */
-    virtual void OnAwake()
-    {
-    }
-
-    /**
-     * @brief 활성화된 상태에서 첫 번째 Update 실행 직전에 호출됩니다.
-     */
-    virtual void OnStart()
-    {
-    }
-
-    /**
-     * @brief 매 프레임마다 호출됩니다.
-     */
-    virtual void OnUpdate()
-    {
-    }
-
-    /**
-     * @brief 고정된 시간 간격마다 호출됩니다. (물리 연산 등에 사용)
-     */
-    virtual void OnFixedUpdate()
-    {
-    }
-
-    /**
-     * @brief 모든 Update가 끝난 후 호출됩니다. (카메라 이동 등에 사용)
-     */
-    virtual void OnLateUpdate()
-    {
-    }
-
-    /**
-     * @brief 렌더링 시 호출됩니다.
-     */
-    virtual void OnRender()
-    {
-    }
-
-    /**
-     * @brief 컴포넌트가 파괴될 때 호출됩니다.
-     */
-    virtual void OnDestroy()
-    {
-    }
-
-private:
-    /**
      * @brief 해당 컴포넌트의 오너를 반환합니다.
      */
     Object* owner;
 
+private:
     /**
      * @brief 해당 컴포넌트의 활성화 여부.
      */
     bool isEnabled;
+
+    /**
+     * @brief 해당 컴포넌트가 시작되었는지 여부.
+     */
+    bool isStarted;
 
     /**
      * @brief 해당 컴포넌트의 파괴 여부.
@@ -147,13 +216,18 @@ public:
      * @param name_ 생성할 엔티티 이름
      * @param tag_  생성할 엔티티 태그
      */
-    Object(StringView name_ = "New Object", 
-           StringView tag_  = "Not tag") noexcept;
+    Object(std::string_view name_ = "New Object", 
+           std::string_view tag_  = "Not tag") noexcept;
 
     /**
      * @brief 소멸자.
      */
     virtual ~Object() noexcept;
+
+    /**
+     * @brief 해당 엔티티를 초기화합니다.
+     */
+    void Start() noexcept;
 
     /**
      * @brief 해당 엔티티를 매 프레임마다 갱신합니다.
@@ -166,11 +240,6 @@ public:
     void FixedUpdate() noexcept;
 
     /**
-     * @brief 해당 엔티티를 매 Update 이후마다 갱신합니다
-     */
-    void LateUpdate() noexcept;
-
-    /**
      * @brief 해당 엔티티를 렌더링합니다.
      */
     void Render() noexcept;
@@ -181,7 +250,7 @@ public:
      * @return String 해당 엔티티의 이름
      */
     [[nodiscard]]
-    inline String GetName() const noexcept
+    inline std::string GetName() const noexcept
     {
         return name;
     }
@@ -191,7 +260,7 @@ public:
      * 
      * @param name_ 지정할 이름
      */
-    inline void SetName(const String& name_) noexcept
+    inline void SetName(std::string_view name_) noexcept
     {
         name = name_;
     }
@@ -202,7 +271,7 @@ public:
      * @return String 해당 엔티티의 태그
      */
     [[nodiscard]]
-    inline String GetTag() const noexcept
+    inline std::string GetTag() const noexcept
     {
         return tag;
     }
@@ -212,9 +281,49 @@ public:
      * 
      * @param tag_ 지정할 태그
      */
-    inline void SetTag(const String& tag_) noexcept
+    inline void SetTag(std::string_view tag_) noexcept
     {
         tag = tag_;
+    }
+
+    /**
+     * @brief 해당 엔티티의 활성화 여부를 반환합니다.
+     * 
+     * @return bool 해당 엔티티의 활성화 여부
+     */
+    [[nodiscard]]
+    inline bool IsEnabled() const noexcept
+    {
+        return isEnabled;
+    }
+
+    /**
+     * @brief 해당 엔티티의 활성화 여부를 설정합니다.
+     * 
+     * @param enabled_ 해당 엔티티의 활성화 여부
+     */
+    inline void SetEnabled(bool enabled_) noexcept
+    {
+        isEnabled = enabled_;
+    }
+
+    /**
+     * @brief 해당 엔티티의 파괴 여부를 반환합니다.
+     * 
+     * @return bool 해당 엔티티의 파괴 여부
+     */
+    [[nodiscard]]
+    inline bool IsDestroyed() const noexcept
+    {
+        return isDestroyed;
+    }
+
+    /**
+     * @brief 해당 엔티티를 파괴합니다.
+     */
+    inline void Destroy() noexcept
+    {
+        isDestroyed = true;
     }
 
     /**
@@ -224,31 +333,42 @@ public:
      * 
      * @return bool 지정한 타입의 컴포넌트가 있는지 여부
      */
-    template <typename TComponent>
+    template <FromComponent TComponent>
     bool HasComponent() const noexcept
     {
-        return false;
+        return GetComponent<TComponent>() != nullptr;
     }
 
     /**
-     * @brief
-     * @tparam TComponent
-     * @return
+     * @brief 지정한 타입의 컴포넌트를 추가합니다.
+     * 
+     * @tparam TComponent 지정할 타입
+     * 
+     * @return TComponent* 추가된 컴포넌트
      */
-    template <typename TComponent>
+    template <FromComponent TComponent>
     TComponent* AddComponent() noexcept
     {
-        return nullptr;
+        std::unique_ptr<TComponent> newComponent = std::make_unique<TComponent>(this);
+        newComponent->Awake();
+
+        return components.emplace_back(std::move(newComponent)).get();
     }
 
     /**
-     * @brief
-     * @tparam TComponent
+     * @brief 지정한 타입의 컴포넌트를 파괴합니다.
+     * 
+     * @tparam TComponent 지정할 타입
      */
-    template <typename TComponent>
+    template <FromComponent TComponent>
     void DestroyComponent() noexcept
     {
-        
+        TComponent* component = GetComponent<TComponent>();
+
+        if (component != nullptr)
+        {
+            component->Destroy();
+        }
     }
 
     /**
@@ -256,23 +376,39 @@ public:
      * 
      * @return bool 해당 엔티티의 활성화 여부
      */
-    template <typename TComponent>
+    template <FromComponent TComponent>
     TComponent* GetComponent() const noexcept
     {
+        for (const std::unique_ptr<TComponent>& component : components)
+        {
+            TComponent* castedComponent = dynamic_cast<TComponent*>(component.get());
+
+            if (castedComponent != nullptr)
+            {
+                return castedComponent;
+            }
+        }
+
         return nullptr;
     }
 
-private:
+protected:
     /**
      * @brief 해당 엔티티의 이름.
      */
-    String name;
+    std::string name;
 
     /**
      * @brief 해당 엔티티의 태그.
      */
-    String tag;
+    std::string tag;
 
+    /**
+     * @brief 해당 엔티티의 핸들.
+     */
+    std::vector<std::unique_ptr<Component>> components;
+
+private:
     /**
      * @brief 해당 엔티티의 활성화 여부.
      */
@@ -282,9 +418,4 @@ private:
      * @brief 해당 엔티티의 파괴 여부.
      */
     bool isDestroyed;
-
-    /**
-     * @brief 해당 엔티티의 핸들.
-     */
-    List<Unique<Component>> components;
 };

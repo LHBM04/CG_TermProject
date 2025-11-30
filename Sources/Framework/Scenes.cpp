@@ -1,0 +1,116 @@
+#include "Scenes.h"
+
+#include "Objects.h"
+#include "Rendering.h"
+#include "Debug.h"
+
+Scene::~Scene() noexcept
+{
+}
+
+void Scene::Enter() noexcept
+{
+	OnEnter();
+}
+
+void Scene::Update() noexcept
+{
+    for (const std::unique_ptr<Object>& entity : objects)
+    {
+        entity->Update();
+    }
+
+	OnUpdate();
+}
+
+void Scene::FixedUpdate() noexcept
+{
+    for (const std::unique_ptr<Object>& object : objects)
+    {
+        object->FixedUpdate();
+    }
+
+    std::erase_if(objects, [](const std::unique_ptr<Object>& object) { return object->IsDestroyed(); });
+
+    OnFixedUpdate();
+}
+
+void Scene::Render() noexcept
+{
+    for (const std::unique_ptr<Object>& entity : objects)
+    {
+        entity->Render();
+    }
+  
+    OnRender();
+}
+
+void Scene::Exit() noexcept
+{
+	OnExit();
+}
+
+Object* Scene::Emplace(std::string_view name_, std::string_view tag_) noexcept
+{
+    return objects.emplace_back(std::make_unique<Object>(name_, tag_)).get();
+}
+
+void Scene::Remove(Object entity) noexcept
+{
+    entity.Destroy();
+}
+
+void SceneManager::AddScene(std::string_view name_, std::unique_ptr<Scene> scene_) noexcept
+{
+    if (scenes.contains(name_.data()))
+    {
+        Logger::Error("Scene '{}' already exists.", name_);
+        return;
+    }
+
+	scenes.emplace(name_.data(), std::move(scene_));
+}
+
+void SceneManager::RemoveScene(std::string_view name_) noexcept
+{
+    if (!scenes.contains(name_.data()))
+    {
+        Logger::Error("Scene '{}' does not exist.", name_);
+        return;
+    }
+
+	scenes.erase(name_.data());
+}
+
+void SceneManager::LoadScene(std::string_view name_) noexcept
+{
+    if (!scenes.contains(name_.data()))
+	{
+        Logger::Error("Scene '{}' does not exist.", name_);
+        return;
+	}
+
+    if (activeScene)
+    {
+        UnloadScene();
+    }
+
+    activeScene = scenes[name_.data()].get();
+    activeScene->Enter();
+}
+
+void SceneManager::UnloadScene() noexcept
+{
+    if (!activeScene)
+    {
+        Logger::Error("No active scene to unload.");
+        return;
+    }
+
+    activeScene->Exit();
+    activeScene = nullptr;
+}
+
+std::unordered_map<std::string, std::unique_ptr<Scene>> SceneManager::scenes;
+
+Scene* SceneManager::activeScene = nullptr;

@@ -1,19 +1,6 @@
 #pragma once
 
-#include <windows.h>
-#include <windowsx.h>
-
-// GLAD
-#include <glad/glad.h>
-
-// GLFW
-#define GLFW_INCLUDE_NONE
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
-
 #include "Common.h"
-#include "Math.h"
 
 /**
  * @class Application
@@ -53,22 +40,22 @@ public:
         /**
          * @brief 애플리케이션 이름.
          */
-        String name;
+        std::string name;
 
 		/**
          * @brief 애플리케이션 창 너비.
 		 */
-		i32 width;
+        int width;
 
 		/**
 		 * @brief 애플리케이션 창 높이.
          */
-        i32 height;
+        int height;
 
 		/**
          * @brief 전체 화면 모드 사용 여부.
          */
-        WindowMode screenMode;
+        Application::WindowMode screenMode;
 
         /**
          * @brief 수직 동기화 활성화 여부.
@@ -90,7 +77,7 @@ public:
 
      * @return int 애플리케이션의 종료 코드.
      */
-    static i32 Run() noexcept;
+    static int Run() noexcept;
 
     /**
      * @brief 애플리케이션을 종료합니다.
@@ -125,7 +112,7 @@ public:
      * @return 
      */
     [[nodiscard]]
-    static inline i64 GetWidth() noexcept
+    static inline int GetWidth() noexcept
     {
         return specification.width;
     }
@@ -136,7 +123,7 @@ public:
      * @return 
      */
     [[nodiscard]]
-    static inline i64 GetHeight() noexcept
+    static inline int GetHeight() noexcept
     {
         return specification.height;
     }
@@ -165,5 +152,5 @@ private:
     /**
      * @brief 클리어 컬러.
      */
-    static FVector3 clearColor;
+    static glm::vec3 clearColor;
 };

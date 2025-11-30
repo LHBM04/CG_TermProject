@@ -127,7 +127,7 @@ private:
      *
      * @brief 로그 레벨을 정의합니다.
      */
-    enum class Level : u8
+    enum class Level : unsigned char
     {
         /**
          * @brief 추적 로그.
@@ -158,5 +158,5 @@ private:
     /**
      * @brief 사용할 로거.
      */
-    static Shared<spdlog::logger> logger;
+    static std::shared_ptr<spdlog::logger> logger;
 };

@@ -1,17 +1,29 @@
 #pragma once
 
-class AudioClip
+#include "Common.h"
+
+class AudioClip;
+
+/**
+ * @brief 반복 재생이 필요한 음원을 정의합니다.
+ */
+class Music
 {
-public:
-    /**
-     * @brief 
-     * @param path_ 
-     * @return 
-     */
-    static AudioClip* Create();
+
 };
 
-class AudioSource
+/**
+ * @brief 단일 재생이 필요한 음원을 정의합니다.
+ */
+class Sound
+{
+
+};
+
+/**
+ * @brief 
+ */
+class AudioManager
 {
 
 };

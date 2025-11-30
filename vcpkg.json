@@ -1,6 +1,5 @@
 ﻿{
   "dependencies": [
-    "assimp",
     "glad",
     "glfw3",
     "glm",
@@ -12,12 +11,10 @@
         "docking-experimental"
       ]
     },
-    "imguizmo",
     "stb",
-    "nameof",
-    "spdlog",
-    "openal-soft",
-    "drlibs",
-    "nlohmann-json"
+    "miniaudio",
+    "tinyobjloader",
+    "nlohmann-json",
+    "spdlog"
   ]
 }

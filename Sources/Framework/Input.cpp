@@ -1,8 +1,14 @@
 #include "Input.h"
 
-#include <GLFW/glfw3.h>
+void InputManager::Initialize(GLFWwindow* const window_) noexcept
+{
+    glfwSetKeyCallback(window_, InputManager::OnKeyInteracted);
+    glfwSetMouseButtonCallback(window_, InputManager::OnMouseButtonInteracted);
+    glfwSetCursorPosCallback(window_, InputManager::OnMouseMoved);
+    glfwSetScrollCallback(window_, InputManager::OnMouseScrolled);
+}
 
-void Input::Update() noexcept
+void InputManager::Update() noexcept
 {
     lastKeyStates         = nowKeyStates;
     lastMouseButtonStates = nowMouseButtonStates;
@@ -10,7 +16,7 @@ void Input::Update() noexcept
     lastScrollOffset      = nowScrollOffset;
 }
 
-void Input::OnKeyInteracted(i32 key_, i32 scancode_, i32 action_, i32 mods_) noexcept
+void InputManager::OnKeyInteracted(GLFWwindow* const window_, int key_, int scancode_, int action_, int mods_) noexcept
 {
     if (key_ < 0 || key_ >= MAX_KEYS)
     {
@@ -38,7 +44,7 @@ void Input::OnKeyInteracted(i32 key_, i32 scancode_, i32 action_, i32 mods_) noe
     }
 }
 
-void Input::OnMouseButtonInteracted(i32 button_, i32 action_, i32 mods_) noexcept
+void InputManager::OnMouseButtonInteracted(GLFWwindow* const window_, int button_, int action_, int mods_) noexcept
 {
     if (button_ < 0 || button_ >= MAX_BUTTONS)
     {
@@ -66,28 +72,28 @@ void Input::OnMouseButtonInteracted(i32 button_, i32 action_, i32 mods_) noexcep
     }
 }
 
-void Input::OnMouseMoved(f64 x_, f64 y_) noexcept
+void InputManager::OnMouseMoved(GLFWwindow* const window_, double x_, double y_) noexcept
 {
-    nowMousePosition = glm::vec2(static_cast<f32>(x_), static_cast<f32>(y_));
+    nowMousePosition = glm::vec2(static_cast<float>(x_), static_cast<float>(y_));
 }
 
-void Input::OnMouseScrolled(f64 x_, f64 y_) noexcept
+void InputManager::OnMouseScrolled(GLFWwindow* const window_, double x_, double y_) noexcept
 {
-    nowScrollOffset = static_cast<f32>(y_);
+    nowScrollOffset = static_cast<float>(y_);
 }
 
-HashMap<Keyboard, bool> Input::lastKeyStates;
+std::unordered_map<Keyboard, bool> InputManager::lastKeyStates;
 
-HashMap<Keyboard, bool> Input::nowKeyStates;
+std::unordered_map<Keyboard, bool> InputManager::nowKeyStates;
 
-HashMap<Mouse, bool> Input::lastMouseButtonStates;
+std::unordered_map<Mouse, bool> InputManager::lastMouseButtonStates;
 
-HashMap<Mouse, bool> Input::nowMouseButtonStates;
+std::unordered_map<Mouse, bool> InputManager::nowMouseButtonStates;
 
-FVector2 Input::lastMousePosition = FVector2(0.0f, 0.0f);
+glm::fvec2 InputManager::lastMousePosition = glm::fvec2(0.0f, 0.0f);
 
-FVector2 Input::nowMousePosition = FVector2(0.0f, 0.0f);
+glm::fvec2 InputManager::nowMousePosition = glm::fvec2(0.0f, 0.0f);
 
-f32 Input::lastScrollOffset = 0.0f;
+float InputManager::lastScrollOffset = 0.0f;
 
-f32 Input::nowScrollOffset = 0.0f;
+float InputManager::nowScrollOffset = 0.0f;
