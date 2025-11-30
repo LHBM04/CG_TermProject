@@ -14,7 +14,7 @@ class TitleScene final : public Scene
 public:
     virtual void OnUpdate() noexcept override
     {
-        if (InputManager::IsKeyHeld(Keyboard::Enter))
+        if (InputManager::IsKeyPressed(Keyboard::Enter))
         {
             Application::Quit();
         }

@@ -88,6 +88,18 @@ bool Application::Initialize(const Specification& specification_) noexcept
         return false;
     }
 
+    glEnable(GL_DEPTH_TEST);
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
+#if defined(DEBUG) || defined(_DEBUG)
+    glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glDebugMessageCallback(Application::OnDebugMessage, nullptr);
+    //glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+#endif
+
     InputManager::Initialize(window); 
     TimeManager::Initialize();
 
@@ -98,10 +110,10 @@ int Application::Run() noexcept
 {
     while (!glfwWindowShouldClose(const_cast<GLFWwindow*>(window)))
     {
-        glfwPollEvents();
-
         InputManager::Update();
         TimeManager::Update();
+
+        glfwPollEvents();
 
         Update();
         Render();
@@ -154,6 +166,46 @@ void Application::Render() noexcept
 
     glfwSwapBuffers(const_cast<GLFWwindow*>(window));
 }
+
+#if defined(DEBUG) || defined(_DEBUG)
+void APIENTRY Application::OnDebugMessage(
+    const GLenum  source_,
+    const GLenum  type_,
+    const GLuint  id_,
+    const GLenum  severity_,
+    const GLsizei length_,
+    const GLchar* message_,
+    const GLvoid* userParam_) noexcept
+{
+    switch (severity_)
+    {
+        case GL_DEBUG_SEVERITY_HIGH:
+        {
+            Logger::Error("{}", message_);
+            break;
+        }
+        case GL_DEBUG_SEVERITY_MEDIUM:
+        {
+            Logger::Warning("{}", message_);
+            break;
+        }
+        case GL_DEBUG_SEVERITY_LOW:
+        {
+            Logger::Info("[OpenGL][Low] {}", message_);
+            break;
+        }
+        case GL_DEBUG_SEVERITY_NOTIFICATION:
+        {
+            Logger::Info("[OpenGL][Notification] {}", message_);
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+}
+#endif
 
 Application::Specification Application::specification;
 

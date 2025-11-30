@@ -185,7 +185,8 @@ public:
     [[nodiscard]]
     static inline bool IsKeyPressed(Keyboard key_) noexcept
     {
-        return nowKeyStates[key_] && !lastKeyStates[key_];
+        return nowKeyStates[static_cast<std::size_t>(key_)] && 
+               !lastKeyStates[static_cast<std::size_t>(key_)];
     }
 
     /*
@@ -198,7 +199,8 @@ public:
     [[nodiscard]]
     static inline bool IsKeyReleased(Keyboard key_) noexcept
     {
-        return !nowKeyStates[key_] && lastKeyStates[key_];
+        return !nowKeyStates[static_cast<std::size_t>(key_)] && 
+                lastKeyStates[static_cast<std::size_t>(key_)];
     }
 
     /**
@@ -211,7 +213,8 @@ public:
     [[nodiscard]]
     static inline bool IsKeyHeld(Keyboard key_) noexcept
     {
-        return nowKeyStates[key_] && lastKeyStates[key_];
+        return nowKeyStates[static_cast<std::size_t>(key_)] && 
+               lastKeyStates[static_cast<std::size_t>(key_)];
     }
 
     /**
@@ -224,7 +227,8 @@ public:
     [[nodiscard]]
     static inline bool IsMouseButtonPressed(Mouse button_) noexcept
     {
-        return nowMouseButtonStates[button_] && !lastMouseButtonStates[button_];
+        return nowMouseButtonStates[static_cast<std::size_t>(button_)] && 
+               !lastMouseButtonStates[static_cast<std::size_t>(button_)];
     }
 
     /**
@@ -237,7 +241,8 @@ public:
     [[nodiscard]]
     static inline bool IsMouseButtonReleased(Mouse button_) noexcept
     {
-        return !nowMouseButtonStates[button_] && lastMouseButtonStates[button_];
+        return !nowMouseButtonStates[static_cast<std::size_t>(button_)] &&
+                lastMouseButtonStates[static_cast<std::size_t>(button_)];
     }
 
     /**
@@ -250,7 +255,8 @@ public:
     [[nodiscard]]
     static inline bool IsMouseButtonHeld(Mouse button_) noexcept
     {
-        return nowMouseButtonStates[button_] && lastMouseButtonStates[button_];
+        return nowMouseButtonStates[static_cast<std::size_t>(button_)] &&
+                lastMouseButtonStates[static_cast<std::size_t>(button_)];
     }
 
     /**
@@ -356,22 +362,22 @@ private:
     /**
      * @brief 이전 프레임에서의 키 상태.
      */
-    static std::unordered_map<Keyboard, bool> lastKeyStates;
+    static std::array<bool, MAX_KEYS> lastKeyStates;
 
     /**
      * @brief 현재 프레임에서의 키 상태.
      */
-    static std::unordered_map<Keyboard, bool> nowKeyStates;
+    static std::array<bool, MAX_KEYS> nowKeyStates;
 
     /**
      * @brief 이전 프레임에서의 마우스 버튼 상태.
      */
-    static std::unordered_map<Mouse, bool> lastMouseButtonStates;
+    static std::array<bool, MAX_MOUSE_BUTTONS> lastMouseButtonStates;
 
     /**
      * @brief 현재 프레임에서의 마우스 버튼 상태.
      */
-    static std::unordered_map<Mouse, bool> nowMouseButtonStates;
+    static std::array<bool, MAX_MOUSE_BUTTONS> nowMouseButtonStates;
 
     /**
      * @brief 이전 프레임에서의 마우스 위치.

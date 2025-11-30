@@ -6,13 +6,16 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
+#include <filesystem>
 #include <format>
+#include <fstream>
 #include <list>
 #include <map>
 #include <memory>
 #include <new>
 #include <queue>
 #include <set>
+#include <sstream>
 #include <stack>
 #include <stdexcept>
 #include <string>

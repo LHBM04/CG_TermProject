@@ -27,12 +27,12 @@ void InputManager::OnKeyInteracted(GLFWwindow* const window_, int key_, int scan
     {
         case GLFW_PRESS:
         {
-            nowKeyStates[static_cast<Keyboard>(key_)] = true;
+            nowKeyStates[key_] = true;
             break;
         }
         case GLFW_RELEASE:
         {
-            nowKeyStates[static_cast<Keyboard>(key_)] = false;
+            nowKeyStates[key_] = false;
             break;
         }
         case GLFW_REPEAT:
@@ -55,12 +55,12 @@ void InputManager::OnMouseButtonInteracted(GLFWwindow* const window_, int button
     {
         case GLFW_PRESS:
         {
-            nowMouseButtonStates[static_cast<Mouse>(button_)] = true;
+            nowMouseButtonStates[button_] = true;
             break;
         }
         case GLFW_RELEASE:
         {
-            nowMouseButtonStates[static_cast<Mouse>(button_)] = false;
+            nowMouseButtonStates[button_] = false;
             break;
         }
         case GLFW_REPEAT:
@@ -82,13 +82,13 @@ void InputManager::OnMouseScrolled(GLFWwindow* const window_, double x_, double 
     nowScrollOffset = static_cast<float>(y_);
 }
 
-std::unordered_map<Keyboard, bool> InputManager::lastKeyStates;
+std::array<bool, MAX_KEYS> InputManager::lastKeyStates;
 
-std::unordered_map<Keyboard, bool> InputManager::nowKeyStates;
+std::array<bool, MAX_KEYS> InputManager::nowKeyStates;
 
-std::unordered_map<Mouse, bool> InputManager::lastMouseButtonStates;
+std::array<bool, MAX_MOUSE_BUTTONS> InputManager::lastMouseButtonStates;
 
-std::unordered_map<Mouse, bool> InputManager::nowMouseButtonStates;
+std::array<bool, MAX_MOUSE_BUTTONS> InputManager::nowMouseButtonStates;
 
 glm::fvec2 InputManager::lastMousePosition = glm::fvec2(0.0f, 0.0f);
 

@@ -172,6 +172,19 @@ private:
      */
     static void Render() noexcept;
 
+#if defined(DEBUG) || defined(_DEBUG)
+    /**
+     * @brief 디버그 콜백 함수.
+     */
+    static void OnDebugMessage(unsigned int source_,
+                               unsigned int type_,
+                               unsigned int id_,
+                               unsigned int severity_,
+                               int          length_,
+                               const char*  message_,
+                               const void*  userParam_) noexcept;
+#endif
+
     /**
      * @brief 애플리케이션의 사양.
      */
