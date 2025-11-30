@@ -110,45 +110,76 @@ Labyrinth::Labyrinth()
     
     ZaxisFrame[3]->resize(glm::vec3(9.75f, 1.0f, 0.2f));
     ZaxisFrame[3]->move(glm::vec3(0.0f, 0.0f, -9.5f));
+
+    // 초기 map 상태 저장
+    initialMapPos.reserve(map.size());
+    initialMapRot.reserve(map.size());
+    for (auto* m : map)
+    {
+        initialMapPos.push_back(m->getPos());
+        initialMapRot.push_back(m->getRot());
+    }
+}
+
+static inline glm::vec3 ApplyParentToPoint(const glm::vec3& p, const glm::quat& rot, const glm::vec3& pivot)
+{
+    glm::vec3 v = p - pivot;
+    glm::vec3 r = rot * v;
+    return pivot + r;
 }
 
 void Labyrinth::Xrotate(float theta)
 {
-    if (rotatedAmountX + theta > maxRotationX)
+    double next = static_cast<double>(rotatedAmountX) + static_cast<double>(theta);
+    if (next > static_cast<double>(maxRotationX) || next < -static_cast<double>(maxRotationX))
         return;
-    else if (rotatedAmountX + theta < -maxRotationX)
-        return;
 
-    glm::vec3 axis = glm::normalize(labyrinthRotation * glm::vec3(1.0f, 0.0f, 0.0f));
+    rotatedAmountX = static_cast<float>(next);
 
-    Xhandle[0]->rotate(theta, axis);
+    glm::quat pitch = glm::angleAxis(glm::radians(rotatedAmountX), glm::vec3(1.0f, 0.0f ,0.0f));
+    glm::quat roll  = glm::angleAxis(glm::radians(rotatedAmountZ), glm::vec3(0.0f, 0.0f, 1.0f));
+    labyrinthRotation = glm::normalize(pitch * roll);
 
+    // 초기 상태에서 절대 변환 재적용: OBB와 렌더를 함께 동기화
+    for (size_t i = 0; i < map.size(); ++i)
+    {
+        glm::vec3 newPos = ApplyParentToPoint(initialMapPos[i], labyrinthRotation, pivot);
+        map[i]->teleport(newPos);
+
+        glm::quat newRot = glm::normalize(labyrinthRotation * initialMapRot[i]);
+        map[i]->setRotationAbsolute(newRot);
+    }
+
+    // 틀/핸들 유지 로직은 기존대로
     for (auto& xf : XaxisFrame)
-        xf->rotate(theta, axis, pivot);
-    for (auto& m : map)
-        m->rotate(theta, axis, pivot);
-
-    labyrinthRotation = glm::angleAxis(glm::radians(theta), axis) * labyrinthRotation;
-    rotatedAmountX += theta;
+        xf->rotate(theta, glm::vec3(1.0f, 0.0f, 0.0f), pivot);
+    Xhandle[0]->rotate(theta, glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 void Labyrinth::Zrotate(float theta)
 {
-    if (rotatedAmountZ + theta > maxRotationZ)
-        return;
-    else if (rotatedAmountZ + theta < -maxRotationZ)
+    double next = static_cast<double>(rotatedAmountZ) + static_cast<double>(theta);
+    if (next > static_cast<double>(maxRotationZ) || next < -static_cast<double>(maxRotationZ))
         return;
 
-    glm::vec3 axis = glm::normalize(labyrinthRotation * glm::vec3(0.0f, 0.0f, 1.0f));
+    rotatedAmountZ = static_cast<float>(next);
 
-    Zhandle[0]->rotate(theta, axis);
+    glm::quat pitch = glm::angleAxis(glm::radians(rotatedAmountX), glm::vec3(1.0f, 0.0f ,0.0f));
+    glm::quat roll  = glm::angleAxis(glm::radians(rotatedAmountZ), glm::vec3(0.0f, 0.0f, 1.0f));
+    labyrinthRotation = glm::normalize(pitch * roll);
+
+    for (size_t i = 0; i < map.size(); ++i)
+    {
+        glm::vec3 newPos = ApplyParentToPoint(initialMapPos[i], labyrinthRotation, pivot);
+        map[i]->teleport(newPos);
+
+        glm::quat newRot = glm::normalize(labyrinthRotation * initialMapRot[i]);
+        map[i]->setRotationAbsolute(newRot);
+    }
+
     for (auto& zf : ZaxisFrame)
-        zf->rotate(theta, axis, pivot);
-    for (auto& m : map)
-        m->rotate(theta, axis, pivot);
-
-    labyrinthRotation = glm::angleAxis(glm::radians(theta), axis) * labyrinthRotation;
-    rotatedAmountZ += theta;
+        zf->rotate(theta, glm::vec3(0.0f, 0.0f, 1.0f), pivot);
+    Zhandle[0]->rotate(theta, glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
 void Labyrinth::draw(GLuint shader)

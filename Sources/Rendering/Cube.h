@@ -41,6 +41,9 @@ public:
     void rotate(float theta, glm::vec3 axis, glm::vec3 pivot);
     void rotateLocal(float theta, glm::vec3 axis);
 
+    // 렌더링과 OBB를 절대 회전에 동기화
+    void setRotationAbsolute(const glm::quat& target);
+
     void resize(glm::vec3 radius_)
     {
         radius = radius_;

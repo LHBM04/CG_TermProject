@@ -59,19 +59,15 @@ void Cube::initBuffer()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
-    // 위치 (location = 0)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
     glEnableVertexAttribArray(0);
 
-    // 노말 (location = 1)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
     glEnableVertexAttribArray(1);
 
-    // 텍스쳐 (location = 2)
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texture));
     glEnableVertexAttribArray(2);
 
-    // index 연결하기
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, index.size() * sizeof(unsigned int), index.data(), GL_STATIC_DRAW);
 }
@@ -86,7 +82,7 @@ void Cube::rotate(float theta, glm::vec3 axis)
 {
     obb->rotate(theta, axis);
     glm::quat q = glm::angleAxis(glm::radians(theta), glm::normalize(axis));
-    rotation    = q * rotation;
+    rotation    = glm::normalize(q * rotation);
 }
 
 void Cube::rotate(float theta, glm::vec3 axis, glm::vec3 pivot)
@@ -106,7 +102,7 @@ void Cube::rotate(float theta, glm::vec3 axis, glm::vec3 pivot)
 
     obb->rotate(theta, axis);
     glm::quat q = glm::angleAxis(glm::radians(theta), glm::normalize(axis));
-    rotation    = q * rotation;
+    rotation    = glm::normalize(q * rotation);
 }
 
 void Cube::rotateLocal(float theta, glm::vec3 axis)
@@ -125,15 +121,35 @@ void Cube::rotateLocal(float theta, glm::vec3 axis)
         local = rotation * glm::vec3(0.0f, 0.0f, 1.0f);
     }
 
-    rotation = glm::angleAxis(glm::radians(theta), local) * rotation;
+    rotation = glm::normalize(glm::angleAxis(glm::radians(theta), local) * rotation);
+}
+
+// 절대 회전을 설정하면서 OBB도 델타만큼 회전시켜 동기화
+void Cube::setRotationAbsolute(const glm::quat& target)
+{
+    glm::quat current = rotation;
+    glm::quat delta   = glm::normalize(target * glm::inverse(current));
+
+    // 축-각으로 분해
+    float angleRad = 2.0f * acos(glm::clamp(delta.w, -1.0f, 1.0f));
+    float s        = sqrtf(std::max(0.0f, 1.0f - delta.w * delta.w));
+    glm::vec3 axis(1.0f, 0.0f, 0.0f);
+    if (s > 1e-6f)
+        axis = glm::normalize(glm::vec3(delta.x / s, delta.y / s, delta.z / s));
+
+    float angleDeg = glm::degrees(angleRad);
+    if (fabs(angleDeg) > 1e-6f && glm::dot(axis, axis) > 1e-8f)
+    {
+        obb->rotate(angleDeg, axis);
+    }
+
+    rotation = glm::normalize(target);
 }
 
 void Cube::checkCollisions(Cube* target)
 {
-    // target과 obb충돌검사
     if (obb->testOBBOBB_SAT(*target->obb, mtv))
     {
-        // 충돌했으면 일단 서로 안 충돌할 정도로만 밀어냄
         move(mtv);
 
         glm::vec3 normal  = glm::normalize(mtv);
@@ -159,10 +175,6 @@ void Cube::Update()
 
 void Cube::Draw(GLuint shaderProgram)
 {
-    // 정적 정점 데이터 재업로드 제거
-    // glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
 

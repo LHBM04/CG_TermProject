@@ -20,33 +20,26 @@ public:
     void draw(GLuint shader);
 
 private:
-    // 중앙의 맵
     std::vector<Cube*> map;
-
-    glm::quat labyrinthRotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-    glm::vec3 pivot = glm::vec3(0.0f, 0.0f, 0.0f);
-
-    // x축 회전을 보여주는 외부 틀
     std::vector<Cube*> XaxisFrame;
-
-    // z축 회전을 보여주는 외부 틀
     std::vector<Cube*> ZaxisFrame;
-
-    // 회전에 따라 돌아가는 손잡이 ( 나중에 육각형말고 원통으로 바꿔야 더 좋을 듯 )
     std::vector<Cube*> Xhandle;
     std::vector<Cube*> Zhandle;
-
-    // 바닥
     std::vector<Cube*> base;
 
-    // 일정 회전 이상은 금지용
+    // 맵의 누적 회전 제거용
+    std::vector<glm::vec3> initialMapPos;
+    std::vector<glm::quat> initialMapRot;
+
     float rotatedAmountX = 0.0f;
     float maxRotationX = 10.0f;
 
     float rotatedAmountZ = 0.0f;
     float maxRotationZ = 10.0f;
 
-    // 텍스쳐 매핑 이미지
+    glm::quat labyrinthRotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+    glm::vec3 pivot = glm::vec3(0.0f, 0.0f, 0.0f);
+
     GLsizei width, height, numberOfChannel;
     GLuint  wood_texture1 = TextureLoader::LoadTexture("Sources/Rendering/wood_texture1.png", width, height, numberOfChannel);
     GLuint  wood_texture2 = TextureLoader::LoadTexture("Sources/Rendering/wood_texture2.png", width, height, numberOfChannel);
