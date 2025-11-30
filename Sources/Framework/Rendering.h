@@ -1,7 +1,5 @@
 #pragma once
 
-#include <glad/glad.h>
-
 #include "Common.h"
 #include "Math.h"
 
@@ -15,22 +13,22 @@ struct Viewport final
     /**
      * @brief x 좌표.
      */
-    int x;
+    float x;
 
     /**
      * @brief y 좌표.
      */
-    int y;
+    float y;
 
     /**
      * @brief 너비.
      */
-    int width;
+    float width;
 
     /**
      * @brief 높이.
      */
-    int height;
+    float height;
 };
 
 class Camera final
@@ -87,9 +85,7 @@ public:
     [[nodiscard]]
     inline glm::fmat4x4 GetProjectionMatrix() const noexcept
     {
-        const float height      = viewport.height;
-        const float width       = viewport.width;
-        const float aspectRatio = width / height;
+        const float aspectRatio = viewport.width / viewport.height;
 
         switch (projection)
         {

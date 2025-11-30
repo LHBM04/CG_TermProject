@@ -101,15 +101,26 @@ public:
      * @return char* 애플리케이션 이름.
      */
     [[nodiscard]]
-    static char* GetName() noexcept
+    static inline char* GetName() noexcept
     {
         return specification.name.data();
     }
 
     /**
-     * @brief 
+     * @brief 애플리케이션 이름을 설정합니다.
      * 
-     * @return 
+     * @param name_ 설정할 애플리케이션 이름.
+     */
+    static inline void SetName(std::string_view name_) noexcept
+    {
+        specification.name = name_;
+        glfwSetWindowTitle(window, specification.name.c_str());
+    }
+
+    /**
+     * @brief 해당 애플리케이션의 창 너비를 반환합니다.
+     * 
+     * @return int 해당 애플리케이션의 창 너비.
      */
     [[nodiscard]]
     static inline int GetWidth() noexcept
@@ -118,14 +129,36 @@ public:
     }
 
     /**
-     * @brief 
+     * @brief 해당 애플리케이션의 창 너비를 지정한 사이즈로 설정합니다.
      * 
-     * @return 
+     * @param width_ 지정할 사이즈
+     */
+    static inline void SetWidth(int width_) noexcept
+    {
+        specification.width = width_;
+        glfwSetWindowSize(window, specification.width, specification.height);
+    }
+
+    /**
+     * @brief 해당 애플리케이션의 창 높이를 반환합니다.
+     * 
+     * @return int 해당 애플리케이션의 창 높이.
      */
     [[nodiscard]]
     static inline int GetHeight() noexcept
     {
         return specification.height;
+    }
+
+    /**
+     * @brief 해당 애플리케이션의 창 높이를 지정한 사이즈로 설정합니다.
+     * 
+     * @param height_ 지정할 사이즈
+     */
+    static inline void SetHeight(int height_) noexcept
+    {
+        specification.height = height_;
+        glfwSetWindowSize(window, specification.width, specification.height);
     }
 
 private:

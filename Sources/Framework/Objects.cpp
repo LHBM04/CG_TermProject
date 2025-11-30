@@ -11,8 +11,7 @@ Component::~Component() noexcept
 {
 }
 
-Object::Object(std::string_view name_, 
-               std::string_view tag_) noexcept
+Object::Object(std::string_view name_, std::string_view tag_) noexcept
     : name(name_)
     , tag(tag_)
     , isEnabled(true)

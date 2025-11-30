@@ -14,7 +14,7 @@ public:
     /**
      * @brief 여러 문자열을 결합하여 하나의 경로로 만듭니다.
      */
-    static String Combine(const List<String>& paths) noexcept;
+    static std::string Combine(const std::vector<std::string>& paths) noexcept;
 
     /**
      * @brief 
@@ -24,32 +24,32 @@ public:
      * 
      * @return 
      */
-    static String Combine(StringView path1, StringView path2) noexcept;
+    static std::string Combine(std::string_view path1, std::string_view path2) noexcept;
 
     /**
      * @brief 경로에서 파일 이름(확장자 포함)을 반환합니다.
      */
-    static String GetFileName(StringView path) noexcept;
+    static std::string GetFileName(std::string_view path) noexcept;
 
     /**
      * @brief 경로에서 확장자를 제외한 파일 이름을 반환합니다.
      */
-    static String GetFileNameWithoutExtension(StringView path) noexcept;
+    static std::string GetFileNameWithoutExtension(std::string_view path) noexcept;
 
     /**
      * @brief 경로에서 확장자(점 포함)를 반환합니다.
      */
-    static String GetExtension(StringView path) noexcept;
+    static std::string GetExtension(std::string_view path) noexcept;
 
     /**
      * @brief 특정 파일의 부모 디렉토리 경로를 반환합니다.
      */
-    static String GetDirectoryName(StringView path) noexcept;
+    static std::string GetDirectoryName(std::string_view path) noexcept;
 
     /**
      * @brief 경로를 절대 경로로 변환합니다.
      */
-    static String GetFullPath(StringView path) noexcept;
+    static std::string GetFullPath(std::string_view path) noexcept;
 };
 
 /**
@@ -65,50 +65,50 @@ public:
     /**
      * @brief 지정된 파일이 존재하는지 확인합니다.
      */
-    static bool Exists(StringView path) noexcept;
+    static bool Exists(std::string_view path) noexcept;
 
     /**
      * @brief 파일을 삭제합니다. 존재하지 않으면 아무 동작도 하지 않습니다.
      */
-    static void Delete(StringView path) noexcept;
+    static void Delete(std::string_view path) noexcept;
 
     /**
      * @brief 파일을 새 위치로 복사합니다.
      * @param overwrite_ true면 대상 파일이 존재할 경우 덮어씁니다.
      */
-    static void Copy(StringView sourceFileName, StringView destFileName, bool overwrite_ = false) noexcept;
+    static void Copy(std::string_view sourceFileName, std::string_view destFileName, bool overwrite_ = false) noexcept;
 
     /**
      * @brief 파일을 새 위치로 이동합니다.
      */
-    static void Move(StringView sourceFileName, StringView destFileName) noexcept;
+    static void Move(std::string_view sourceFileName, std::string_view destFileName) noexcept;
 
     // --- 읽기/쓰기 편의 기능 (C# 스타일) ---
 
     /**
      * @brief 텍스트 파일을 열어 모든 내용을 문자열로 읽어옵니다.
      */
-    static String ReadAllText(StringView path);
+    static std::string ReadAllText(std::string_view path);
 
     /**
      * @brief 문자열을 파일에 씁니다. 파일이 있으면 덮어쓰고, 없으면 생성합니다.
      */
-    static void WriteAllText(StringView path, StringView contents);
+    static void WriteAllText(std::string_view path, std::string_view contents);
 
     /**
      * @brief 텍스트를 파일 끝에 추가합니다. 파일이 없으면 생성합니다.
      */
-    static void AppendAllText(StringView path, StringView contents);
+    static void AppendAllText(std::string_view path, std::string_view contents);
 
     /**
      * @brief 바이너리 파일을 열어 모든 내용을 바이트 배열로 읽어옵니다.
      */
-    static List<u8> ReadAllBytes(StringView path);
+    static std::vector<unsigned char> ReadAllBytes(std::string_view path);
 
     /**
      * @brief 바이트 배열을 파일에 씁니다.
      */
-    static void WriteAllBytes(StringView path, const List<u8>& bytes);
+    static void WriteAllBytes(std::string_view path, const std::vector<unsigned char>& bytes);
 };
 
 /**
@@ -124,28 +124,28 @@ public:
     /**
      * @brief 지정된 디렉토리가 존재하는지 확인합니다.
      */
-    static bool Exists(StringView path) noexcept;
+    static bool Exists(std::string_view path) noexcept;
 
     /**
      * @brief 지정된 경로에 모든 디렉토리와 하위 디렉토리를 생성합니다.
      */
-    static void Create(StringView path) noexcept;
+    static void Create(std::string_view path) noexcept;
 
     /**
      * @brief 디렉토리를 삭제합니다.
      * @param recursive_ true면 하위 디렉토리와 파일까지 모두 삭제합니다.
      */
-    static void Delete(StringView path, bool recursive_ = false) noexcept;
+    static void Delete(std::string_view path, bool recursive_ = false) noexcept;
 
     /**
      * @brief 디렉토리를 이동합니다.
      */
-    static void Move(StringView sourceDirName, StringView destDirName) noexcept;
+    static void Move(std::string_view sourceDirName, std::string_view destDirName) noexcept;
 
     /**
      * @brief 현재 디렉토리를 반환합니다.
      */
-    static String GetCurrentDirectory() noexcept;
+    static std::string GetCurrentDirectory() noexcept;
 
     // --- 검색 기능 ---
 
@@ -156,10 +156,11 @@ public:
      * 검색)
      * @param recursive_ 하위 폴더까지 검색할지 여부
      */
-    static List<String> GetFiles(StringView path_, StringView searchPattern_ = "*", bool recursive_ = false);
+    static std::vector<std::string>
+            GetFiles(std::string_view path_, std::string_view searchPattern_ = "*", bool recursive_ = false);
 
     /**
      * @brief 지정된 디렉토리 내의 하위 디렉토리 이름(경로 포함) 목록을 반환합니다.
      */
-    static List<String> GetDirectories(StringView path_, bool recursive_ = false);
+    static std::vector<std::string> GetDirectories(std::string_view path_, bool recursive_ = false);
 };
