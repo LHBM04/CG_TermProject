@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../PCH.h"
+#include "Model.h"
 #include "OBB.h"
 
 struct Vertex
@@ -54,7 +55,9 @@ public:
 
     void Draw(GLuint shaderProgram);
 
-    // 물리 파라미터 설정
+    // 외부 모델 데이터로 교체
+    void LoadFromModel(const Model& model);
+
     void SetPhysicsParams(float gravityScale_, float slopeBoost_, float speedScale_)
     {
         gravityScale = gravityScale_;

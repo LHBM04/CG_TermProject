@@ -15,6 +15,17 @@ Labyrinth::Labyrinth()
             }
         }
     }
+
+    // 벽 테스트용
+    int wallIdx[10][2]{{-5, -6}, {-4, -6}, {-3, -6}, {-2, -6}, {-1, -6}, {-1, -6}, {2, -4}, {1, -4}, {0, -4}, {-1, -4}};
+    for (int i{}; i < 10; ++i)
+    {
+        map.push_back(new Cube());
+        map.back()->setTexture(handle);
+        map.back()->move(glm::vec3(wallIdx[i][0], 0.5f, wallIdx[i][1]));
+        map.back()->resize(glm::vec3(0.5f, 0.5f, 0.5f));
+    }
+
     map.push_back(new Cube());
     map.back()->setTexture(wood_texture3);
     map.back()->resize(glm::vec3(7.5f, 0.0f, 7.5f));

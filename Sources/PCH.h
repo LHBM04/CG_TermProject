@@ -11,6 +11,7 @@
 #include <vector>
 #include <stack>
 #include <random>
+#include <unordered_map>
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX

@@ -6,6 +6,8 @@
 #include "../Rendering/Light.h"
 #include "../Rendering/Camera.h"
 #include "../Rendering/TextureLoader.h"
+#include "../Rendering/Splines.h"
+#include "../Rendering/Model.h"
 
 #include "Scene.h"
 
@@ -25,6 +27,8 @@ public:
     void make_vertexShaders();
     void make_fragmentShaders();
     void make_shaderProgram();
+    void  read_newline(char* str);
+    void  read_obj_file(const char* file, Model* model);
     char* filetobuf(const char* file);
 
 	/**
@@ -46,16 +50,22 @@ private:
 	Vector2 mousePos;
     float   scrollOffset;
 
-	Camera* cam;
-    Cube*	cube;
+	Camera*     cam;
+    Cube*	    cube;
     Labyrinth* labyrinth;
-    Light*	light;
+    Cube*       base;
+    Light*	    light;
+    Splines    splines;
+
+    Model ballModel;
 
     GLsizei width, height, numberOfChannel;
     GLuint  wood_texture1 = TextureLoader::LoadTexture("Sources/Rendering/wood_texture1.png", width, height, numberOfChannel);
     GLuint  wood_texture2 = TextureLoader::LoadTexture("Sources/Rendering/wood_texture2.png", width, height, numberOfChannel);
     GLuint  wood_texture3 = TextureLoader::LoadTexture("Sources/Rendering/wood_texture3.png", width, height, numberOfChannel);
     GLuint  wood_texture4 = TextureLoader::LoadTexture("Sources/Rendering/wood_texture4.png", width, height, numberOfChannel);
-    GLuint  handle = TextureLoader::LoadTexture("Sources/Rendering/handle.png", width, height, numberOfChannel);
-    GLuint  handle_bar = TextureLoader::LoadTexture("Sources/Rendering/handle_bar.png", width, height, numberOfChannel);
+    GLuint  handle        = TextureLoader::LoadTexture("Sources/Rendering/handle.png", width, height, numberOfChannel);
+    GLuint  handle_bar    = TextureLoader::LoadTexture("Sources/Rendering/handle_bar.png", width, height, numberOfChannel);
+    GLuint  planet_earth  = TextureLoader::LoadTexture("Sources/Rendering/planet_earth.png", width, height, numberOfChannel);
+    GLuint poket_ball = TextureLoader::LoadTexture("Sources/Rendering/Poketball.png", width, height, numberOfChannel);
 };

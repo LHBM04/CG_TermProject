@@ -223,8 +223,40 @@ void Cube::UpdateWithSlope(const glm::vec3& groundNormal)
         dir += tangent * slopeBoost * dt;
     }
 
-    pos += dir * speedScale * dt;
+    glm::vec3 v = dir * speedScale * dt;
+    pos += v;
     obb->teleport(pos);
+
+    float speed = glm::length(v);
+    if (speed > 1e-6f)
+    {
+        // 수평 이동 방향 (지면 탄젠트 성분)
+        glm::vec3 moveDir = glm::normalize(v);
+        glm::vec3 axis    = glm::cross(n, moveDir);
+
+        float axisLen = glm::length(axis);
+        if (axisLen > 1e-6f)
+        {
+            axis = axis / axisLen;
+
+            // 유효 반지름 추정: 메시 스케일 평균 사용 (보다 정밀히는 접촉 방향 반지름)
+            // radius가 반지름 스케일 벡터이므로 평균값을 사용
+            float effectiveRadius = (radius.x + radius.y + radius.z) / 3.0f;
+            // 보호: 너무 작은 반지름 방지
+            effectiveRadius = glm::max(effectiveRadius, 0.4f);
+
+            float angleRad = speed / effectiveRadius; // s = r * theta
+            float angleDeg = glm::degrees(angleRad);
+
+            glm::quat q = glm::angleAxis(angleRad, axis);
+            rotation    = glm::normalize(q * rotation);
+
+            obb->rotate(angleDeg, axis);
+        }
+    }
+
+    // 디버그
+    SPDLOG_INFO("dir = ( {}, {}, {} ), pos = ( {}, {}, {} )", dir.x, dir.y, dir.z, pos.x, pos.y, pos.z);
 }
 
 void Cube::Draw(GLuint shaderProgram)
@@ -248,4 +280,108 @@ void Cube::Draw(GLuint shaderProgram)
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(index.size()), GL_UNSIGNED_INT, 0);
 
     obb->draw(shaderProgram);
+}
+
+void Cube::LoadFromModel(const Model& model)
+{
+    if (model.vertex_count == 0 || model.face_count == 0)
+    {
+        SPDLOG_WARN("Cube::LoadFromModel: empty model.");
+        return;
+    }
+
+    // 기존 GL 리소스 정리
+    if (VAO)
+        glDeleteVertexArrays(1, &VAO);
+    if (VBO)
+        glDeleteBuffers(1, &VBO);
+    if (EBO)
+        glDeleteBuffers(1, &EBO);
+    VAO = VBO = EBO = 0;
+
+    vertices.clear();
+    index.clear();
+    vertices.reserve(model.face_count * 3);
+    index.reserve(model.face_count * 3);
+
+    glm::vec3 minP(FLT_MAX);
+    glm::vec3 maxP(-FLT_MAX);
+
+    // Face 단위로 삼각형 생성 (중복 정점)
+    for (size_t i = 0; i < model.face_count; ++i)
+    {
+        const Face&  f     = model.faces[i];
+        unsigned int vs[3] = {f.v1, f.v2, f.v3};
+        unsigned int ts[3] = {f.t1, f.t2, f.t3};
+
+        if (vs[0] >= model.vertex_count || vs[1] >= model.vertex_count || vs[2] >= model.vertex_count)
+        {
+            SPDLOG_WARN("Cube::LoadFromModel: vertex index out of range.");
+            continue;
+        }
+
+        // 위치 가져오기
+        glm::vec3 p[3];
+        for (int k = 0; k < 3; ++k)
+        {
+            ::Vt mv = model.vertices[vs[k]];
+            p[k]               = glm::vec3(mv.x, mv.y, mv.z);
+            minP               = glm::min(minP, p[k]);
+            maxP               = glm::max(maxP, p[k]);
+        }
+
+        // 노멀 계산
+        glm::vec3 n = glm::normalize(glm::cross(p[1] - p[0], p[2] - p[0]));
+        if (!glm::all(glm::isinf(n)))
+            n = glm::vec3(0.0f, 1.0f, 0.0f);
+
+        // 텍스처 좌표
+        glm::vec2 uv[3];
+        for (int k = 0; k < 3; ++k)
+        {
+            if (model.texcoords && ts[k] < model.texcoord_count)
+            {
+                const TexCoord& tc = model.texcoords[ts[k]];
+                uv[k]              = glm::vec2(tc.u, tc.v);
+            }
+            else
+            {
+                uv[k] = glm::vec2(0.0f, 0.0f);
+            }
+        }
+
+        // 정점 push
+        for (int k = 0; k < 3; ++k)
+        {
+            Vertex cv;
+            cv.pos     = p[k];
+            cv.normal  = n;
+            cv.texture = uv[k];
+            vertices.push_back(cv);
+            index.push_back(static_cast<unsigned int>(vertices.size() - 1));
+        }
+    }
+
+    // 중심 이동 및 반경 계산
+    glm::vec3 center      = (minP + maxP) * 0.5f;
+    glm::vec3 halfExtents = (maxP - minP) * 0.5f;
+    if (halfExtents.x <= 0.0f)
+        halfExtents.x = 0.0001f;
+    if (halfExtents.y <= 0.0f)
+        halfExtents.y = 0.0001f;
+    if (halfExtents.z <= 0.0f)
+        halfExtents.z = 0.0001f;
+
+    for (auto& v : vertices)
+    {
+        v.pos -= center; // 모델을 원점 중심 정렬
+    }
+
+    radius = Vector3(halfExtents.x * 0.5f, halfExtents.y * 0.5f, halfExtents.z * 0.5f);
+    obb->resize(glm::vec3(radius.x * 0.5f, radius.y * 0.5f, radius.z * 0.5f));
+    obb->teleport(glm::vec3(pos.x, pos.y, pos.z));
+
+    initBuffer();
+
+    SPDLOG_INFO("Cube::LoadFromModel: loaded {} faces ({} vertices generated).", model.face_count, vertices.size());
 }

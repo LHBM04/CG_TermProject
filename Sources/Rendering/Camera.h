@@ -30,6 +30,10 @@ public:
     {
         return pos;
     }
+    void setPos(glm::vec3 p)
+    {
+        pos = p;
+    }
 
     void move(glm::vec3 v);
     void moveForward();

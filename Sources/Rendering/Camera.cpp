@@ -24,7 +24,7 @@ void Camera::settingCamera(GLuint shaderProgram)
 
     if (projection == Projection::Perspective)
     {
-        projMat = glm::perspective(fovy, aspectRatio, nearPlane, farPlane);
+        projMat = glm::perspective(glm::radians(fovy), aspectRatio, nearPlane, farPlane);
     }
     else if (projection == Projection::Orthographic)
     {

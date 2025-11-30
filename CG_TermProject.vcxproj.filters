@@ -36,10 +36,13 @@
     <ClCompile Include="Sources\Rendering\Cube.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Rendering\TextureLoader.cpp">
+    <ClCompile Include="Sources\Rendering\Labyrinth.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Rendering\Labyrinth.cpp">
+    <ClCompile Include="Sources\Rendering\Splines.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Rendering\TextureLoader.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>
@@ -97,10 +100,16 @@
     <ClInclude Include="Sources\Rendering\stb_image.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Rendering\TextureLoader.h">
+    <ClInclude Include="Sources\Rendering\Labyrinth.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Rendering\Labyrinth.h">
+    <ClInclude Include="Sources\Rendering\Splines.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Rendering\Model.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Rendering\TextureLoader.h">
       <Filter>Rendering</Filter>
     </ClInclude>
   </ItemGroup>
@@ -148,5 +157,19 @@
     <Image Include="Sources\Rendering\handle_bar.png">
       <Filter>Rendering</Filter>
     </Image>
+    <Image Include="Sources\Rendering\planet_earth.png">
+      <Filter>Rendering</Filter>
+    </Image>
+    <Image Include="Sources\Rendering\Poketball.png">
+      <Filter>Rendering</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Sources\Rendering\Cube.obj">
+      <Filter>Rendering</Filter>
+    </Text>
+    <Text Include="Sources\Rendering\Ball.obj">
+      <Filter>Rendering</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -76,11 +76,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Sources\Rendering\Splines.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Sources\Rendering\TextureLoader.cpp">
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PCH.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PCH.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -121,7 +123,9 @@
     <ClInclude Include="Sources\Rendering\Labyrinth.h" />
     <ClInclude Include="Sources\Rendering\Light.h" />
     <ClInclude Include="Sources\Rendering\Mesh.h" />
+    <ClInclude Include="Sources\Rendering\Model.h" />
     <ClInclude Include="Sources\Rendering\OBB.h" />
+    <ClInclude Include="Sources\Rendering\Splines.h" />
     <ClInclude Include="Sources\Rendering\stb_image.h" />
     <ClInclude Include="Sources\Rendering\TextureLoader.h" />
     <ClInclude Include="Sources\Scenes\Scene.h" />
@@ -135,10 +139,22 @@
   <ItemGroup>
     <Image Include="Sources\Rendering\handle.png" />
     <Image Include="Sources\Rendering\handle_bar.png" />
+    <Image Include="Sources\Rendering\planet_earth.png" />
+    <Image Include="Sources\Rendering\Poketball.png" />
     <Image Include="Sources\Rendering\wood_texture1.png" />
     <Image Include="Sources\Rendering\wood_texture2.png" />
     <Image Include="Sources\Rendering\wood_texture3.png" />
     <Image Include="Sources\Rendering\wood_texture4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Sources\Rendering\Cube.obj">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Sources\Rendering\Ball.obj">
+      <FileType>Document</FileType>
+    </Text>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
