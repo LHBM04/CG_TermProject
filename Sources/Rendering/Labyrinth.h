@@ -17,6 +17,12 @@ public:
         return map;
     }
 
+    // 바닥의 기울어진 정도를 반환
+    glm::vec3 getGroundNormal() const
+    {
+        return labyrinthRotation * glm::vec3(0.0f, 1.0f, 0.0f);
+    }
+
     void draw(GLuint shader);
 
 private:

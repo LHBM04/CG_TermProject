@@ -10,7 +10,7 @@ Labyrinth::Labyrinth()
             {
                 map.push_back(new Cube());
                 map.back()->setTexture(wood_texture3);
-                map.back()->move(glm::vec3(float(i), 1.0f, float(j)));
+                map.back()->move(glm::vec3(float(i), 0.5f, float(j)));
                 map.back()->resize(glm::vec3(0.5f, 0.5f, 0.5f));
             }
         }

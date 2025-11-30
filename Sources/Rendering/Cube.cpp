@@ -174,13 +174,13 @@ void Cube::checkCollisions(Cube* target)
         glm::vec3 normal = glm::normalize(mtv);
         float dotProd = glm::dot(dir, normal);
 
-        // 벽을 뚫고 다시 들어가지 않도록 법선 성분 제거 + 약간의 슬롭 오프셋
-        if (dotProd < 0.0f) // 벽 안쪽으로 향하는 성분만 제거
+        // 벽을 뚫고 다시 들어가지 않게
+        if (dotProd < 0.0f)
         {
             dir = dir - (1.0f + cor) * dotProd * normal;
         }
 
-        // 정적 벽과 접촉 시 미세 침투 방지용 작은 푸시
+        // 벽과 접촉 시 약간 밀어내는 용
         const float separationBias = 1e-3f;
         move(separationBias * normal);
     }
@@ -195,8 +195,35 @@ void Cube::teleport(glm::vec3 v)
 void Cube::Update()
 {
     float dt = Time::GetDeltaTime();
-    dir += gravity * dt;
-    pos += dir * dt;
+    // 중력 강화
+    dir += gravity * gravityScale * dt;
+    // 최종 속도 승수
+    pos += dir * speedScale * dt;
+    obb->teleport(pos);
+
+    // 최대 속도 제한용
+    float maxSpeed = 30.0f;
+    float cur      = glm::length(glm::vec3(dir.x, dir.y, dir.z));
+    if (cur > maxSpeed)
+        dir *= (maxSpeed / cur);
+}
+
+// 경사면 노말을 외부에서 전달받아 추가 가속 적용
+void Cube::UpdateWithSlope(const glm::vec3& groundNormal)
+{
+    float dt = Time::GetDeltaTime();
+    dir += gravity * gravityScale * dt;
+
+    // 경사면 추가 가속
+    glm::vec3 n = glm::normalize(groundNormal);
+    glm::vec3 g = glm::vec3(gravity.x, gravity.y, gravity.z) * gravityScale;
+    glm::vec3 tangent = g - (glm::dot(g, n)) * n;
+    if (slopeBoost > 0.0f)
+    {
+        dir += tangent * slopeBoost * dt;
+    }
+
+    pos += dir * speedScale * dt;
     obb->teleport(pos);
 }
 
@@ -207,8 +234,8 @@ void Cube::Draw(GLuint shaderProgram)
 
     glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
     model *= glm::mat4_cast(rotation);
-    glm::mat4 scale = glm::scale(glm::mat4(1.0f), radius);
-    model *= scale;
+    glm::mat4 scaleM = glm::scale(glm::mat4(1.0f), radius);
+    model *= scaleM;
 
     GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));

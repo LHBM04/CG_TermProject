@@ -106,6 +106,10 @@ void TestScene::OnEnter() noexcept
     cube->setTexture(handle);
     cube->move(Vector3(0.0f, 5.0f, 0.0f));
     cube->resize(glm::vec3(0.5f, 0.5f, 0.5f));
+    cube->SetPhysicsParams(1.8f,
+                           2.5f,
+                           1.3f
+    );
 
     for (int i{-7}; i <= 7; ++i)
 
@@ -215,7 +219,7 @@ void TestScene::OnUpdate() noexcept
     {
         cube->checkCollisions(labyrinth->getMap()[i]);
     }
-    cube->Update();
+    cube->UpdateWithSlope(labyrinth->getGroundNormal());
 }
 
 void TestScene::OnRender() noexcept

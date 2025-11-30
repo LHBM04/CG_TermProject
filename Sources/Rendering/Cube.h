@@ -40,8 +40,6 @@ public:
     void rotate(float theta, glm::vec3 axis);
     void rotate(float theta, glm::vec3 axis, glm::vec3 pivot);
     void rotateLocal(float theta, glm::vec3 axis);
-
-    // 렌더링과 OBB를 절대 회전에 동기화
     void setRotationAbsolute(const glm::quat& target);
 
     void resize(glm::vec3 radius_)
@@ -51,9 +49,18 @@ public:
     }
 
     void Update();
+    void UpdateWithSlope(const glm::vec3& groundNormal);
     void checkCollisions(Cube* target);
 
     void Draw(GLuint shaderProgram);
+
+    // 물리 파라미터 설정
+    void SetPhysicsParams(float gravityScale_, float slopeBoost_, float speedScale_)
+    {
+        gravityScale = gravityScale_;
+        slopeBoost   = slopeBoost_;
+        speedScale   = speedScale_;
+    }
 
 private:
     GLuint VAO = 0, VBO = 0, EBO = 0;
@@ -84,4 +91,9 @@ private:
 
     // 큐브의 반발 계수
     const float cor = 0.3f;
+
+    // 큐브 속도 조절용
+    float gravityScale = 1.0f; // 중력 배율
+    float slopeBoost   = 0.0f; // 경사면 가속 배율
+    float speedScale   = 1.0f; // 최종 속도 배율
 };
