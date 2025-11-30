@@ -1,37 +1,10 @@
 #pragma once
 
 #include "Common.h"
-#include "Math.h"
+#include "Objects.h"
+#include "Resources.h"
 
-/**
- * @struct Viewport
- *
- * @brief 렌더링 영역을 정의합니다.
- */
-struct Viewport final
-{
-    /**
-     * @brief x 좌표.
-     */
-    float x;
-
-    /**
-     * @brief y 좌표.
-     */
-    float y;
-
-    /**
-     * @brief 너비.
-     */
-    float width;
-
-    /**
-     * @brief 높이.
-     */
-    float height;
-};
-
-class Camera final
+class Camera : public Component
 {
 public:
     /**
@@ -51,36 +24,247 @@ public:
     };
 
     /**
+     * @struct Viewport
+     *
+     * @brief 렌더링 영역을 정의합니다.
+     */
+    struct Viewport final
+    {
+        /**
+         * @brief x 좌표.
+         */
+        float x;
+
+        /**
+         * @brief y 좌표.
+         */
+        float y;
+
+        /**
+         * @brief 너비.
+         */
+        float width;
+
+        /**
+         * @brief 높이.
+         */
+        float height;
+    };
+
+    /**
+     * @struct ClipingPlanes
+     * 
+     * @brief 해당 카메라의 가시 범위를 정의합니다.
+     */
+    struct ClipingPlanes final
+    {
+        /**
+         * @brief 해당 카메라의 근평면 거리.
+         */
+        float nearPlane;
+
+        /**
+         * @brief 해당 카메라의 원평면 거리.
+         */
+        float farPlane;
+    };
+
+    /**
+     * @brief 생성자.
+     * 
+     * @param owner_ 해당 컴포넌트의 오너 엔티티
+     */
+    explicit Camera(Object* const owner_) noexcept;
+
+    /**
+     * @brief 소멸자.
+     */
+    virtual ~Camera() noexcept override;
+
+    /**
      * @brief 렌더링을 시작하기 전 해당 카메라를 준비합니다.
      */
     void Ready() const noexcept;
 
     /**
-     * @brief 
-     * 
-     * @return 
+     * @brief 해당 카메라의 투영 방식을 반환합니다.
+     *
+     * @return Projection 해당 카메라의 투영 방식
      */
     [[nodiscard]]
-    inline float GetFov() const noexcept
+    inline Projection GetProjection() const noexcept
     {
-        return fov;
+        return projection;
     }
 
     /**
-     * @brief 
+     * @brief 해당 카메라의 투영 방식을 설정합니다.
+     *
+     * @param projection_ 설정할 투영 방식
+     */
+    inline void SetProjection(Projection projection_) noexcept
+    {
+        projection = projection_;
+    }
+
+    /**
+     * @brief 해당 카메라의 시야각을 반환합니다.
+     *
+     * @return float 해당 카메라의 시야각
+     */
+    [[nodiscard]]
+    inline float GetFieldOfView() const noexcept
+    {
+        return fieldOfView;
+    }
+
+    /**
+     * @brief 시야각을 설정합니다.
+     *
+     * @param fov_ 설정할 시야각
+     */
+    inline void SetFieldOfView(const float fov_) noexcept
+    {
+        fieldOfView = fov_;
+    }
+
+    /**
+     * @brief 해당 카메라의 근평면 거리를 반환합니다.
      * 
-     * @return 
+     * @return float 해당 카메라의 근평면 거리
+     */
+    [[nodiscard]]
+    inline const Viewport& GetViewport() const noexcept
+    {
+        return viewport;
+    }
+
+    /**
+     * @brief 해당 카메라의 뷰포트 영역을 설정합니다.
+     * 
+     * @param viewport_ 해당 카메라의 뷰포트 영역
+     */
+    inline void SetViewport(const Viewport& viewport_) noexcept
+    {
+        viewport = viewport_;
+    }
+
+    /**
+     * @brief 해당 카메라의 가시 범위를 반환합니다.
+     * 
+     * @return ClipingPlanes 해당 카메라의 가시 범위
+     */
+    [[nodiscard]]
+    inline const ClipingPlanes& GetClipingPlanes() const noexcept
+    {
+        return clipingPlanes;
+    }
+
+    /**
+     * @brief 해당 카메라의 가시 범위를 설정합니다.
+     * 
+     * @param clipPlanes_ 해당 카메라의 가시 범위
+     */
+    inline void SetClipingPlanes(const ClipingPlanes& clipingPlanes_) noexcept
+    {
+        clipingPlanes = clipingPlanes_;
+    }
+
+    /**
+     * @brief 해당 카메라의 근평면 거리를 반환합니다.
+     * 
+     * @return float 해당 카메라의 근평면 거리
+     */
+    [[nodiscard]]
+    inline float GetNearPlane() const noexcept
+    {
+        return clipingPlanes.nearPlane;
+    }
+
+    /**
+     * @brief 해당 카메라의 근평면 거리를 설정합니다.
+     * 
+     * @param nearPlane_ 해당 카메라의 근평면 거리
+     */
+    inline void SetNearPlane(const float nearPlane_) noexcept
+    {
+        clipingPlanes.nearPlane = nearPlane_;
+    }
+
+    /**
+     * @brief 해당 카메라의 원평면 거리를 반환합니다.
+     * 
+     * @return float 해당 카메라의 원평면 거리
+     */
+    [[nodiscard]]
+    inline float GetFarPlane() const noexcept
+    {
+        return clipingPlanes.farPlane;
+    }
+
+    /**
+     * @brief 해당 카메라의 원평면 거리를 설정합니다.
+     * 
+     * @param farPlane_ 해당 카메라의 원평면 거리
+     */
+    inline void SetFarPlane(const float farPlane_) noexcept
+    {
+        clipingPlanes.farPlane = farPlane_;
+    }
+
+    /**
+     * @brief 해당 카메라의 직교 투영 크기를 반환합니다.
+     * 
+     * @return float 해당 카메라의 직교 투영 크기
+     */
+    [[nodiscard]]
+    inline float GetOrthoSize() const noexcept
+    {
+        return orthoSize;
+    }
+
+    /**
+     * @brief 해당 카메라의 직교 투영 크기를 설정합니다.
+     * 
+     * @param orthoSize_ 해당 카메라의 직교 투영 크기
+     */
+    inline void SetOrthoSize(const float orthoSize_) noexcept
+    {
+        orthoSize = orthoSize_;
+    }
+
+    /**
+     * @brief 해당 카메라의 뷰 행렬을 반환합니다.
+     * 
+     * @return glm::fmat4x4 해당 카메라의 뷰 행렬
      */
     [[nodiscard]]
     inline glm::fmat4x4 GetViewMatrix() const noexcept
     {
-        return glm::lookAt(eye, eye + front, up);
+        Transform* transform = GetOwner()->GetTransform();
+        if (!transform)
+        {
+            return glm::mat4(1.0f);
+        }
+
+        const glm::vec3 position = transform->GetPosition();
+        const glm::vec3 rotation = transform->GetRotation();
+
+        glm::vec3 front;
+        front.x = cos(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
+        front.y = sin(glm::radians(rotation.x));
+        front.z = sin(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
+        front   = glm::normalize(front);
+
+        const glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+
+        return glm::lookAt(position, position + front, up);
     }
 
     /**
-     * @brief 
+     * @brief 해당 카메라의 투영 행렬을 반환합니다.
      * 
-     * @return 
+     * @return glm::fmat4x4 해당 카메라의 투영 행렬
      */
     [[nodiscard]]
     inline glm::fmat4x4 GetProjectionMatrix() const noexcept
@@ -89,16 +273,22 @@ public:
 
         switch (projection)
         {
-            case Projection::Orthographic:
+            case Camera::Projection::Orthographic:
             {
                 const float halfHeight = orthoSize * 0.5f;
                 const float halfWidth  = halfHeight * aspectRatio;
 
-                return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, nearPlane, farPlane);
+                return glm::ortho(-halfWidth,
+                                  halfWidth,
+                                  -halfHeight,
+                                  halfHeight,
+                                  clipingPlanes.nearPlane,
+                                  clipingPlanes.farPlane);
             }
-            case Projection::Perspective:
+            case Camera::Projection::Perspective:
             {
-                return glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);
+                return glm::perspective(
+                        glm::radians(fieldOfView), aspectRatio, clipingPlanes.nearPlane, clipingPlanes.farPlane);
             }
             default:
             {
@@ -114,42 +304,75 @@ private:
     Camera::Projection projection;
 
     /**
+     * @brief 해당 카메라의 시야각.
+     */
+    float fieldOfView;
+
+    /**
      * @brief 해당 카메라의 뷰포트 영역.
      */
-    Viewport viewport;
+    Camera::Viewport viewport;
 
     /**
-     * @brief 해당 카메라의 위치 벡터.
+     * @brief 해당 카메라의 가시 범위.
      */
-    glm::fvec3 eye;
+    Camera::ClipingPlanes clipingPlanes;
 
     /**
-     * @brief 해당 카메라의 주시 벡터.
+     * @brief 해당 카메라의 직교 투영의 크기.
      */
-    glm::fvec3 front;
+    float orthoSize;
+};
+
+/**
+ * @class MeshRenderer
+ *
+ * @brief 메쉬를 렌더링하는 컴포넌트를 정의합니다.
+ */
+class MeshRenderer : public Component
+{
+public:
+    /**
+     * @brief 생성자.
+     * 
+     * @param owner_ 해당 컴포넌트의 오너
+     */
+    explicit MeshRenderer(Object* const owner_) noexcept;
 
     /**
-     * @brief 해당 카메라의 윗 벡터.
+     * @brief 소멸자.
      */
-    glm::fvec3 up;
+    virtual ~MeshRenderer() noexcept override;
 
     /**
-     * @brief 시야각.
+     * @brief 해당 메쉬를 렌더링합니다.
      */
-    float fov = 45.0f;
+    virtual void Render() noexcept override;
 
     /**
-     * @brief 해당 카메라가 볼 수 있는 최소 거리.
+     * @brief 해당 렌더러가 그릴 메쉬를 설정합니다.
+     * 
+     * @param mesh_ 해당 렌더러가 그릴 메쉬
      */
-    float nearPlane = 0.1f;
+    [[nodiscard]]
+    inline Mesh* const GetMesh() const noexcept
+    {
+        return mesh;
+    }
 
     /**
-     * @brief 해당 카메라가 볼 수 있는 최대 거리.
+     * @brief 해당 렌더러가 그릴 메쉬를 설정합니다.
+     * 
+     * @param mesh_ 해당 렌더러가 그릴 메쉬
      */
-    float farPlane = 100.0f;
+    inline void SetMesh(Mesh* const mesh_) noexcept
+    {
+        mesh = mesh_;
+    }
 
+private:
     /**
-     * @brief
+     * @brief 해당 렌더러가 그릴 메쉬.
      */
-    float orthoSize = 10.0f;
+    Mesh* mesh;
 };

@@ -82,13 +82,13 @@ void InputManager::OnMouseScrolled(GLFWwindow* const window_, double x_, double 
     nowScrollOffset = static_cast<float>(y_);
 }
 
-std::array<bool, MAX_KEYS> InputManager::lastKeyStates;
+std::array<bool, InputManager::MAX_KEYS> InputManager::lastKeyStates;
 
-std::array<bool, MAX_KEYS> InputManager::nowKeyStates;
+std::array<bool, InputManager::MAX_KEYS> InputManager::nowKeyStates;
 
-std::array<bool, MAX_MOUSE_BUTTONS> InputManager::lastMouseButtonStates;
+std::array<bool, InputManager::MAX_MOUSE_BUTTONS> InputManager::lastMouseButtonStates;
 
-std::array<bool, MAX_MOUSE_BUTTONS> InputManager::nowMouseButtonStates;
+std::array<bool, InputManager::MAX_MOUSE_BUTTONS> InputManager::nowMouseButtonStates;
 
 glm::fvec2 InputManager::lastMousePosition = glm::fvec2(0.0f, 0.0f);
 

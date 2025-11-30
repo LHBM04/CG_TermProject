@@ -2,25 +2,215 @@
 
 #include "Common.h"
 
+class ResourceManager;
+
 class Resource
 {
+    friend class ResourceManager;
+
 public:
-    virtual ~Resource() noexcept = default;
+    /**
+     * @brief 소멸자.
+     */
+    virtual ~Resource() noexcept;
+
+    /**
+     * @brief 리소스 이름을 반환합니다.
+     * 
+     * @return std::string 리소스 이름
+     */
+    [[nodiscard]]
+    inline std::string GetName() const noexcept
+    {
+        return name;
+    }
+
+    /**
+     * @brief 리소스 이름을 설정합니다.
+     * 
+     * @param name_ 리소스 이름
+     */
+    inline void SetName(std::string_view name_) noexcept
+    {
+        name = name_;
+    }
+
+    /**
+     * @brief 리소스 경로를 반환합니다.
+     * 
+     * @return std::string 리소스 경로
+     */
+    [[nodiscard]]
+    inline std::string GetPath() const noexcept
+    {
+        return path;
+    }
+
+    /**
+     * @brief 리소스 경로를 설정합니다.
+     * 
+     * @param path_ 리소스 경로
+     */
+    inline void SetPath(std::string_view path_) noexcept
+    {
+        path = path_;
+    }
+
+    /**
+     * @brief 리소스가 로드되었는지 여부를 반환합니다.
+     * 
+     * @return bool 리소스 로드 여부
+     */
+    [[nodiscard]]
+    inline bool IsLoaded() const noexcept
+    {
+        return isLoaded;
+    }
+
+protected:
+    /**
+     * @brief 해당 리소스를 로드합니다.
+     * 
+     * @param path_ 리소스 이름
+     * 
+     * @return bool 리소스 로드 성공 여부
+     */
+    virtual bool Load(std::string_view path_) noexcept = 0;
+
+private:
+    /**
+     * @brief 리소스 이름.
+     */
+    std::string name;
+
+    /**
+     * @brief 리소스 경로.
+     */
+    std::string path;
+
+    /**
+     * @brief 리소스가 로드되었는지 여부.
+     */
+    bool isLoaded = false;
 };
 
 template <typename TResource>
-concept IsResource = std::derived_from<Resource, TResource>;
+concept IsResource = std::derived_from<TResource, Resource>;
 
 class Sprite : public Resource
 {
+public:
+    /**
+     * @brief 생성자.
+     */
+    virtual ~Sprite() noexcept override;
+
+protected:
+    /**
+     * @brief 머티리얼을 로드합니다.
+     *
+     * @param path_ 머티리얼 이름
+     *
+     * @return bool 머티리얼 로드 성공 여부
+     */
+    virtual bool Load(std::string_view path_) noexcept override;
 };
 
 class Texture : public Resource
 {
+public:
+    /**
+     * @brief 생성자.
+     */
+    explicit Texture() noexcept;
+
+    /**
+     * @brief 생성자.
+     */
+    virtual ~Texture() noexcept override;
+
+    /**
+     * @brief 해당 텍스쳐의 ID를 반환합니다.
+     * 
+     * @return unsigned int 해당 텍스쳐의 ID.
+     */
+    [[nodiscard]]
+    inline unsigned int GetTextureID() const noexcept
+    {
+        return textureID;
+    }
+
+    /**
+     * @brief 해당 텍스쳐의 너비를 반환합니다.
+     * 
+     * @return int 해당 텍스쳐의 너비.
+     */
+    [[nodiscard]]
+    inline int GetWidth() const noexcept
+    {
+        return width;
+    }
+
+    /**
+     * @brief 해당 텍스쳐의 높이를 반환합니다.
+     * 
+     * @return int 해당 텍스쳐의 높이.
+     */
+    [[nodiscard]]
+    inline int GetHeight() const noexcept
+    {
+        return height;
+    }
+
+protected:
+    /**
+     * @brief 머티리얼을 로드합니다.
+     *
+     * @param path_ 머티리얼 이름
+     *
+     * @return bool 머티리얼 로드 성공 여부
+     */
+    virtual bool Load(std::string_view path_) noexcept override;
+
+private:
+    /**
+     * @brief 해당 텍스쳐의 ID.
+     */
+    unsigned int textureID;
+
+    /**
+     * @brief 해당 텍스쳐의 너비.
+     */
+    int width;
+
+    /**
+     * @brief 해당 텍스쳐의 높이.
+     */
+    int height;
+
+    /**
+     * @brief 해당 텍스쳐의 채널 수.
+     */
+    int channels;
 };
 
 class Font : public Resource
 {
+public:
+    /**
+     * @brief 생성자.
+     */
+    virtual ~Font() noexcept override;
+
+protected:
+    /**
+     * @brief 머티리얼을 로드합니다.
+     *
+     * @param path_ 머티리얼 이름
+     *
+     * @return bool 머티리얼 로드 성공 여부
+     */
+    virtual bool Load(std::string_view path_) noexcept override;
 };
 
 /**
@@ -28,9 +218,19 @@ class Font : public Resource
  *
  * @brief 셰이더를 정의합니다.
  */
-class Shader final
+class Shader : public Resource
 {
 public:
+    /**
+     * @brief 생성자.
+     */
+    explicit Shader() noexcept;
+
+    /**
+     * @brief 소멸자.
+     */
+    virtual ~Shader() noexcept override;
+
     /**
      * @brief 셰이더를 사용합니다.
      */
@@ -42,7 +242,7 @@ public:
     /**
      * @brief 셰이더 프로그램 ID를 반환합니다.
      *
-     * @return unsigned int 셰이더 프로그램 ID.
+     * @return unsigned int 셰이더 프로그램 ID
      */
     [[nodiscard]]
     inline unsigned int GetProgramID() noexcept
@@ -53,8 +253,8 @@ public:
     /**
      * @brief 정수형 유니폼 변수를 설정합니다.
      *
-     * @param name_  유니폼 변수 이름.
-     * @param value_ 설정할 값.
+     * @param name_  유니폼 변수 이름
+     * @param value_ 설정할 값
      */
     inline void SetUniformInt(const char* const name_, const int value_) noexcept
     {
@@ -65,8 +265,8 @@ public:
     /**
      * @brief 실수형 유니폼 변수를 설정합니다.
      *
-     * @param name_  유니폼 변수 이름.
-     * @param value_ 설정할 값.
+     * @param name_  유니폼 변수 이름
+     * @param value_ 설정할 값
      */
     inline void SetUniformFloat(const char* const name_, const float value_) noexcept
     {
@@ -77,8 +277,8 @@ public:
     /**
      * @brief 2차원 벡터 유니폼 변수를 설정합니다.
      *
-     * @param name_  유니폼 변수 이름.
-     * @param value_ 설정할 값.
+     * @param name_  유니폼 변수 이름
+     * @param value_ 설정할 값
      */
     inline void SetUniformVector2(const char* const name_, const glm::fvec3& value_) noexcept
     {
@@ -89,8 +289,8 @@ public:
     /**
      * @brief 3차원 벡터 유니폼 변수를 설정합니다.
      *
-     * @param name_  유니폼 변수 이름.
-     * @param value_ 설정할 값.
+     * @param name_  유니폼 변수 이름
+     * @param value_ 설정할 값
      */
     inline void SetUniformVector3(const char* const name_, const glm::fvec3& value_) noexcept
     {
@@ -101,8 +301,8 @@ public:
     /**
      * @brief 4차원 벡터 유니폼 변수를 설정합니다.
      *
-     * @param name_  유니폼 변수 이름.
-     * @param value_ 설정할 값.
+     * @param name_  유니폼 변수 이름
+     * @param value_ 설정할 값
      */
     inline void SetUniformVector4(const char* const name_, const glm::vec4& value_) noexcept
     {
@@ -113,8 +313,8 @@ public:
     /**
      * @brief 4x4 행렬 유니폼 변수를 설정합니다.
      *
-     * @param name_  유니폼 변수 이름.
-     * @param value_ 설정할 값.
+     * @param name_  유니폼 변수 이름
+     * @param value_ 설정할 값
      */
     inline void SetUniformMatrix4x4(const char* const name_, const glm::mat4& value_) noexcept
     {
@@ -122,7 +322,26 @@ public:
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value_));
     }
 
+protected:
+    /**
+     * @brief 셰이더를 로드합니다.
+     * 
+     * @param path_ 셰이더 이름
+     * 
+     * @return bool 셰이더 로드 성공 여부
+     */
+    virtual bool Load(std::string_view path_) noexcept override;
+
 private:
+    /**
+     * @brief 셰이더를 컴파일합니다.
+     * 
+     * @param type_   셰이더 타입 (GL_VERTEX_SHADER, GL_FRAGMENT_SHADER 등)
+     * @param source_ 셰이더 소스 코드
+     */
+    [[nodiscard]]
+    static unsigned int Compile(unsigned int type_, std::string_view source_) noexcept;
+
     /**
      * @brief 셰이더 프로그램 ID.
      */
@@ -131,6 +350,56 @@ private:
 
 class Material : public Resource
 {
+public:
+    /**
+     * @brief 생성자.
+     */
+    explicit Material() noexcept;
+
+    /**
+     * @brief 소멸자.
+     */
+    virtual ~Material() noexcept override;
+
+    inline void SetShader(Shader* shader_) noexcept
+    {
+        shader = shader_;
+    }
+
+    [[nodiscard]] Shader* GetShader() const noexcept
+    {
+        return shader;
+    }
+
+    void SetTexture(Texture* texture_) noexcept
+    {
+        texture = texture_;
+    }
+
+    [[nodiscard]] Texture* GetTexture() const noexcept
+    {
+        return texture;
+    }
+
+    void SetColor(const glm::vec4& color_) noexcept
+    {
+        color = color_;
+    }
+
+    [[nodiscard]] const glm::vec4& GetColor() const noexcept
+    {
+        return color;
+    }
+
+    void Bind() const noexcept;
+
+protected:
+    virtual bool Load(std::string_view path_) noexcept override;
+
+private:
+    Shader*   shader  = nullptr;
+    Texture*  texture = nullptr;
+    glm::vec4 color   = glm::vec4(1.0f); // 기본값: 흰색
 };
 
 class Mesh final : public Resource
@@ -156,7 +425,7 @@ public:
         /**
          * @brief 정점의 텍스처 좌표.
          */
-        glm::vec3 texCoords;
+        glm::vec2 texCoords;
     };
 
     /**
@@ -167,7 +436,22 @@ public:
     /**
      * @brief 소멸자.
      */
-    ~Mesh() noexcept;
+    virtual ~Mesh() noexcept override;
+
+    /**
+     * @brief 메쉬를 바인딩합니다.
+     */
+    void Draw() noexcept;
+
+protected:
+    /**
+     * @brief 머티리얼을 로드합니다.
+     *
+     * @param path_ 머티리얼 이름
+     *
+     * @return bool 머티리얼 로드 성공 여부
+     */
+    virtual bool Load(std::string_view path_) noexcept override;
 
 private:
     /**
@@ -199,8 +483,20 @@ private:
 class AudioClip : public Resource
 {
 public:
+    /**
+     * @brief 생성자.
+     */
+    virtual ~AudioClip() noexcept override;
 
-private:
+protected:
+    /**
+     * @brief 머티리얼을 로드합니다.
+     *
+     * @param path_ 머티리얼 이름
+     *
+     * @return bool 머티리얼 로드 성공 여부
+     */
+    virtual bool Load(std::string_view path_) noexcept override;
 };
 
 /**
@@ -210,21 +506,44 @@ private:
  */
 class ResourceManager final
 {
+    friend class Resource;
+
     STATIC_CLASS(ResourceManager)
 
 public:
     template <IsResource TResource>
     static TResource* LoadResource(std::string_view path_)
     {
-        if (resources.contains(path_))
+        // std::string 변환 (키 값 사용)
+        std::string key(path_);
+
+        if (resources.contains(key))
         {
-            return static_cast<TResource*>(resources[path_].get());
+            return static_cast<TResource*>(resources[key].get());
         }
 
-        auto result = MakeUnique<TResource>();
-        
+        // 1. 리소스 생성
+        auto result = std::make_unique<TResource>();
 
-        return resources.emplace(path_, std::move(result)).first->second.get();
+        // [핵심 수정] Resource* 로 캐스팅하여 호출
+        // ResourceManager는 Resource의 friend이므로 Resource::Load에 접근 가능
+        // Load는 가상 함수이므로 실제 인스턴스(Shader 등)의 Load가 호출됨
+        Resource* resourceBase = static_cast<Resource*>(result.get());
+
+        if (!resourceBase->Load(path_))
+        {
+            // 로드 실패 시 nullptr 반환 (선택 사항: 로그 출력)
+            return nullptr;
+        }
+
+        // 경로 설정 (Resource 클래스 멤버)
+        resourceBase->SetPath(path_);
+
+        // 2. 맵에 등록하고 포인터 반환
+        // emplace는 pair<iterator, bool>을 반환하므로 .first->second로 접근
+        auto it = resources.emplace(key, std::move(result));
+
+        return static_cast<TResource*>(it.first->second.get());
     }
 
     template <IsResource TResource>
@@ -233,7 +552,7 @@ public:
         auto it = resources.find(path_);
         if (it != resources.end())
         {
-            return static_cast<TResource*>(it->second.get());
+            return dynamic_cast<TResource*>(it->second.get());
         }
 
         return nullptr;

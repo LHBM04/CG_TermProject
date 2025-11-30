@@ -8,7 +8,7 @@ void Logger::Initialize() noexcept
     }
 
     auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    consoleSink->set_pattern("%^[%T] [%l] %v%$");
+    consoleSink->set_pattern("%^[%T] [%l] [%s:%#] %v%$");
 
     auto    now   = std::chrono::system_clock::now();
     auto    timeT = std::chrono::system_clock::to_time_t(now);
@@ -24,7 +24,7 @@ void Logger::Initialize() noexcept
     std::string logFileName = oss.str();
 
     auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logFileName, true);
-    fileSink->set_pattern("%^[%T] [%l] %v%$");
+    fileSink->set_pattern("%^[%T] [%l] [%s:%#] %v%$");
 
     std::vector<spdlog::sink_ptr> sinks{consoleSink, fileSink};
 

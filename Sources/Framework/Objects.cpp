@@ -2,7 +2,9 @@
 
 Component::Component(Object* const owner_) 
     : owner(owner_)
+    , transform(owner_->GetTransform())
     , isEnabled(true)
+    , isStarted(false)
     , isDestroyed(false)
 {
 }
@@ -17,6 +19,8 @@ Object::Object(std::string_view name_, std::string_view tag_) noexcept
     , isEnabled(true)
     , isDestroyed(false)
 {
+    // 기본 컴포넌트로 Transform 추가
+    transform = AddComponent<Transform>();
 }
 
 Object::~Object() noexcept
@@ -97,4 +101,16 @@ void Object::Render() noexcept
             component->Render();
         }
     }
+}
+
+Transform::Transform(Object* const owner)
+    : Component(owner)
+    , position(0.0f, 0.0f, 0.0f)
+    , rotation(0.0f, 0.0f, 0.0f)
+    , scale(1.0f, 1.0f, 1.0f)
+{
+}
+
+Transform::~Transform() noexcept
+{
 }

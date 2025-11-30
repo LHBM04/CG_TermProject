@@ -362,22 +362,22 @@ private:
     /**
      * @brief 이전 프레임에서의 키 상태.
      */
-    static std::array<bool, MAX_KEYS> lastKeyStates;
+    static std::array<bool, InputManager::MAX_KEYS> lastKeyStates;
 
     /**
      * @brief 현재 프레임에서의 키 상태.
      */
-    static std::array<bool, MAX_KEYS> nowKeyStates;
+    static std::array<bool, InputManager::MAX_KEYS> nowKeyStates;
 
     /**
      * @brief 이전 프레임에서의 마우스 버튼 상태.
      */
-    static std::array<bool, MAX_MOUSE_BUTTONS> lastMouseButtonStates;
+    static std::array<bool, InputManager::MAX_MOUSE_BUTTONS> lastMouseButtonStates;
 
     /**
      * @brief 현재 프레임에서의 마우스 버튼 상태.
      */
-    static std::array<bool, MAX_MOUSE_BUTTONS> nowMouseButtonStates;
+    static std::array<bool, InputManager::MAX_MOUSE_BUTTONS> nowMouseButtonStates;
 
     /**
      * @brief 이전 프레임에서의 마우스 위치.

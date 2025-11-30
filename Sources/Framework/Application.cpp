@@ -90,14 +90,16 @@ bool Application::Initialize(const Specification& specification_) noexcept
 
     glEnable(GL_DEPTH_TEST);
 
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    // glEnable(GL_CULL_FACE);
+    // glCullFace(GL_BACK);
 
 #if defined(DEBUG) || defined(_DEBUG)
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(Application::OnDebugMessage, nullptr);
-    //glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nullptr, GL_TRUE);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, 0, nullptr, GL_TRUE);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE);
 #endif
 
     InputManager::Initialize(window); 
@@ -186,17 +188,17 @@ void APIENTRY Application::OnDebugMessage(
         }
         case GL_DEBUG_SEVERITY_MEDIUM:
         {
-            Logger::Warning("{}", message_);
+            Logger::Warn("{}", message_);
             break;
         }
         case GL_DEBUG_SEVERITY_LOW:
         {
-            Logger::Info("[OpenGL][Low] {}", message_);
+            Logger::Warn("[OpenGL][Low] {}", message_);
             break;
         }
         case GL_DEBUG_SEVERITY_NOTIFICATION:
         {
-            Logger::Info("[OpenGL][Notification] {}", message_);
+            Logger::Warn("[OpenGL][Notification] {}", message_);
             break;
         }
         default:

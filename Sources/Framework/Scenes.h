@@ -13,6 +13,11 @@ class Scene
 {
 public:
     /**
+     * @brief 생성자.
+     */
+    explicit Scene() noexcept;
+
+    /**
      * @brief 소멸자.
      */
     virtual ~Scene() noexcept;
@@ -51,7 +56,7 @@ protected:
      * 
      * @return 배치된 엔티티
      */
-    Object* Emplace(std::string_view name_, std::string_view tag_) noexcept;
+    Object* AddObject(std::string_view name_, std::string_view tag_) noexcept;
 
     /**
      * @brief 씬에서 엔티티를 제거합니다.

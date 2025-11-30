@@ -123,7 +123,7 @@ public:
      * @return int 해당 애플리케이션의 창 너비.
      */
     [[nodiscard]]
-    static inline int GetWidth() noexcept
+    static inline int GetWindowWidth() noexcept
     {
         return specification.width;
     }
@@ -145,7 +145,7 @@ public:
      * @return int 해당 애플리케이션의 창 높이.
      */
     [[nodiscard]]
-    static inline int GetHeight() noexcept
+    static inline int GetWindowHeight() noexcept
     {
         return specification.height;
     }

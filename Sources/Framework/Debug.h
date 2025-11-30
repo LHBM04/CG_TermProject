@@ -6,12 +6,6 @@
 
 #include "Common.h"
 
-#define LOG_TRACE(message_, ...) Logger::Trace(message_, ...)
-#define LOG_INFO(message_, ...) Logger::Info(message_, ...)
-#define LOG_WARNING(message_, ...) Logger::Warning(message_, ...)
-#define LOG_ERROR(message_, ...) Logger::Error(message_, ...)
-#define LOG_CRITICAL(mes) Logger::Critical(message_, ...)
-
 /**
  * @class Logger
  *
@@ -74,7 +68,7 @@ public:
      * @param ...args_ 출력할 메시지에 포함될 인자
      */
     template <typename... Args>
-    static void Warning(spdlog::format_string_t<Args...> message_, Args... args_)
+    static void Warn(spdlog::format_string_t<Args...> message_, Args... args_)
     {
         if (!logger)
         {
@@ -142,7 +136,7 @@ private:
         /**
          * @brief 경고 로그.
          */
-        Warning,
+        Warn,
 
         /**
          * @brief 에러 로그. (하지만 실행은 될 수 있는 수준)
