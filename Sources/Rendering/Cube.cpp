@@ -127,35 +127,62 @@ void Cube::rotateLocal(float theta, glm::vec3 axis)
 // 절대 회전을 설정하면서 OBB도 델타만큼 회전시켜 동기화
 void Cube::setRotationAbsolute(const glm::quat& target)
 {
-    glm::quat current = rotation;
-    glm::quat delta   = glm::normalize(target * glm::inverse(current));
+    glm::quat t = glm::normalize(target);
+    glm::quat c = glm::normalize(rotation);
+    glm::quat delta = glm::normalize(t * glm::inverse(c));
 
-    // 축-각으로 분해
-    float angleRad = 2.0f * acos(glm::clamp(delta.w, -1.0f, 1.0f));
-    float s        = sqrtf(std::max(0.0f, 1.0f - delta.w * delta.w));
+    // w가 약간 음수일 때도 동일 회전을 나타내므로 부호 표준화
+    if (delta.w < 0.0f)
+    {
+        delta = glm::quat(-delta.w, -delta.x, -delta.y, -delta.z);
+    }
+
+    // angle 계산 안전화
+    float w = glm::clamp(delta.w, -1.0f, 1.0f);
+    float angleRad = 2.0f * acosf(w);
+    float s = sqrtf(std::max(0.0f, 1.0f - w * w));
+
     glm::vec3 axis(1.0f, 0.0f, 0.0f);
     if (s > 1e-6f)
-        axis = glm::normalize(glm::vec3(delta.x / s, delta.y / s, delta.z / s));
+        axis = glm::vec3(delta.x / s, delta.y / s, delta.z / s);
 
     float angleDeg = glm::degrees(angleRad);
-    if (fabs(angleDeg) > 1e-6f && glm::dot(axis, axis) > 1e-8f)
+
+    // 아주 작은 델타는 무시
+    if (angleDeg > 1e-4f && glm::dot(axis, axis) > 1e-8f)
     {
+        axis = glm::normalize(axis);
         obb->rotate(angleDeg, axis);
     }
 
-    rotation = glm::normalize(target);
+    rotation = t;
 }
 
 void Cube::checkCollisions(Cube* target)
 {
     if (obb->testOBBOBB_SAT(*target->obb, mtv))
     {
+        // MTV 클램프: 비정상적으로 큰 보정 방지
+        float len = glm::length(mtv);
+        if (len > 2.0f) // 씬 스케일에 맞게 임계값 조정
+        {
+            mtv *= (2.0f / len);
+        }
+
         move(mtv);
 
-        glm::vec3 normal  = glm::normalize(mtv);
-        float     dotProd = glm::dot(dir, normal);
+        glm::vec3 normal = glm::normalize(mtv);
+        float dotProd = glm::dot(dir, normal);
 
-        dir = dir - (1.0f + cor) * dotProd * normal;
+        // 벽을 뚫고 다시 들어가지 않도록 법선 성분 제거 + 약간의 슬롭 오프셋
+        if (dotProd < 0.0f) // 벽 안쪽으로 향하는 성분만 제거
+        {
+            dir = dir - (1.0f + cor) * dotProd * normal;
+        }
+
+        // 정적 벽과 접촉 시 미세 침투 방지용 작은 푸시
+        const float separationBias = 1e-3f;
+        move(separationBias * normal);
     }
 }
 

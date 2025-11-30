@@ -133,27 +133,27 @@ void Labyrinth::Xrotate(float theta)
     double next = static_cast<double>(rotatedAmountX) + static_cast<double>(theta);
     if (next > static_cast<double>(maxRotationX) || next < -static_cast<double>(maxRotationX))
         return;
-
     rotatedAmountX = static_cast<float>(next);
 
     glm::quat pitch = glm::angleAxis(glm::radians(rotatedAmountX), glm::vec3(1.0f, 0.0f ,0.0f));
     glm::quat roll  = glm::angleAxis(glm::radians(rotatedAmountZ), glm::vec3(0.0f, 0.0f, 1.0f));
     labyrinthRotation = glm::normalize(pitch * roll);
 
-    // 초기 상태에서 절대 변환 재적용: OBB와 렌더를 함께 동기화
+    // 1) 먼저 정적 벽 재적용 (teleport + setRotationAbsolute)
     for (size_t i = 0; i < map.size(); ++i)
     {
         glm::vec3 newPos = ApplyParentToPoint(initialMapPos[i], labyrinthRotation, pivot);
         map[i]->teleport(newPos);
-
-        glm::quat newRot = glm::normalize(labyrinthRotation * initialMapRot[i]);
-        map[i]->setRotationAbsolute(newRot);
+        map[i]->setRotationAbsolute(glm::normalize(labyrinthRotation * initialMapRot[i]));
     }
 
-    // 틀/핸들 유지 로직은 기존대로
+    // 2) 핸들과 프레임은 원하는 방식 유지
     for (auto& xf : XaxisFrame)
         xf->rotate(theta, glm::vec3(1.0f, 0.0f, 0.0f), pivot);
     Xhandle[0]->rotate(theta, glm::vec3(1.0f, 0.0f, 0.0f));
+
+    // 3) 이제 동적 오브젝트들의 충돌 처리(Update 루프에서 수행 권장)
+    //    - 여기서는 순서만 강조. 실제 동적 오브젝트가 어디에 있는지에 따라 호출 위치 조정.
 }
 
 void Labyrinth::Zrotate(float theta)

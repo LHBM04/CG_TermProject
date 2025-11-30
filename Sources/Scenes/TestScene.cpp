@@ -194,19 +194,19 @@ void TestScene::OnUpdate() noexcept
         labyrinth->Zrotate(-0.2f);
     }
 
-    if (Input::IsKeyHeld(GLFW_KEY_J))
+    if (Input::IsKeyHeld(GLFW_KEY_I))
     {
         labyrinth->Zrotate(-0.2f);
     }
-    else if (Input::IsKeyHeld(GLFW_KEY_L))
+    else if (Input::IsKeyHeld(GLFW_KEY_K))
     {
         labyrinth->Zrotate(0.2f);
     }
-    else if (Input::IsKeyHeld(GLFW_KEY_I))
+    else if (Input::IsKeyHeld(GLFW_KEY_J))
     {
         labyrinth->Xrotate(0.2f);
     }
-    else if (Input::IsKeyHeld(GLFW_KEY_K))
+    else if (Input::IsKeyHeld(GLFW_KEY_L))
     {
         labyrinth->Xrotate(-0.2f);
     }
