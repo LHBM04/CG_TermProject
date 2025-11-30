@@ -46,7 +46,7 @@ void InputManager::OnKeyInteracted(GLFWwindow* const window_, int key_, int scan
 
 void InputManager::OnMouseButtonInteracted(GLFWwindow* const window_, int button_, int action_, int mods_) noexcept
 {
-    if (button_ < 0 || button_ >= MAX_BUTTONS)
+    if (button_ < 0 || button_ >= MAX_MOUSE_BUTTONS)
     {
         return;
     }

@@ -140,11 +140,6 @@ enum class Keyboard : unsigned short
 };
 
 /**
- * @brief 애플리케이션에서 처리할 수 있는 키의 최대 개수.
- */
-static constexpr std::size_t MAX_KEYS = static_cast<std::size_t>(Keyboard::Menu) + 1;
-
-/**
  * @enum Mouse
  *
  * @brief 마우스 버튼 코드를 정의합니다.
@@ -165,11 +160,6 @@ enum class Mouse : unsigned char
     ButtonRight  = Button1,
     ButtonMiddle = Button2
 };
-
-/**
- * @brief 애플리케이션에서 처리할 수 있는 마우스 버튼의 최대 개수.
- */
-static constexpr std::size_t MAX_BUTTONS = static_cast<std::size_t>(Mouse::Button7) + 1;
 
 class Application;
 
@@ -354,14 +344,14 @@ private:
     static void OnMouseScrolled(GLFWwindow* const window_, double x_, double y_) noexcept;
 
     /**
-     * @brief 키 최대 개수.
+     * @brief 애플리케이션에서 처리할 수 있는 키의 최대 개수.
      */
-    static constexpr std::size_t MAX_KEYS = MAX_KEYS;
+    static constexpr std::size_t MAX_KEYS = static_cast<std::size_t>(Keyboard::Menu) + 1;
 
     /**
-     * @brief 버튼 최대 개수.
+     * @brief 애플리케이션에서 처리할 수 있는 마우스 버튼의 최대 개수.
      */
-    static constexpr std::size_t MAX_BUTTONS = MAX_BUTTONS;
+    static constexpr std::size_t MAX_MOUSE_BUTTONS = static_cast<std::size_t>(Mouse::Button7) + 1;
 
     /**
      * @brief 이전 프레임에서의 키 상태.
