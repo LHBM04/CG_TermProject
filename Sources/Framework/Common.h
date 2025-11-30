@@ -2,6 +2,7 @@
 
 // Standard
 #include <array>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
