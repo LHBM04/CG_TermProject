@@ -31,7 +31,6 @@ public:
     {
         // Scene에 입장하면 반드시 testCamera가 반드시 있어야 함.
         testCamera = AddObject("Test Camera", "Main Camera")->AddComponent<Camera>();
-        testCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 5.0f));
         testCamera->GetTransform()->SetRotation(glm::fvec3(0.0f, -90.0f, 0.0f));
   
         Light* testLight = AddObject("Test Light", "Light")->AddComponent<Light>();
@@ -43,20 +42,21 @@ public:
         testObject->GetTransform()->SetRotation(glm::fvec3(0.0f, 45.0f, 0.0f));
   
         testRenderer = testObject->AddComponent<MeshRenderer>();
-        testRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
-        testRenderer->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Texture_Test.png"));
 
-        Light* testLight = AddObject("Test Light", "Light")->AddComponent<Light>();
-        testLight->GetTransform()->SetPosition(glm::fvec3(0.0f, 5.0f, 5.0f));
-        testLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
+        mesh_cube = ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj");
+        mesh_ball = ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Ball.obj");
+        testRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Ball.obj"));
+        testRenderer->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Poketball.png"));
+
         testCamera_spline = testCamera->GetOwner()->AddComponent<Spline>();
-        testCamera_spline->AddPoint(glm::vec3(40.0f, 35.0f, 0.0f));
-        testCamera_spline->AddPoint(glm::vec3(0.0f, 30.0f, 40.0f));
-        testCamera_spline->AddPoint(glm::vec3(-40.0f, 25.0f, 0.0f));
-        testCamera_spline->AddPoint(glm::vec3(0.0f, 20.0f, -40.0f));
-        testCamera_spline->AddPoint(glm::vec3(40.0f, 15.0f, 0.0f));
-        testCamera_spline->AddPoint(glm::vec3(0.0f, 20.0f, 40.0f));
-        testCamera_spline->AddPoint(glm::vec3(20.0f, 20.0f, 20.0f));
+        // testCamera_spline->AddPoint(glm::vec3(40.0f, 35.0f, 0.0f));
+        // testCamera_spline->AddPoint(glm::vec3(0.0f, 30.0f, 40.0f));
+        // testCamera_spline->AddPoint(glm::vec3(-40.0f, 25.0f, 0.0f));
+        // testCamera_spline->AddPoint(glm::vec3(0.0f, 20.0f, -40.0f));
+        // testCamera_spline->AddPoint(glm::vec3(40.0f, 15.0f, 0.0f));
+        // testCamera_spline->AddPoint(glm::vec3(0.0f, 20.0f, 40.0f));
+        // testCamera_spline->AddPoint(glm::vec3(20.0f, 20.0f, 20.0f));
+        testCamera_spline->AddPoint(glm::vec3(0.0f, 0.0f, 5.0f));
     }
 
     virtual void OnUpdate() noexcept override
@@ -102,6 +102,9 @@ private:
      * @brief 카메라 이동 곡선
      */
     Spline* testCamera_spline = nullptr;
+
+    Mesh* mesh_cube = nullptr;
+    Mesh* mesh_ball = nullptr;
 
     /**
      * @brief 테스트에 사용할 메쉬 렌더러.
