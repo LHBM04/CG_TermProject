@@ -247,18 +247,11 @@ public:
             return glm::mat4(1.0f);
         }
 
-        const glm::vec3 position = transform->GetPosition();
-        const glm::vec3 rotation = transform->GetRotation();
+        const glm::vec3 pos   = transform->GetPosition();
+        const glm::vec3 front = transform->GetForward();
+        const glm::vec3 up    = transform->GetUp();
 
-        glm::vec3 front;
-        front.x = cos(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
-        front.y = sin(glm::radians(rotation.x));
-        front.z = sin(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
-        front   = glm::normalize(front);
-
-        const glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-
-        return glm::lookAt(position, position + front, up);
+        return glm::lookAt(pos, pos + front, up);
     }
 
     /**
