@@ -208,7 +208,6 @@ bool Mesh::Load(const std::filesystem::path& path_) noexcept
     std::vector<tinyobj::material_t> materials;
     std::string                      warn, err;
 
-    // GetDirectoryName은 이제 path를 반환하므로 string()으로 변환 후 '/' 추가
     std::filesystem::path baseDirPath = Path::GetDirectoryName(path_);
     std::string           baseDir     = baseDirPath.string() + "/";
 

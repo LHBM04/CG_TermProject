@@ -523,7 +523,8 @@ public:
 
         Resource* resourceBase = dynamic_cast<Resource*>(result.get());
 
-        if (!resourceBase->Load(path_))
+        std::filesystem::path fullPath = std::filesystem::current_path() / path_;
+        if (!resourceBase->Load(fullPath))
         {
             return nullptr;
         }
