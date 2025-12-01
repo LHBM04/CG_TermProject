@@ -48,26 +48,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// 강제 종료 매크로
-#define ABORT(message_, ...)             \
-    do                                   \
-    {                                    \
-        Logger::Critical(message_, ...); \
-        std::abort();                    \
-    }                                    \
-    while (0)                            \
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
 
-// 조건 실패 시 종료하는 ASSERT 매크로
-#define ASSERT(condition_, message_, ...)   \
-    do                                      \
-    {                                       \
-        if (!(condition_))                  \
-        {                                   \
-           Logger::Critical(message_, ...); \
-           std::abort();                    \
-        }                                   \
-    }                                       \
-    while (0)                               \
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 // 정적 클래스 매크로
 #define STATIC_CLASS(type)                      \

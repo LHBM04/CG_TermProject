@@ -6,6 +6,29 @@
 
 #include "Common.h"
 
+
+// 강제 종료 매크로
+#define ABORT(message_, ...)                                                                                           \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        Logger::Critical(message_, ...);                                                                               \
+        std::abort();                                                                                                  \
+    }                                                                                                                  \
+    while (0)
+
+// 조건 실패 시 종료하는 ASSERT 매크로
+#define ASSERT(condition_, message_, ...)                                                                              \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (!(condition_))                                                                                             \
+        {                                                                                                              \
+            Logger::Critical(message_, ...);                                                                           \
+            std::abort();                                                                                              \
+        }                                                                                                              \
+    }                                                                                                                  \
+    while (0)                               \
+
+
 /**
  * @class Logger
  *

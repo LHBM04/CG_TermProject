@@ -4,12 +4,6 @@
 #include "Rendering.h"
 #include "Debug.h"
 
-Scene::Scene() noexcept
-{
-    Object* camera = AddObject("Main Camera", "Camera");
-    camera->AddComponent<Camera>();
-}
-
 Scene::~Scene() noexcept
 {
 }
@@ -43,21 +37,17 @@ void Scene::FixedUpdate() noexcept
 
 void Scene::Render() noexcept
 {
-    // [1단계] 현재 씬에서 활성화된 모든 카메라를 수집합니다.
     std::vector<Camera*> cameras;
 
     for (const std::unique_ptr<Object>& object : objects)
     {
-        // 비활성화된 오브젝트는 건너뜀
         if (!object->IsEnabled())
         {
             continue;
         }
 
-        // type_index로 최적화된 GetComponent를 사용하여 빠르게 검사
         if (Camera* camera = object->GetComponent<Camera>())
         {
-            // 카메라도 켜져 있어야 함
             if (camera->IsEnabled())
             {
                 cameras.push_back(camera);
@@ -65,20 +55,16 @@ void Scene::Render() noexcept
         }
     }
 
-    // 활성화된 카메라가 없으면 그릴 필요가 없음
     if (cameras.empty())
     {
         Logger::Warn("No active camera found in the scene. Skipping rendering.");
         return;
     }
 
-    // [2단계] 수집된 카메라를 기준으로 렌더링을 수행합니다.
     for (Camera* camera : cameras)
     {
-        // 셰이더 설정 및 뷰포트/Clear 처리
         camera->Ready();
 
-        // 모든 오브젝트 렌더링
         for (const std::unique_ptr<Object>& object : objects)
         {
             if (object->IsEnabled())
@@ -88,7 +74,6 @@ void Scene::Render() noexcept
         }
     }
 
-    // UI 렌더링 등 후처리
     OnRender();
 }
 
