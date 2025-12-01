@@ -265,6 +265,8 @@ private:
  */
 class Component
 {
+    friend class Object;
+
 public:
     /**
      * @brief 생성자.
@@ -277,69 +279,6 @@ public:
      * @brief 소멸자.
      */
     virtual ~Component() noexcept;
-
-    /**
-     * @brief 해당 컴포넌트가 생성될 때 호출됩니다.
-     */
-    virtual void Awake()
-    {
-    }
-
-    /**
-     * @brief 해당 컴포넌트가 활성화될 때 호출됩니다.
-     */
-    virtual void OnEnabled()
-    {
-    }
-
-    /**
-     * @brief 활성화된 상태에서 첫 번째 Update 실행 직전에 호출됩니다.
-     */
-    virtual void Start()
-    {
-    }
-
-    /**
-     * @brief 매 프레임마다 호출됩니다.
-     */
-    virtual void Update()
-    {
-    }
-
-    /**
-     * @brief 고정된 시간 간격마다 호출됩니다. (물리 연산 등에 사용)
-     */
-    virtual void FixedUpdate()
-    {
-    }
-
-    /**
-     * @brief 모든 Update가 끝난 후 호출됩니다. (카메라 이동 등에 사용)
-     */
-    virtual void LateUpdate()
-    {
-    }
-
-    /**
-     * @brief 렌더링 시 호출됩니다.
-     */
-    virtual void Render()
-    {
-    }
-    
-    /**
-     * @brief 해당 컴포넌트가 비활성화될 때 호출됩니다.
-     */
-    virtual void OnDisabled()
-    {
-    }
-
-    /**
-     * @brief 컴포넌트가 파괴될 때 호출됩니다.
-     */
-    virtual void OnDestroy()
-    {
-    }
 
     /**
      * @brief 해당 컴포넌트의 오너 엔티티를 반환합니다.
@@ -432,6 +371,69 @@ public:
     }
 
 protected:
+    /**
+     * @brief 해당 컴포넌트가 생성될 때 호출됩니다.
+     */
+    virtual void Awake()
+    {
+    }
+
+    /**
+     * @brief 해당 컴포넌트가 활성화될 때 호출됩니다.
+     */
+    virtual void OnEnabled()
+    {
+    }
+
+    /**
+     * @brief 활성화된 상태에서 첫 번째 Update 실행 직전에 호출됩니다.
+     */
+    virtual void Start()
+    {
+    }
+
+    /**
+     * @brief 매 프레임마다 호출됩니다.
+     */
+    virtual void Update()
+    {
+    }
+
+    /**
+     * @brief 고정된 시간 간격마다 호출됩니다. (물리 연산 등에 사용)
+     */
+    virtual void FixedUpdate()
+    {
+    }
+
+    /**
+     * @brief 모든 Update가 끝난 후 호출됩니다. (카메라 이동 등에 사용)
+     */
+    virtual void LateUpdate()
+    {
+    }
+
+    /**
+     * @brief 렌더링 시 호출됩니다.
+     */
+    virtual void Render()
+    {
+    }
+
+    /**
+     * @brief 해당 컴포넌트가 비활성화될 때 호출됩니다.
+     */
+    virtual void OnDisabled()
+    {
+    }
+
+    /**
+     * @brief 컴포넌트가 파괴될 때 호출됩니다.
+     */
+    virtual void OnDestroy()
+    {
+    }
+
     /**
      * @brief 해당 컴포넌트의 오너.
      */

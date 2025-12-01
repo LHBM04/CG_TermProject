@@ -33,11 +33,17 @@ public:
         testCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 5.0f));
         testCamera->GetTransform()->SetRotation(glm::fvec3(0.0f, -90.0f, 0.0f));
 
-        testRenderer = AddObject("Test Object", "Object")->AddComponent<MeshRenderer>();
-        testRenderer->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 0.0f)); 
-        testRenderer->GetTransform()->SetRotation(glm::fvec3(0.0f, 45.0f, 0.0f));
+        Light* testLight = AddObject("Test Light", "Light")->AddComponent<Light>();
+        testLight->GetTransform()->SetPosition(glm::fvec3(0.0f, 5.0f, 5.0f));
+        testLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
 
+        testObject = AddObject("Test Object", "Object");
+        testObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 0.0f));
+        testObject->GetTransform()->SetRotation(glm::fvec3(0.0f, 45.0f, 0.0f));
+
+        testRenderer = testObject->AddComponent<MeshRenderer>();
         testRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
+        testRenderer->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Texture_Test.png"));
     }
 
     virtual void OnUpdate() noexcept override
@@ -73,11 +79,6 @@ private:
      * @brief 테스트에 사용할 카메라.
      */
     Camera* testCamera = nullptr;
-
-    /**
-     * @brief 테스트에 사용할 메쉬.
-     */
-    Mesh* testMesh = nullptr;
 
     /**
      * @brief 테스트에 사용할 메쉬 렌더러.

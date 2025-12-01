@@ -41,6 +41,33 @@ void Camera::Ready() const noexcept
     
     const glm::mat4 projection = GetProjectionMatrix();
     shader->SetUniformMatrix4x4("projection", projection);
+
+    const glm::fvec3 viewPosition = GetTransform()->GetPosition();
+    shader->SetUniformVector3("viewPos", viewPosition);
+}
+
+Light::Light(Object* const owner_) noexcept
+    : Component(owner_)
+    , color(1.0f, 1.0f, 1.0f)
+{
+}
+
+Light::~Light() noexcept
+{
+}
+
+void Light::Update() noexcept
+{
+    static Shader* shader = ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard");
+    if (!shader)
+    {
+        Logger::Error("Light: Failed to load default shader.");
+        return;
+    }
+
+    shader->Use();
+    shader->SetUniformVector3("lightColor", color);
+    shader->SetUniformVector3("lightPos", GetTransform()->GetPosition());
 }
 
 MeshRenderer::MeshRenderer(Object* const owner_) noexcept
@@ -69,6 +96,12 @@ void MeshRenderer::Render() noexcept
 
     shader->Use();
     shader->SetUniformMatrix4x4("model", GetTransform()->GetWorldMatrix());
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture->GetTextureID());
+
+    GLint samplerLoc = glGetUniformLocation(shader->GetProgramID(), "outTexture");
+    glUniform1i(samplerLoc, 0);
 
     mesh->Draw();
 }
