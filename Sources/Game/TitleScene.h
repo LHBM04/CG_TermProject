@@ -42,7 +42,6 @@ public:
         testCamera_spline->AddPoint(glm::vec3(40.0f, 15.0f, 0.0f));
         testCamera_spline->AddPoint(glm::vec3(0.0f, 20.0f, 40.0f));
         testCamera_spline->AddPoint(glm::vec3(20.0f, 20.0f, 20.0f));
-
         
 
         testRenderer = AddObject("Test Object", "Object")->AddComponent<MeshRenderer>();
@@ -57,7 +56,6 @@ public:
         testCamera->GetTransform()->SetPosition(testCamera_spline->GetTransform()->GetPosition());
 
         const glm::fvec3 tmp = testCamera->GetTransform()->GetPosition();
-        SPDLOG_INFO("cameraPos: {}, {}, {}", tmp.x, tmp.y, tmp.z);
 
         if (InputManager::IsKeyPressed(Keyboard::Enter))
         {
