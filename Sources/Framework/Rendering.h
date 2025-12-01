@@ -324,6 +324,13 @@ private:
     float orthoSize;
 };
 
+class Light : public Component
+{
+public:
+private:
+    glm::fvec3 color;
+};
+
 /**
  * @class MeshRenderer
  *

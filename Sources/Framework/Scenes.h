@@ -13,11 +13,6 @@ class Scene
 {
 public:
     /**
-     * @brief 생성자.
-     */
-    explicit Scene() noexcept;
-
-    /**
      * @brief 소멸자.
      */
     virtual ~Scene() noexcept;

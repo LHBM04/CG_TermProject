@@ -41,7 +41,7 @@ public:
      * @return std::string 리소스 경로
      */
     [[nodiscard]]
-    inline std::string GetPath() const noexcept
+    inline const std::filesystem::path& GetPath() const noexcept
     {
         return path;
     }
@@ -51,7 +51,7 @@ public:
      * 
      * @param path_ 리소스 경로
      */
-    inline void SetPath(std::string_view path_) noexcept
+    inline void SetPath(const std::filesystem::path& path_) noexcept
     {
         path = path_;
     }
@@ -69,13 +69,13 @@ public:
 
 protected:
     /**
-     * @brief 해당 리소스를 로드합니다.
+     * @brief 지정한 경로에 위치한 리소스를 불러옵니다.
      * 
-     * @param path_ 리소스 이름
+     * @param path_ 불러올 리소스의 경로.
      * 
-     * @return bool 리소스 로드 성공 여부
+     * @return bool 리소스가 성공적으로 불러와졌는지 여부.
      */
-    virtual bool Load(std::string_view path_) noexcept = 0;
+    virtual bool Load(const std::filesystem::path& path_) noexcept = 0;
 
 private:
     /**
@@ -86,7 +86,7 @@ private:
     /**
      * @brief 리소스 경로.
      */
-    std::string path;
+    std::filesystem::path path;
 
     /**
      * @brief 리소스가 로드되었는지 여부.
@@ -113,7 +113,7 @@ protected:
      *
      * @return bool 머티리얼 로드 성공 여부
      */
-    virtual bool Load(std::string_view path_) noexcept override;
+    virtual bool Load(const std::filesystem::path& path_) noexcept override;
 };
 
 class Texture : public Resource
@@ -170,7 +170,7 @@ protected:
      *
      * @return bool 머티리얼 로드 성공 여부
      */
-    virtual bool Load(std::string_view path_) noexcept override;
+    virtual bool Load(const std::filesystem::path& path_) noexcept override;
 
 private:
     /**
@@ -210,7 +210,7 @@ protected:
      *
      * @return bool 머티리얼 로드 성공 여부
      */
-    virtual bool Load(std::string_view path_) noexcept override;
+    virtual bool Load(const std::filesystem::path& path_) noexcept override;
 };
 
 /**
@@ -330,7 +330,7 @@ protected:
      * 
      * @return bool 셰이더 로드 성공 여부
      */
-    virtual bool Load(std::string_view path_) noexcept override;
+    virtual bool Load(const std::filesystem::path& path_) noexcept override;
 
 private:
     /**
@@ -394,7 +394,7 @@ public:
     void Bind() const noexcept;
 
 protected:
-    virtual bool Load(std::string_view path_) noexcept override;
+    virtual bool Load(const std::filesystem::path& path_) noexcept override;
 
 private:
     Shader*   shader  = nullptr;
@@ -451,7 +451,7 @@ protected:
      *
      * @return bool 머티리얼 로드 성공 여부
      */
-    virtual bool Load(std::string_view path_) noexcept override;
+    virtual bool Load(const std::filesystem::path& path_) noexcept override;
 
 private:
     /**
@@ -496,7 +496,7 @@ protected:
      *
      * @return bool 머티리얼 로드 성공 여부
      */
-    virtual bool Load(std::string_view path_) noexcept override;
+    virtual bool Load(const std::filesystem::path& path_) noexcept override;
 };
 
 /**
@@ -512,42 +512,31 @@ class ResourceManager final
 
 public:
     template <IsResource TResource>
-    static TResource* LoadResource(std::string_view path_)
+    static TResource* LoadResource(const std::filesystem::path& path_)
     {
-        // std::string 변환 (키 값 사용)
-        std::string key(path_);
-
-        if (resources.contains(key))
+        if (resources.contains(path_))
         {
-            return static_cast<TResource*>(resources[key].get());
+            return dynamic_cast<TResource*>(resources[path_].get());
         }
 
-        // 1. 리소스 생성
-        auto result = std::make_unique<TResource>();
+        std::unique_ptr<TResource> result = std::make_unique<TResource>();
 
-        // [핵심 수정] Resource* 로 캐스팅하여 호출
-        // ResourceManager는 Resource의 friend이므로 Resource::Load에 접근 가능
-        // Load는 가상 함수이므로 실제 인스턴스(Shader 등)의 Load가 호출됨
-        Resource* resourceBase = static_cast<Resource*>(result.get());
+        Resource* resourceBase = dynamic_cast<Resource*>(result.get());
 
         if (!resourceBase->Load(path_))
         {
-            // 로드 실패 시 nullptr 반환 (선택 사항: 로그 출력)
             return nullptr;
         }
 
-        // 경로 설정 (Resource 클래스 멤버)
         resourceBase->SetPath(path_);
 
-        // 2. 맵에 등록하고 포인터 반환
-        // emplace는 pair<iterator, bool>을 반환하므로 .first->second로 접근
-        auto it = resources.emplace(key, std::move(result));
+        auto it = resources.emplace(path_, std::move(result));
 
-        return static_cast<TResource*>(it.first->second.get());
+        return dynamic_cast<TResource*>(it.first->second.get());
     }
 
     template <IsResource TResource>
-    static TResource* GetResource(std::string_view path_)
+    static TResource* GetResource(const std::filesystem::path& path_)
     {
         auto it = resources.find(path_);
         if (it != resources.end())
@@ -562,5 +551,5 @@ private:
     /**
      * @brief 게임 내 사용할 리소스들.
      */
-    static std::unordered_map<std::string, std::unique_ptr<Resource>> resources;
+    static std::unordered_map<std::filesystem::path, std::unique_ptr<Resource>> resources;
 };

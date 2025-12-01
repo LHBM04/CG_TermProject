@@ -1,5 +1,11 @@
 #include "Resources.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 #include "Debug.h"
 #include "IO.h"
 
@@ -24,14 +30,14 @@ Texture::~Texture() noexcept
     }
 }
 
-bool Texture::Load(std::string_view path_) noexcept
+bool Texture::Load(const std::filesystem::path& path_) noexcept
 {
     stbi_set_flip_vertically_on_load(true);
 
-    unsigned char* data = stbi_load(path_.data(), &width, &height, &channels, 0);
+    unsigned char* data = stbi_load(path_.string().c_str(), &width, &height, &channels, 0);
     if (!data)
     {
-        Logger::Error("Failed to load texture image: {}", path_);
+        Logger::Error("Failed to load texture image: {}", path_.string());
         return false;
     }
 
@@ -67,7 +73,7 @@ bool Texture::Load(std::string_view path_) noexcept
     stbi_image_free(data);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    Logger::Info("Texture loaded successfully: {} ({}x{}, {}ch)", path_, width, height, channels);
+    Logger::Info("Texture loaded successfully: {} ({}x{}, {}ch)", path_.string(), width, height, channels);
     return true;
 }
 #pragma endregion
@@ -86,65 +92,57 @@ Shader::~Shader() noexcept
     }
 }
 
-bool Shader::Load(std::string_view path_) noexcept
+bool Shader::Load(const std::filesystem::path& path_) noexcept
 {
-    // 입력받은 기본 경로에 확장자를 붙여 실제 파일 경로 생성
-    // 예: "Assets/Shaders/Simple" -> "Assets/Shaders/Simple.vert", "Assets/Shaders/Simple.frag"
-    const std::string vertexPath   = std::string(path_) + ".vert";
-    const std::string fragmentPath = std::string(path_) + ".frag";
+    std::filesystem::path vertexPath = path_;
+    vertexPath += ".vert";
 
-    // 1. 소스 코드 읽기
+    std::filesystem::path fragmentPath = path_;
+    fragmentPath += ".frag";
+
     const std::string vertexCode   = File::ReadAllText(vertexPath);
     const std::string fragmentCode = File::ReadAllText(fragmentPath);
 
     if (vertexCode.empty())
     {
-        Logger::Error("Vertex shader source is empty or file not found: {}", vertexPath);
+        Logger::Error("Vertex shader source is empty or file not found: {}", vertexPath.string());
         return false;
     }
     if (fragmentCode.empty())
     {
-        Logger::Error("Fragment shader source is empty or file not found: {}", fragmentPath);
+        Logger::Error("Fragment shader source is empty or file not found: {}", fragmentPath.string());
         return false;
     }
 
-    // 2. 컴파일
     const unsigned int vertexShader = Shader::Compile(GL_VERTEX_SHADER, vertexCode);
     if (vertexShader == 0)
-    {
         return false;
-    }
 
     const unsigned int fragmentShader = Shader::Compile(GL_FRAGMENT_SHADER, fragmentCode);
     if (fragmentShader == 0)
-    {
         return false;
-    }
 
-    // 3. 링크
     programID = glCreateProgram();
     glAttachShader(programID, vertexShader);
     glAttachShader(programID, fragmentShader);
     glLinkProgram(programID);
 
-    // 4. 링크 에러 체크
     int success;
     glGetProgramiv(programID, GL_LINK_STATUS, &success);
     if (success == GL_FALSE)
     {
         char infoLog[1024];
         glGetProgramInfoLog(programID, 1024, nullptr, infoLog);
-        Logger::Error("Shader Linking Failed [{}]:\n{}", path_, infoLog);
+        Logger::Error("Shader Linking Failed [{}]:\n{}", path_.string(), infoLog);
         glDeleteProgram(programID);
         programID = 0;
         return false;
     }
 
-    // 5. 정리
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    Logger::Info("Shader loaded successfully: {}", path_);
+    Logger::Info("Shader loaded successfully: {}", path_.string());
     return true;
 }
 
@@ -203,35 +201,25 @@ void Mesh::Draw() noexcept
     glBindVertexArray(0);
 }
 
-bool Mesh::Load(std::string_view path_) noexcept
+bool Mesh::Load(const std::filesystem::path& path_) noexcept
 {
-    // 1. 경로 처리 (.obj 확장자 자동 추가)
-    // path_가 "Assets/Meshes/Cube"라면 "Assets/Meshes/Cube.obj"로 변환
-    std::string fullPath = std::string(path_);
-
     tinyobj::attrib_t                attrib;
     std::vector<tinyobj::shape_t>    shapes;
     std::vector<tinyobj::material_t> materials;
     std::string                      warn, err;
 
-    std::string baseDir = Path::GetDirectoryName(fullPath) + "/";
+    // GetDirectoryName은 이제 path를 반환하므로 string()으로 변환 후 '/' 추가
+    std::filesystem::path baseDirPath = Path::GetDirectoryName(path_);
+    std::string           baseDir     = baseDirPath.string() + "/";
 
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, fullPath.c_str(), baseDir.c_str());
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path_.string().c_str(), baseDir.c_str());
 
     if (!warn.empty())
-    {
-        Logger::Warn("Mesh Load Warning [{}]: {}", fullPath, warn);
-    }
-
+        Logger::Warn("Mesh Load Warning [{}]: {}", path_.string(), warn);
     if (!err.empty())
-    {
-        Logger::Error("Mesh Load Error [{}]: {}", fullPath, err);
-    }
-
+        Logger::Error("Mesh Load Error [{}]: {}", path_.string(), err);
     if (!ret)
-    {
         return false;
-    }
 
     vertices.clear();
     indices.clear();
@@ -242,7 +230,6 @@ bool Mesh::Load(std::string_view path_) noexcept
         {
             Vertex vertex{};
 
-            // Position
             if (index.vertex_index >= 0)
             {
                 vertex.position = glm::fvec3(attrib.vertices[3 * index.vertex_index + 0],
@@ -250,7 +237,6 @@ bool Mesh::Load(std::string_view path_) noexcept
                                              attrib.vertices[3 * index.vertex_index + 2]);
             }
 
-            // Normal
             if (index.normal_index >= 0)
             {
                 vertex.normal = glm::fvec3(attrib.normals[3 * index.normal_index + 0],
@@ -258,7 +244,6 @@ bool Mesh::Load(std::string_view path_) noexcept
                                            attrib.normals[3 * index.normal_index + 2]);
             }
 
-            // TexCoord
             if (index.texcoord_index >= 0)
             {
                 vertex.texCoords = glm::fvec2(attrib.texcoords[2 * index.texcoord_index + 0],
@@ -281,19 +266,20 @@ bool Mesh::Load(std::string_view path_) noexcept
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
 
-    // 2. Normal (Layout 1)
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
 
-    // 3. TexCoord (Layout 2)
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
 
     glBindVertexArray(0);
 
-    Logger::Info("Mesh loaded successfully: {} (Vertices: {}, Indices: {})", fullPath, vertices.size(), indices.size());
+    Logger::Info("Mesh loaded successfully: {} (Vertices: {}, Indices: {})",
+                 path_.string(),
+                 vertices.size(),
+                 indices.size());
     return true;
 }
 #pragma endregion
 
-std::unordered_map<std::string, std::unique_ptr<Resource>> ResourceManager::resources;
+std::unordered_map<std::filesystem::path, std::unique_ptr<Resource>> ResourceManager::resources;
