@@ -269,6 +269,24 @@ class Component
 
 public:
     /**
+     * @enum Space
+     *
+     * @brief 좌표계 종류를 정의합니다.
+     */
+    enum class Space : unsigned char
+    {
+        /**
+         * @brief 로컬 좌표계.
+         */
+        Local,
+
+        /**
+         * @brief 월드 좌표계.
+         */
+        World
+    };
+
+    /**
      * @brief 생성자.
      * 
      * @param owner_ 해당 컴포넌트의 오너 엔티티
@@ -495,7 +513,7 @@ public:
     /**
      * @brief 오브젝트의 위치 값을 설정합니다.
      *
-     * @param position_ 설정할 위치 값
+     * @param translation_ 설정할 위치 값
      */
     inline void SetPosition(const glm::fvec3& position_) noexcept
     {
@@ -510,7 +528,7 @@ public:
     [[nodiscard]]
     inline const glm::fvec3& GetRotation() const noexcept
     {
-        return rotation;
+        return glm::degrees(glm::eulerAngles(rotation));
     }
 
     /**
@@ -520,7 +538,7 @@ public:
      */
     inline void SetRotation(const glm::fvec3& rotation_) noexcept
     {
-        rotation = rotation_;
+        rotation = glm::quat(glm::radians(rotation_));
     }
 
     /**
@@ -563,6 +581,146 @@ public:
     inline void SetParent(Transform* const parent_) noexcept
     {
         parent = parent_;
+    }
+
+    /**
+     * @brief 해당 트랜스폼의 앞쪽 벡터를 반환합니다.
+     * 
+     * @return glm::fvec3 해당 트랜스폼의 앞쪽 벡터
+     */
+    [[nodiscard]] 
+    inline glm::fvec3 GetForward() const noexcept
+    {
+        return glm::normalize(rotation * glm::fvec3(0.0f, 0.0f, -1.0f));
+    }
+
+    /**
+     * @brief 해당 트랜스폼의 윗쪽 벡터를 반환합니다.
+     *
+     * @return glm::fvec3 해당 트랜스폼의 윗쪽 벡터
+     */
+    [[nodiscard]] 
+    inline glm::fvec3 GetUp() const noexcept
+    {
+        return glm::normalize(rotation * glm::fvec3(0.0f, 1.0f, 0.0f));
+    }
+
+    /**
+     * @brief 해당 트랜스폼의 오른쪽 벡터를 반환합니다.
+     * 
+     * @return glm::fvec3 해당 트랜스폼의 오른쪽 벡터
+     */
+    [[nodiscard]] 
+    inline glm::fvec3 GetRight() const noexcept
+    {
+        return glm::normalize(rotation * glm::fvec3(1.0f, 0.0f, 0.0f));
+    }
+
+    /**
+     * @brief 오브젝트의 전방(Forward, -Z) 벡터를 지정한 방향으로 설정합니다.
+     */
+    inline void SetForward(const glm::fvec3& forward_) noexcept
+    {
+        if (glm::length2(forward_) < FLT_EPSILON)
+        {
+            return;
+        }
+
+        LookAt(position + forward_);
+    }
+
+    /**
+     * @brief 오브젝트의 위쪽(Up, +Y) 벡터를 지정한 방향으로 설정합니다.
+     */
+    inline void SetUp(const glm::fvec3& up_) noexcept
+    {
+        if (glm::length2(up_) < FLT_EPSILON)
+        {
+            return;
+        }
+
+        const glm::fvec3 currentUp = GetUp();
+        const glm::fvec3 targetUp  = glm::normalize(up_);
+
+        if (glm::length2(currentUp - targetUp) < FLT_EPSILON)
+        {
+            return;
+        }
+
+        const glm::quat rotationDelta = glm::rotation(currentUp, targetUp);
+        rotation = rotationDelta * rotation;
+    }
+
+    /**
+     * @brief 오브젝트의 오른쪽(Right, +X) 벡터를 지정한 방향으로 설정합니다.
+     */
+    inline void SetRight(const glm::fvec3& right_) noexcept
+    {
+        if (glm::length2(right_) < FLT_EPSILON)
+        {
+            return;
+        }
+
+        const glm::fvec3 currentRight = GetRight();
+        const glm::fvec3 targetRight  = glm::normalize(right_);
+
+        if (glm::length2(currentRight - targetRight) < FLT_EPSILON)
+        {
+            return;
+        }
+
+        const glm::quat rotationDelta = glm::rotation(currentRight, targetRight);
+        rotation = rotationDelta * rotation;
+    }
+
+    /**
+     * @brief 해당 트랜스폼이 지정한 위치를 바라보도록 설정합니다.
+     * 
+     * @param target  지정할 위치
+     * @param worldUp 월드 좌표계 내 윗쪽 벡터
+     */
+    inline void LookAt(const glm::fvec3& target, const glm::fvec3& worldUp = glm::fvec3(0, 1, 0)) noexcept
+    {
+        const glm::fvec3 direction = glm::normalize(target - position);
+        rotation = glm::quatLookAt(direction, worldUp);
+    }
+
+    /**
+     * @brief 해당 트랜프폼의 위치 값을 지정한 값만큼 이동시킵니다.
+     * 
+     * @param translation_ 지정할 값
+     * @param space_       이동을 수행할 좌표계 종류
+     */
+    inline void Translate(const glm::fvec3& translation_, const Transform::Space space_) noexcept
+    {
+        if (space_ == Space::Local)
+        {
+            position += rotation * translation_;
+        }
+        else
+        {
+            position += translation_;
+        }
+    }
+
+    /**
+     * @brief 해당 트랜스폼의 회전 값을 지정한 값만큼 회전시킵니다.
+     * 
+     * @param eulerAngles_ 지정할 값
+     * @param space_       회전을 수행할 좌표계 종류
+     */
+    inline void Rotate(const glm::fvec3& eulerAngles_, Space space_ = Space::Local) noexcept
+    {
+        const glm::fquat rotationDelta = glm::fquat(glm::radians(eulerAngles_));
+
+        if (space_ == Space::Local)
+        {
+            rotation = rotation * rotationDelta;
+        }
+        else
+        {
+            rotation = rotationDelta * rotation;
+        }
     }
 
     /**
@@ -612,7 +770,7 @@ private:
     /**
      * @brief 오브젝트의 회전 값.
      */
-    glm::fvec3 rotation;
+    glm::fquat rotation;
 
     /**
      * @brief 오브젝트의 크기 값.
