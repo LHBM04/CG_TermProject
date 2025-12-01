@@ -6,6 +6,7 @@
 #include "../Framework/Resources.h"
 #include "../Framework/Scenes.h"
 #include "../Framework/Time.h"
+#include "Spline.h"
 
 /**
  * @class TitleScene
@@ -33,6 +34,17 @@ public:
         testCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 5.0f));
         testCamera->GetTransform()->SetRotation(glm::fvec3(0.0f, -90.0f, 0.0f));
 
+        testCamera_spline = testCamera->GetOwner()->AddComponent<Spline>();
+        testCamera_spline->AddPoint(glm::vec3(40.0f, 35.0f, 0.0f));
+        testCamera_spline->AddPoint(glm::vec3(0.0f, 30.0f, 40.0f));
+        testCamera_spline->AddPoint(glm::vec3(-40.0f, 25.0f, 0.0f));
+        testCamera_spline->AddPoint(glm::vec3(0.0f, 20.0f, -40.0f));
+        testCamera_spline->AddPoint(glm::vec3(40.0f, 15.0f, 0.0f));
+        testCamera_spline->AddPoint(glm::vec3(0.0f, 20.0f, 40.0f));
+        testCamera_spline->AddPoint(glm::vec3(20.0f, 20.0f, 20.0f));
+
+        
+
         testRenderer = AddObject("Test Object", "Object")->AddComponent<MeshRenderer>();
         testRenderer->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 0.0f)); 
         testRenderer->GetTransform()->SetRotation(glm::fvec3(0.0f, 45.0f, 0.0f));
@@ -42,6 +54,11 @@ public:
 
     virtual void OnUpdate() noexcept override
     {
+        testCamera->GetTransform()->SetPosition(testCamera_spline->GetTransform()->GetPosition());
+
+        const glm::fvec3 tmp = testCamera->GetTransform()->GetPosition();
+        SPDLOG_INFO("cameraPos: {}, {}, {}", tmp.x, tmp.y, tmp.z);
+
         if (InputManager::IsKeyPressed(Keyboard::Enter))
         {
             Application::Quit();
@@ -75,9 +92,9 @@ private:
     Camera* testCamera = nullptr;
 
     /**
-     * @brief 테스트에 사용할 메쉬.
+     * @brief 카메라 이동 곡선
      */
-    Mesh* testMesh = nullptr;
+    Spline* testCamera_spline = nullptr;
 
     /**
      * @brief 테스트에 사용할 메쉬 렌더러.
