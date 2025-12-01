@@ -79,6 +79,8 @@ void Scene::Render() noexcept
 
 void Scene::Exit() noexcept
 {
+    objects.clear();
+
 	OnExit();
 }
 
