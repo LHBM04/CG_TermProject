@@ -46,9 +46,6 @@ public:
         testRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
         testRenderer->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Texture_Test.png"));
 
-        Light* testLight = AddObject("Test Light", "Light")->AddComponent<Light>();
-        testLight->GetTransform()->SetPosition(glm::fvec3(0.0f, 5.0f, 5.0f));
-        testLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
         testCamera_spline = testCamera->GetOwner()->AddComponent<Spline>();
         testCamera_spline->AddPoint(glm::vec3(40.0f, 35.0f, 0.0f));
         testCamera_spline->AddPoint(glm::vec3(0.0f, 30.0f, 40.0f));
@@ -62,9 +59,9 @@ public:
     virtual void OnUpdate() noexcept override
     {
         testCamera->GetTransform()->SetPosition(testCamera_spline->GetTransform()->GetPosition());
+        testCamera->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
         const glm::fvec3 tmp = testCamera->GetTransform()->GetPosition();
-        SPDLOG_INFO("cameraPos: {}, {}, {}", tmp.x, tmp.y, tmp.z);
 
         if (InputManager::IsKeyPressed(Keyboard::Enter))
         {
