@@ -241,7 +241,7 @@ public:
     [[nodiscard]]
     inline glm::fmat4x4 GetViewMatrix() const noexcept
     {
-        Transform* transform = GetOwner()->GetTransform();
+        Transform* const transform = GetOwner()->GetTransform();
         if (!transform)
         {
             return glm::mat4(1.0f);
