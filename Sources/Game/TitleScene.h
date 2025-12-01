@@ -37,7 +37,7 @@ public:
         testRenderer->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 0.0f)); 
         testRenderer->GetTransform()->SetRotation(glm::fvec3(0.0f, 45.0f, 0.0f));
 
-        testRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("C:/Game Projects/CG_TermProject/Assets/Meshes/Cube.obj"));
+        testRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
     }
 
     virtual void OnUpdate() noexcept override
@@ -83,4 +83,9 @@ private:
      * @brief 테스트에 사용할 메쉬 렌더러.
      */
     MeshRenderer* testRenderer = nullptr;
+
+    /**
+     * @brief 
+     */
+    Object* testObject = nullptr;
 };

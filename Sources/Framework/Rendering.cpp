@@ -25,7 +25,7 @@ Camera::~Camera()
 
 void Camera::Ready() const noexcept
 {
-    static Shader* shader = ResourceManager::LoadResource<Shader>("C:/Game Projects/CG_TermProject/Assets/Shaders/Standard");
+    static Shader* shader = ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard");
     if (!shader)
     {
         Logger::Error("Camera: Failed to load default shader.");
@@ -60,7 +60,7 @@ void MeshRenderer::Render() noexcept
         return;
     }
 
-    static Shader* const shader = ResourceManager::LoadResource<Shader>("C:/Game Projects/CG_TermProject/Assets/Shaders/Standard");
+    static Shader* const shader = ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard");
     if (!shader)
     {
         Logger::Error("MeshRenderer: Failed to load default shader.");
