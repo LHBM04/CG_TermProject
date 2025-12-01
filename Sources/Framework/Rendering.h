@@ -324,10 +324,53 @@ private:
     float orthoSize;
 };
 
+/**
+ * @brief 
+ */
 class Light : public Component
 {
 public:
+    /**
+     * @brief 생성자.
+     * 
+     * @param owner_ 해당 컴포넌트의 오너
+     */
+    explicit Light(Object* const owner_) noexcept;
+
+    /**
+     * @brief 소멸자.
+     */
+    virtual ~Light() noexcept override;
+
+    /**
+     * @brief 해당 조명의 색상을 반환합니다.
+     * * @return glm::fvec3 조명의 색상
+     */
+    [[nodiscard]]
+    inline const glm::fvec3& GetColor() const noexcept
+    {
+        return color;
+    }
+
+    /**
+     * @brief 해당 조명의 색상을 설정합니다.
+     * * @param color_ 설정할 색상
+     */
+    inline void SetColor(const glm::fvec3& color_) noexcept
+    {
+        color = color_;
+    }
+
+protected:
+    /**
+     * @brief 매 프레임마다 호출됩니다.
+     */
+    virtual void Update() noexcept override;
+
 private:
+    /**
+     * @brief 해당 조명의 색상.
+     */
     glm::fvec3 color;
 };
 
@@ -377,9 +420,35 @@ public:
         mesh = mesh_;
     }
 
+    /**
+     * @brief 해당 렌더러가 사용할 텍스처를 반환합니다.
+     * 
+     * @return Texture* 해당 렌더러가 사용할 텍스처
+     */
+    [[nodiscard]]
+    inline Texture* const GetTexture() const noexcept
+    {
+        return texture;
+    }
+
+    /**
+     * @brief 해당 렌더러가 사용할 텍스처를 설정합니다.
+     * 
+     * @param texture_ 해당 렌더러가 사용할 텍스처
+     */
+    inline void SetTexture(Texture* const texture_) noexcept
+    {
+        texture = texture_;
+    }
+
 private:
     /**
      * @brief 해당 렌더러가 그릴 메쉬.
      */
     Mesh* mesh;
+
+    /**
+     * @brief 해당 렌더러가 사용할 텍스처.
+     */
+    Texture* texture;
 };

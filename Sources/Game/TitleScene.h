@@ -33,7 +33,22 @@ public:
         testCamera = AddObject("Test Camera", "Main Camera")->AddComponent<Camera>();
         testCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 5.0f));
         testCamera->GetTransform()->SetRotation(glm::fvec3(0.0f, -90.0f, 0.0f));
+  
+        Light* testLight = AddObject("Test Light", "Light")->AddComponent<Light>();
+        testLight->GetTransform()->SetPosition(glm::fvec3(0.0f, 5.0f, 5.0f));
+        testLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
+  
+        testObject = AddObject("Test Object", "Object");
+        testObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 0.0f));
+        testObject->GetTransform()->SetRotation(glm::fvec3(0.0f, 45.0f, 0.0f));
+  
+        testRenderer = testObject->AddComponent<MeshRenderer>();
+        testRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
+        testRenderer->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Texture_Test.png"));
 
+        Light* testLight = AddObject("Test Light", "Light")->AddComponent<Light>();
+        testLight->GetTransform()->SetPosition(glm::fvec3(0.0f, 5.0f, 5.0f));
+        testLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
         testCamera_spline = testCamera->GetOwner()->AddComponent<Spline>();
         testCamera_spline->AddPoint(glm::vec3(40.0f, 35.0f, 0.0f));
         testCamera_spline->AddPoint(glm::vec3(0.0f, 30.0f, 40.0f));
@@ -42,13 +57,6 @@ public:
         testCamera_spline->AddPoint(glm::vec3(40.0f, 15.0f, 0.0f));
         testCamera_spline->AddPoint(glm::vec3(0.0f, 20.0f, 40.0f));
         testCamera_spline->AddPoint(glm::vec3(20.0f, 20.0f, 20.0f));
-        
-
-        testRenderer = AddObject("Test Object", "Object")->AddComponent<MeshRenderer>();
-        testRenderer->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 0.0f)); 
-        testRenderer->GetTransform()->SetRotation(glm::fvec3(0.0f, 45.0f, 0.0f));
-
-        testRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
     }
 
     virtual void OnUpdate() noexcept override
@@ -56,6 +64,7 @@ public:
         testCamera->GetTransform()->SetPosition(testCamera_spline->GetTransform()->GetPosition());
 
         const glm::fvec3 tmp = testCamera->GetTransform()->GetPosition();
+        SPDLOG_INFO("cameraPos: {}, {}, {}", tmp.x, tmp.y, tmp.z);
 
         if (InputManager::IsKeyPressed(Keyboard::Enter))
         {
