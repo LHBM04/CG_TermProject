@@ -90,10 +90,22 @@ public:
             xFramePivot->GetTransform()->SetRotation(glm::vec3(rotatedAmountX, 0.0f, 0.0f));
         }
 
+        // X축 손잡이 회전
+        if (xHandlePivot)
+        {
+            xHandlePivot->GetTransform()->SetRotation(glm::vec3(rotatedAmountX, 0.0f, 0.0f));
+        }
+
         // Z축 프레임 회전
         if (zFramePivot)
         {
             zFramePivot->GetTransform()->SetRotation(glm::vec3(0.0f, 0.0f, rotatedAmountZ));
+        }
+
+        // Z축 손잡이 회전
+        if (zHandlePivot)
+        {
+            zHandlePivot->GetTransform()->SetRotation(glm::vec3(0.0f, 0.0f, rotatedAmountZ));
         }
     }
 
@@ -113,7 +125,10 @@ private:
         boardPivot  = AddObject("BoardPivot", "Pivot");
         xFramePivot = AddObject("XFramePivot", "Pivot");
         zFramePivot = AddObject("ZFramePivot", "Pivot");
-
+        xHandlePivot = AddObject("XHandlePivot", "Pivot");
+        xHandlePivot->GetTransform()->SetPosition(glm::vec3(10.5f, -3.0f, 0.0f));
+        zHandlePivot = AddObject("ZHandlePivot", "Pivot");
+        zHandlePivot->GetTransform()->SetPosition(glm::vec3(0.0f, -3.0f, 10.5f));
 
         // 보드판
         for (int i = -7; i <= 7; ++i)
@@ -155,7 +170,7 @@ private:
                 nullptr, meshCube, texWood4, glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(20.0f, 1.0f, 20.0f)); // 10.0 * 2
 
         // X축 손잡이랑 바닥 파이프들
-        CreateCube(nullptr, meshCube, texHandle, glm::vec3(10.5f, -3.0f, 0.0f), glm::vec3(1.0f, 2.0f, 2.0f));
+        CreateCube(xHandlePivot, meshCube, texHandle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 2.0f));
         CreateCube(nullptr, meshCube, texBar, glm::vec3(0.7f, -3.0f, 0.0f), glm::vec3(18.8f, 0.4f, 0.4f));
         CreateCube(nullptr, meshCube, texBar, glm::vec3(8.5f, -1.5f, 0.0f), glm::vec3(0.4f, 3.0f, 0.4f));
         CreateCube(nullptr, meshCube, texBar, glm::vec3(-8.5f, -1.5f, 0.0f), glm::vec3(0.4f, 3.0f, 0.4f));
@@ -167,7 +182,7 @@ private:
         CreateCube(xFramePivot, meshCube, texWood2, glm::vec3(0.0f, 0.0f, -8.5f), glm::vec3(17.5f, 2.0f, 0.4f));
 
         // Z축 손잡이랑 바닥파이프들
-        CreateCube(nullptr, meshCube, texHandle, glm::vec3(0.0f, -3.0f, 10.5f), glm::vec3(2.0f, 2.0f, 1.0f));
+        CreateCube(zHandlePivot, meshCube, texHandle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 2.0f, 1.0f));
         CreateCube(nullptr, meshCube, texBar, glm::vec3(0.0f, -3.0f, 0.7f), glm::vec3(0.4f, 0.4f, 19.4f));
         CreateCube(nullptr, meshCube, texBar, glm::vec3(0.0f, -1.5f, 9.5f), glm::vec3(0.4f, 3.0f, 0.4f));
         CreateCube(nullptr, meshCube, texBar, glm::vec3(0.0f, -1.5f, -9.5f), glm::vec3(0.4f, 3.0f, 0.4f));
@@ -204,6 +219,8 @@ private:
     Object* boardPivot  = nullptr; // 미로 바닥 + 벽
     Object* xFramePivot = nullptr; // X축 프레임
     Object* zFramePivot = nullptr; // Z축 프레임
+    Object* xHandlePivot = nullptr; // X축 손잡이의 피봇
+    Object* zHandlePivot = nullptr; // Z축 손잡이의 피봇
 
     // 회전 상태
     float       rotatedAmountX = 0.0f;
