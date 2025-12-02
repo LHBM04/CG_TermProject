@@ -49,6 +49,7 @@ void Camera::Ready() const noexcept
 Light::Light(Object* const owner_) noexcept
     : Component(owner_)
     , color(1.0f, 1.0f, 1.0f)
+    , intensity(1.0f)
 {
 }
 
