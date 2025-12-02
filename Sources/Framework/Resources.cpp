@@ -220,39 +220,129 @@ bool Mesh::Load(const std::filesystem::path& path_) noexcept
     if (!ret)
         return false;
 
+    // 기존 GL 리소스 정리 (Cube::LoadFromModel 방식과 동일)
+    if (vao)
+        glDeleteVertexArrays(1, &vao);
+    if (vbo)
+        glDeleteBuffers(1, &vbo);
+    if (ebo)
+        glDeleteBuffers(1, &ebo);
+    vao = vbo = ebo = 0;
+
     vertices.clear();
     indices.clear();
 
+    // 전체 face 수 계산(각 shape의 num_face_vertices 벡터 길이 합)
+    size_t totalFaces = 0;
+    for (const auto& shape : shapes)
+        totalFaces += shape.mesh.num_face_vertices.size();
+
+    vertices.reserve(totalFaces * 3);
+    indices.reserve(totalFaces * 3);
+
+    glm::vec3 minP(FLT_MAX);
+    glm::vec3 maxP(-FLT_MAX);
+
+    // Face 단위로 삼각형 생성 (중복 정점)
     for (const auto& shape : shapes)
     {
-        for (const auto& index : shape.mesh.indices)
+        size_t      index_offset = 0;
+        const auto& nf           = shape.mesh.num_face_vertices;
+        for (size_t f = 0; f < nf.size(); ++f)
         {
-            Vertex vertex{};
-
-            if (index.vertex_index >= 0)
+            int fv = nf[f]; // 보통 3
+            if (fv < 3)
             {
-                vertex.position = glm::fvec3(attrib.vertices[3 * index.vertex_index + 0],
-                                             attrib.vertices[3 * index.vertex_index + 1],
-                                             attrib.vertices[3 * index.vertex_index + 2]);
+                // 삼각형이 아닌 경우 간단히 패스 (필요시 삼각화 필요)
+                index_offset += fv;
+                continue;
             }
 
-            if (index.normal_index >= 0)
+            // 삼각형의 세 정점 처리 (fv이 3이라고 가정)
+            glm::vec3 p[3];
+            glm::vec2 uv[3];
+
+            for (int k = 0; k < 3; ++k)
             {
-                vertex.normal = glm::fvec3(attrib.normals[3 * index.normal_index + 0],
-                                           attrib.normals[3 * index.normal_index + 1],
-                                           attrib.normals[3 * index.normal_index + 2]);
+                const tinyobj::index_t& idx = shape.mesh.indices[index_offset + k];
+
+                if (idx.vertex_index >= 0 && (size_t)(3 * idx.vertex_index + 2) < attrib.vertices.size())
+                {
+                    p[k] = glm::vec3(attrib.vertices[3 * idx.vertex_index + 0],
+                                     attrib.vertices[3 * idx.vertex_index + 1],
+                                     attrib.vertices[3 * idx.vertex_index + 2]);
+                    minP = glm::min(minP, p[k]);
+                    maxP = glm::max(maxP, p[k]);
+                }
+                else
+                {
+                    Logger::Warn("Mesh::Load: vertex index out of range for file {}", path_.string());
+                    p[k] = glm::vec3(0.0f);
+                }
+
+                if (idx.texcoord_index >= 0 && (size_t)(2 * idx.texcoord_index + 1) < attrib.texcoords.size())
+                {
+                    uv[k] = glm::vec2(attrib.texcoords[2 * idx.texcoord_index + 0],
+                                      attrib.texcoords[2 * idx.texcoord_index + 1]);
+                }
+                else
+                {
+                    uv[k] = glm::vec2(0.0f, 0.0f);
+                }
             }
 
-            if (index.texcoord_index >= 0)
+            // 노멀 계산 (Cube 코드의 로직과 동일하게 유지)
+            glm::vec3 n = glm::normalize(glm::cross(p[1] - p[0], p[2] - p[0]));
+            // 주의: 원본 Cube 코드의 조건을 그대로 복사하면 의도와 다르게 항상 기본노멀로 덮어써질 수 있음.
+            if (!glm::all(glm::isinf(n)))
+                n = glm::vec3(0.0f, 1.0f, 0.0f);
+
+            // 정점 push (면마다 중복 정점 생성)
+            for (int k = 0; k < 3; ++k)
             {
-                vertex.texCoords = glm::fvec2(attrib.texcoords[2 * index.texcoord_index + 0],
-                                              attrib.texcoords[2 * index.texcoord_index + 1]);
+                Vertex vertex{};
+                vertex.position  = p[k];
+                vertex.normal    = n;
+                vertex.texCoords = uv[k];
+
+                vertices.push_back(vertex);
+                indices.push_back(static_cast<unsigned int>(vertices.size() - 1));
             }
 
-            vertices.push_back(vertex);
-            indices.push_back(static_cast<unsigned int>(indices.size()));
+            index_offset += fv;
         }
     }
+
+    // 중심 이동 및 반경 계산 (Cube 방식과 동일)
+    glm::vec3 center      = (minP + maxP) * 0.5f;
+    glm::vec3 halfExtents = (maxP - minP) * 0.5f;
+    if (halfExtents.x <= 0.0f)
+        halfExtents.x = 0.0001f;
+    if (halfExtents.y <= 0.0f)
+        halfExtents.y = 0.0001f;
+    if (halfExtents.z <= 0.0f)
+        halfExtents.z = 0.0001f;
+
+    for (auto& v : vertices)
+    {
+        v.position -= center; // 모델을 원점 중심 정렬
+    }
+
+    // radius와 obb는 클래스에 존재한다고 가정하고 Cube와 동일한 계산을 적용
+    /*radius = Vector3(halfExtents.x * 0.5f, halfExtents.y * 0.5f, halfExtents.z * 0.5f);
+    if (obb)
+    {
+        obb->resize(glm::vec3(radius.x * 0.5f, radius.y * 0.5f, radius.z * 0.5f));
+        obb->teleport(glm::vec3(pos.x, pos.y, pos.z));
+    }*/
+
+    // GL 버퍼 업로드 (vao/vbo/ebo 생성 포함)
+    if (vao == 0)
+        glGenVertexArrays(1, &vao);
+    if (vbo == 0)
+        glGenBuffers(1, &vbo);
+    if (ebo == 0)
+        glGenBuffers(1, &ebo);
 
     glBindVertexArray(vao);
 
@@ -273,8 +363,9 @@ bool Mesh::Load(const std::filesystem::path& path_) noexcept
 
     glBindVertexArray(0);
 
-    Logger::Info("Mesh loaded successfully: {} (Vertices: {}, Indices: {})",
+    Logger::Info("Mesh loaded successfully: {} (Faces: {}, Vertices: {}, Indices: {})",
                  path_.string(),
+                 totalFaces,
                  vertices.size(),
                  indices.size());
     return true;
