@@ -354,6 +354,27 @@ public:
         color = color_;
     }
 
+    /**
+     * @brief 해당 조명의 세기를 반환합니다.
+     * 
+     * @return float 조명의 세기
+     */
+    [[nodiscard]]
+    inline float GetIntensity() const noexcept
+    {
+        return intensity;
+    }
+
+    /**
+     * @brief 해당 조명의 세기를 설정합니다.
+     * 
+     * @param intensity_ 조명의 세기
+     */
+    inline void SetIntensity(const float intensity_) noexcept
+    {
+        intensity = intensity_;
+    }
+
 protected:
     /**
      * @brief 매 프레임마다 호출됩니다.
@@ -365,6 +386,11 @@ private:
      * @brief 해당 조명의 색상.
      */
     glm::fvec3 color;
+
+    /**
+     * @brief 해당 조명의 세기.
+     */
+    float intensity;
 };
 
 /**

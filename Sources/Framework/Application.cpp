@@ -90,8 +90,8 @@ bool Application::Initialize(const Specification& specification_) noexcept
 
     glEnable(GL_DEPTH_TEST);
 
-    // glEnable(GL_CULL_FACE);
-    // glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
 #if defined(DEBUG) || defined(_DEBUG)
     glEnable(GL_DEBUG_OUTPUT);

@@ -66,7 +66,7 @@ void Light::Update() noexcept
     }
 
     shader->Use();
-    shader->SetUniformVector3("lightColor", color);
+    shader->SetUniformVector3("lightColor", color * intensity);
     shader->SetUniformVector3("lightPos", GetTransform()->GetPosition());
 }
 
