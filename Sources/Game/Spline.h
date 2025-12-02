@@ -5,7 +5,15 @@
 class Spline : public Component
 {
 public:
+    /**
+     * @brief 
+     * @param owner 
+     */
     explicit Spline(Object* const owner);
+
+    /**
+     * @brief 
+     */
     virtual ~Spline() noexcept;
 
     void AddPoint(glm::vec3 p)

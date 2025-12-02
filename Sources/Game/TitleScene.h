@@ -29,90 +29,68 @@ public:
 
     virtual void OnEnter() noexcept override
     {
-        // Scene에 입장하면 반드시 testCamera가 반드시 있어야 함.
-        testCamera = AddObject("Test Camera", "Main Camera")->AddComponent<Camera>();
-        testCamera->GetTransform()->SetRotation(glm::fvec3(0.0f, -90.0f, 0.0f));
-  
-        Light* testLight = AddObject("Test Light", "Light")->AddComponent<Light>();
-        testLight->GetTransform()->SetPosition(glm::fvec3(0.0f, 5.0f, 5.0f));
-        testLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
-  
-        testObject = AddObject("Test Object", "Object");
+        Object* const cameraObject = AddObject("Main Camera", "Camera");
+
+        mainCamera = cameraObject->AddComponent<Camera>();
+        mainCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 7.5f, 10.0f));
+        mainCamera->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
+
+        Object* const lightObject = AddObject("Directional Light", "Light");
+
+        mainLight = lightObject->AddComponent<Light>();
+        mainLight->GetTransform()->SetPosition(glm::fvec3(0.0f, 5.0f, 1.0f));
+
+        Object* const testObject = AddObject("Test Object", "Object");
         testObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 0.0f));
-        testObject->GetTransform()->SetRotation(glm::fvec3(0.0f, 45.0f, 0.0f));
-  
-        testRenderer = testObject->AddComponent<MeshRenderer>();
 
-        mesh_cube = ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj");
-        mesh_ball = ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Ball.obj");
-        testRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Ball.obj"));
-        testRenderer->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Poketball.png"));
-
-        testCamera_spline = testCamera->GetOwner()->AddComponent<Spline>();
-        // testCamera_spline->AddPoint(glm::vec3(40.0f, 35.0f, 0.0f));
-        // testCamera_spline->AddPoint(glm::vec3(0.0f, 30.0f, 40.0f));
-        // testCamera_spline->AddPoint(glm::vec3(-40.0f, 25.0f, 0.0f));
-        // testCamera_spline->AddPoint(glm::vec3(0.0f, 20.0f, -40.0f));
-        // testCamera_spline->AddPoint(glm::vec3(40.0f, 15.0f, 0.0f));
-        // testCamera_spline->AddPoint(glm::vec3(0.0f, 20.0f, 40.0f));
-        // testCamera_spline->AddPoint(glm::vec3(20.0f, 20.0f, 20.0f));
-        testCamera_spline->AddPoint(glm::vec3(0.0f, 0.0f, 5.0f));
+        MeshRenderer* objRenderer = testObject->AddComponent<MeshRenderer>();
+        objRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
+        objRenderer->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Texture_Test.png"));
     }
+    
 
     virtual void OnUpdate() noexcept override
     {
-        testCamera->GetTransform()->SetPosition(testCamera_spline->GetTransform()->GetPosition());
+        static float angle    = 0.0f;
+        static float distance = 7.0f;
 
-        const glm::fvec3 tmp = testCamera->GetTransform()->GetPosition();
-        SPDLOG_INFO("cameraPos: {}, {}, {}", tmp.x, tmp.y, tmp.z);
+        const float     rotationSpeed = 45.0f;
+        const glm::vec3 center(0.0f, 0.0f, 0.0f);
 
-        if (InputManager::IsKeyPressed(Keyboard::Enter))
+        if (InputManager::IsKeyHeld(Keyboard::N))
         {
-            Application::Quit();
+            distance += 10.0f * TimeManager::GetDeltaTime();
+        }
+        if (InputManager::IsKeyHeld(Keyboard::F))
+        {
+            distance -= 10.0f * TimeManager::GetDeltaTime();
+            if (distance < 0.5f)
+            {
+                distance = 0.5f;
+            }
         }
 
-        const float      scalar = TimeManager::GetDeltaTime() * 50.0f;
-        const glm::fvec3 curPos = testRenderer->GetTransform()->GetPosition();
+        angle += rotationSpeed * TimeManager::GetDeltaTime();
+        float radianAngle = glm::radians(angle);
+        float currentY    = center.y + (distance * 0.5f);
 
-        if (InputManager::IsKeyHeld(Keyboard::W))
-        {
-            testRenderer->GetTransform()->SetPosition(curPos + scalar * glm::fvec3(0.0f, 0.0f, -0.1f));
-        }
-        if (InputManager::IsKeyHeld(Keyboard::S))
-        {
-            testRenderer->GetTransform()->SetPosition(curPos + scalar * glm::fvec3(0.0f, 0.0f, 0.1f));
-        }
-        if (InputManager::IsKeyHeld(Keyboard::A))
-        {
-            testRenderer->GetTransform()->SetPosition(curPos + scalar * glm::fvec3(-0.1f, 0.0f, 0.0f));
-        }
-        if (InputManager::IsKeyHeld(Keyboard::D))
-        {
-            testRenderer->GetTransform()->SetPosition(curPos + scalar * glm::fvec3(0.1f, 0.0f, 0.0f));
-        }
+        float h_radius = distance * 0.866f;
+
+        float camX = center.x + sin(radianAngle) * h_radius;
+        float camZ = center.z + cos(radianAngle) * h_radius;
+
+        mainLight->GetTransform()->SetPosition(glm::vec3(camX, currentY, camZ));
+        mainLight->GetTransform()->LookAt(center);
     }
 
 private:
     /**
-     * @brief 테스트에 사용할 카메라.
+     * @brief 해당 씬의 메인 카메라.
      */
-    Camera* testCamera = nullptr;
+    Camera* mainCamera = nullptr;
 
     /**
-     * @brief 카메라 이동 곡선
+     * @brief 해당 씬의 메인 라이트.
      */
-    Spline* testCamera_spline = nullptr;
-
-    Mesh* mesh_cube = nullptr;
-    Mesh* mesh_ball = nullptr;
-
-    /**
-     * @brief 테스트에 사용할 메쉬 렌더러.
-     */
-    MeshRenderer* testRenderer = nullptr;
-
-    /**
-     * @brief 
-     */
-    Object* testObject = nullptr;
+    Light* mainLight = nullptr;
 };
