@@ -32,7 +32,7 @@ public:
         Object* const cameraObject = AddObject("Main Camera", "Camera");
 
         mainCamera = cameraObject->AddComponent<Camera>();
-        mainCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 7.5f, 10.0f));
+        mainCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 2.5f, 5.0f));
         mainCamera->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
 
         Object* const lightObject = AddObject("Directional Light", "Light");
@@ -45,7 +45,7 @@ public:
 
         MeshRenderer* objRenderer = testObject->AddComponent<MeshRenderer>();
         objRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
-        objRenderer->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Texture_Test.png"));
+        objRenderer->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle_bar.png"));
     }
     
 
