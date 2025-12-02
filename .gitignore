@@ -1,7 +1,12 @@
 # Created by https://www.toptal.com/developers/gitignore/api/c,c++,visualstudio,vcpkg
 # Edit at https://www.toptal.com/developers/gitignore?templates=c,c++,visualstudio,vcpkg
 
-!Assets/**
+# 기본적으로 모든 Assets 무시
+**/Assets/**
+
+# 루트의 Assets만 다시 허용
+!/Assets/
+!/Assets/**
 
 ### C ###
 # Prerequisites
