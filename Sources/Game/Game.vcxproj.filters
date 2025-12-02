@@ -4,10 +4,12 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Spline.cpp" />
     <ClCompile Include="OBB.cpp" />
+    <ClCompile Include="PlayerController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="Spline.h" />
     <ClInclude Include="OBB.h" />
+    <ClInclude Include="PlayerController.h" />
   </ItemGroup>
 </Project>
