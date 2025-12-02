@@ -32,13 +32,18 @@ public:
         Object* const cameraObject = AddObject("Main Camera", "Camera");
 
         mainCamera = cameraObject->AddComponent<Camera>();
-        mainCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 2.5f, 5.0f));
+        mainCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 5.5f, 7.0f));
         mainCamera->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
 
         Object* const lightObject = AddObject("Directional Light", "Light");
+        lightObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 2.5f, 3.0f));
+        
+        MeshRenderer* const lightRenderer = lightObject->AddComponent<MeshRenderer>();
+        lightRenderer->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
+        lightRenderer->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\White.png"));
 
         mainLight = lightObject->AddComponent<Light>();
-        mainLight->GetTransform()->SetPosition(glm::fvec3(0.0f, 5.0f, 1.0f));
+        mainLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
 
         Object* const testObject = AddObject("Test Object", "Object");
         testObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 0.0f));
@@ -52,7 +57,7 @@ public:
     virtual void OnUpdate() noexcept override
     {
         static float angle    = 0.0f;
-        static float distance = 7.0f;
+        static float distance = 3.0f;
 
         const float     rotationSpeed = 45.0f;
         const glm::vec3 center(0.0f, 0.0f, 0.0f);
