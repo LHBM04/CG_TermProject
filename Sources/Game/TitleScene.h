@@ -246,30 +246,21 @@ private:
     {
         Object* obj = AddObject("CubePart", isWall ? "Wall" : "Deco");
         if (parent)
-        {
             obj->GetTransform()->SetParent(parent->GetTransform());
-        }
 
         obj->GetTransform()->SetPosition(position);
-        obj->GetTransform()->SetScale(scale); // Framework의 Transform은 Scale 전체 크기가 아니라 배율일 수 있으니 주의.
-                                              // OBB는 반경(Half-extent)을 씀.
+        obj->GetTransform()->SetScale(scale);
 
         MeshRenderer* renderer = obj->AddComponent<MeshRenderer>();
         renderer->SetMesh(mesh);
         renderer->SetTexture(texture);
 
+        // [중요] 벽이나 바닥일 경우 OBB(충돌체) 추가
         if (isWall)
         {
             OBB* obb = obj->AddComponent<OBB>();
-            // 큐브의 기본 크기가 -1~1 (길이2)라면 scale 0.5는 길이 1.
-            // OBB는 Half-extent(반지름)를 받으므로, scale 자체가 반지름 역할.
-            //obb->resize(scale);
-
-            // 초기 위치 동기화
-            // 주의: Parent가 있으면 World Position을 계산해서 넣어야 함
-            // 간단하게 초기에는 로컬=월드라 가정하거나, UpdatePhysicsWalls에서 처리
+            obb->resize(scale); // Scale이 곧 반지름(Half-extent) 역할
             obb->teleport(position);
-
             wallOBBs.push_back(obb);
         }
     }
@@ -287,30 +278,18 @@ private:
                 // 2. 위치 추출
                 glm::vec3 pos = glm::vec3(worldMat[3]);
 
-                // 3. 회전 추출 (핵심 수정: 스케일 제거 후 회전만 뽑아내기)
-                // 행렬의 3개 축(Axis) 벡터를 가져옵니다.
-                glm::vec3 axisX = glm::vec3(worldMat[0]);
-                glm::vec3 axisY = glm::vec3(worldMat[1]);
-                glm::vec3 axisZ = glm::vec3(worldMat[2]);
+                // 회전 추출 (스케일 제거 후 순수 회전만 뽑기)
+                glm::vec3 axisX = glm::normalize(glm::vec3(worldMat[0]));
+                glm::vec3 axisY = glm::normalize(glm::vec3(worldMat[1]));
+                glm::vec3 axisZ = glm::normalize(glm::vec3(worldMat[2]));
 
-                // 벡터를 정규화(Normalize)하여 스케일(크기) 정보를 제거합니다.
-                if (glm::length(axisX) > 1e-6f)
-                    axisX = glm::normalize(axisX);
-                if (glm::length(axisY) > 1e-6f)
-                    axisY = glm::normalize(axisY);
-                if (glm::length(axisZ) > 1e-6f)
-                    axisZ = glm::normalize(axisZ);
-
-                // 정규화된 축으로 회전 행렬을 다시 만듭니다.
                 glm::mat3 rotMat;
-                rotMat[0] = axisX;
-                rotMat[1] = axisY;
-                rotMat[2] = axisZ;
-
-                // 순수 회전 행렬을 쿼터니언으로 변환
+                rotMat[0]     = axisX;
+                rotMat[1]     = axisY;
+                rotMat[2]     = axisZ;
                 glm::quat rot = glm::quat_cast(rotMat);
 
-                // 4. 동기화
+                // 동기화
                 obb->teleport(pos);
                 obb->setRotation(rot);
             }
