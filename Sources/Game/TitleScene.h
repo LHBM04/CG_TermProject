@@ -212,7 +212,7 @@ private:
     void CreatePlayer()
     {
         auto meshSphere =
-                ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"); // 구체 모델이 없다면 큐브로 대체
+                ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Ball.obj"); // 구체 모델이 없다면 큐브로 대체
         auto texBall = ResourceManager::LoadResource<Texture>(
                 "Assets\\Textures\\Poketball.png"); // 혹은 Rendering/Poketball.png
 
@@ -222,7 +222,7 @@ private:
         playerObject->GetTransform()->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
 
         // 공의 크기 설정 (기존 반지름 0.4 -> 지름 0.8)
-        playerObject->GetTransform()->SetScale(glm::vec3(1.0f));
+        playerObject->GetTransform()->SetScale(glm::vec3(0.7f));
 
         MeshRenderer* renderer = playerObject->AddComponent<MeshRenderer>();
         renderer->SetMesh(meshSphere);
@@ -230,7 +230,7 @@ private:
 
         OBB* obb = playerObject->AddComponent<OBB>();
         // OBB는 반경(Half-extents)을 사용하므로 Scale의 절반인 0.4를 입력
-        obb->resize(glm::vec3(0.4f));
+        obb->resize(glm::vec3(0.2f));
         obb->teleport(glm::vec3(0.0f, 5.0f, 0.0f));
 
         // 컨트롤러 추가
@@ -259,7 +259,7 @@ private:
         if (isWall)
         {
             OBB* obb = obj->AddComponent<OBB>();
-            obb->resize(scale); // Scale이 곧 반지름(Half-extent) 역할
+            obb->resize(scale * 0.5f); // Scale이 곧 반지름(Half-extent) 역할
             obb->teleport(position);
             wallOBBs.push_back(obb);
         }
