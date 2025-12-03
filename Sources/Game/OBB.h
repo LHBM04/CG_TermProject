@@ -26,6 +26,11 @@ public:
         return glm::mat3_cast(rotation)[1];
     }
 
+    void setRotation(const glm::quat& q)
+    {
+        rotation = q;
+    }
+
     void move(glm::vec3 v)
     {
         pos += v;
