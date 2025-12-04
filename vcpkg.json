@@ -11,10 +11,11 @@
         "docking-experimental"
       ]
     },
-    "stb",
     "openal-soft",
+    "stb",
     "tinyobjloader",
     "drlibs",
+    "freetype",
     "nlohmann-json",
     "spdlog"
   ]
