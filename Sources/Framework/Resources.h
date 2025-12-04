@@ -486,7 +486,23 @@ public:
     /**
      * @brief 생성자.
      */
+    explicit AudioClip() noexcept;
+
+    /**
+     * @brief 생성자.
+     */
     virtual ~AudioClip() noexcept override;
+
+    /**
+     * @brief 버퍼 ID를 반환합니다.
+     * 
+     * @return unsigned int 버퍼 ID
+     */
+    [[nodiscard]]
+    inline unsigned int GetBufferID() const noexcept
+    {
+        return bufferID;
+    }
 
 protected:
     /**
@@ -497,6 +513,12 @@ protected:
      * @return bool 머티리얼 로드 성공 여부
      */
     virtual bool Load(const std::filesystem::path& path_) noexcept override;
+
+private:
+    /**
+     * @brief 버퍼 ID.
+     */
+    unsigned int bufferID;
 };
 
 /**

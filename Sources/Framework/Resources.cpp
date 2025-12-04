@@ -1,10 +1,25 @@
 #include "Resources.h"
 
+#include <AL/al.h>
+#include <AL/alc.h>
+
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+
+#define STB_VORBIS_HEADER_ONLY
+#include <stb_vorbis.c>
+
+#define DR_MP3_IMPLEMENTATION
+#include <dr_mp3.h>
+
+#define DR_WAV_IMPLEMENTATION
+#include <dr_wav.h>
+
+#define DR_FLAC_IMPLEMENTATION
+#include <dr_flac.h>
 
 #include "Debug.h"
 #include "IO.h"
@@ -342,6 +357,113 @@ bool Mesh::Load(const std::filesystem::path& path_) noexcept
 
     glBindVertexArray(0);
 
+    return true;
+}
+#pragma endregion
+
+#pragma region AudioClip Implementation
+AudioClip::AudioClip() noexcept
+    : bufferID(0)
+{
+}
+
+AudioClip::~AudioClip() noexcept
+{
+    if (bufferID)
+    {
+        alDeleteBuffers(1, &bufferID);
+        bufferID = 0;
+    }
+}
+
+bool AudioClip::Load(const std::filesystem::path& path_) noexcept
+{
+    std::string pathStr = path_.string();
+    std::string ext     = path_.extension().string();
+
+    // 확장자 소문자 변환
+    for (auto& c : ext)
+        c = std::tolower(c);
+
+    short*       pSampleData        = nullptr;
+    unsigned int channels           = 0;
+    unsigned int sampleRate         = 0;
+    uint64_t     totalPCMFrameCount = 0;
+
+    // 1. 확장자에 따른 디코딩
+    if (ext == ".mp3")
+    {
+        drmp3_config config;
+        pSampleData = drmp3_open_file_and_read_pcm_frames_s16(pathStr.c_str(), &config, &totalPCMFrameCount, nullptr);
+    }
+    else if (ext == ".wav")
+    {
+        pSampleData = drwav_open_file_and_read_pcm_frames_s16(
+                pathStr.c_str(), &channels, &sampleRate, &totalPCMFrameCount, nullptr);
+    }
+    else if (ext == ".flac")
+    {
+        pSampleData = drflac_open_file_and_read_pcm_frames_s16(
+                pathStr.c_str(), &channels, &sampleRate, &totalPCMFrameCount, nullptr);
+    }
+    else if (ext == ".ogg")
+    {
+        int ch, rate;
+        int frames = stb_vorbis_decode_filename(pathStr.c_str(), &ch, &rate, &pSampleData);
+        if (frames > 0)
+        {
+            channels           = ch;
+            sampleRate         = rate;
+            totalPCMFrameCount = frames;
+        }
+    }
+    else
+    {
+        Logger::Error("Unsupported audio format: {}", ext);
+        return false;
+    }
+
+    // 2. 데이터 로드 실패 체크
+    if (!pSampleData)
+    {
+        Logger::Error("Failed to decode audio file: {}", pathStr);
+        return false;
+    }
+
+    // 3. OpenAL 포맷 결정
+    ALenum format = 0;
+    if (channels == 1)
+        format = AL_FORMAT_MONO16;
+    else if (channels == 2)
+        format = AL_FORMAT_STEREO16;
+
+    if (format == 0)
+    {
+        Logger::Error("Unsupported channel count ({}) in: {}", channels, pathStr);
+        free(pSampleData); // dr_libs와 stb 모두 standard free 사용 가능
+        return false;
+    }
+
+    // 4. OpenAL 버퍼 생성 및 업로드
+    if (bufferID == 0)
+        alGenBuffers(1, &bufferID);
+
+    // 데이터 크기(Byte) 계산: 프레임 수 * 채널 수 * 샘플 크기(2bytes)
+    ALsizei dataSize = static_cast<ALsizei>(totalPCMFrameCount * channels * sizeof(short));
+
+    alBufferData(bufferID, format, pSampleData, dataSize, sampleRate);
+
+    // 5. 메모리 해제
+    free(pSampleData);
+
+    // 6. 에러 체크
+    if (alGetError() != AL_NO_ERROR)
+    {
+        Logger::Error("OpenAL Error while buffering: {}", pathStr);
+        return false;
+    }
+
+    Logger::Info("AudioClip Loaded: {} ({} Hz, {} ch)", pathStr, sampleRate, channels);
     return true;
 }
 #pragma endregion
