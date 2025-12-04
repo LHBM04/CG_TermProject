@@ -12,8 +12,9 @@
       ]
     },
     "stb",
-    "miniaudio",
+    "openal-soft",
     "tinyobjloader",
+    "drlibs",
     "nlohmann-json",
     "spdlog"
   ]
