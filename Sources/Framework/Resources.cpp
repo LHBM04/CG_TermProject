@@ -9,9 +9,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#define STB_VORBIS_HEADER_ONLY
-#include <stb_vorbis.c>
-
 #define DR_MP3_IMPLEMENTATION
 #include <dr_mp3.h>
 
@@ -378,59 +375,76 @@ AudioClip::~AudioClip() noexcept
 
 bool AudioClip::Load(const std::filesystem::path& path_) noexcept
 {
+    // [1] 파일 시스템 경로 처리
     std::string pathStr = path_.string();
     std::string ext     = path_.extension().string();
-
-    // 확장자 소문자 변환
     for (auto& c : ext)
         c = std::tolower(c);
 
+    // [2] 파일을 바이너리로 메모리에 먼저 로드 (IO 분리)
+    // std::ifstream은 경로에 공백이 있어도, Unicode 경로라도 정확하게 처리합니다.
+    std::ifstream file(path_, std::ios::binary | std::ios::ate);
+    if (!file.is_open())
+    {
+        // 여기가 뜨면: 경로가 잘못되었거나, 다른 프로그램이 파일을 잡고 있음(Lock)
+        Logger::Error("File IO Error: Could not open file at {}", pathStr);
+        return false;
+    }
+
+    std::streamsize size = file.tellg();
+    if (size <= 0)
+    {
+        Logger::Error("File IO Error: File is empty {}", pathStr);
+        return false;
+    }
+
+    std::vector<uint8_t> fileBuffer(size);
+    file.seekg(0, std::ios::beg);
+    if (!file.read(reinterpret_cast<char*>(fileBuffer.data()), size))
+    {
+        Logger::Error("File IO Error: Failed to read bytes {}", pathStr);
+        return false;
+    }
+    file.close(); // 파일 핸들 즉시 반환
+
+    // [3] 메모리에서 디코딩 시작
     short*       pSampleData        = nullptr;
     unsigned int channels           = 0;
     unsigned int sampleRate         = 0;
     uint64_t     totalPCMFrameCount = 0;
 
-    // 1. 확장자에 따른 디코딩
     if (ext == ".mp3")
     {
         drmp3_config config;
-        pSampleData = drmp3_open_file_and_read_pcm_frames_s16(pathStr.c_str(), &config, &totalPCMFrameCount, nullptr);
+        pSampleData = drmp3_open_memory_and_read_pcm_frames_s16(
+                fileBuffer.data(), fileBuffer.size(), &config, &totalPCMFrameCount, nullptr);
+        if (pSampleData)
+        {
+            channels   = config.channels;
+            sampleRate = config.sampleRate;
+        }
     }
     else if (ext == ".wav")
     {
-        pSampleData = drwav_open_file_and_read_pcm_frames_s16(
-                pathStr.c_str(), &channels, &sampleRate, &totalPCMFrameCount, nullptr);
+        pSampleData = drwav_open_memory_and_read_pcm_frames_s16(
+                fileBuffer.data(), fileBuffer.size(), &channels, &sampleRate, &totalPCMFrameCount, nullptr);
     }
     else if (ext == ".flac")
     {
-        pSampleData = drflac_open_file_and_read_pcm_frames_s16(
-                pathStr.c_str(), &channels, &sampleRate, &totalPCMFrameCount, nullptr);
-    }
-    else if (ext == ".ogg")
-    {
-        int ch, rate;
-        int frames = stb_vorbis_decode_filename(pathStr.c_str(), &ch, &rate, &pSampleData);
-        if (frames > 0)
-        {
-            channels           = ch;
-            sampleRate         = rate;
-            totalPCMFrameCount = frames;
-        }
-    }
-    else
-    {
-        Logger::Error("Unsupported audio format: {}", ext);
-        return false;
+        // 여기서 실패하면 100% 포맷 문제 (Ogg-FLAC일 가능성 높음)
+        pSampleData = drflac_open_memory_and_read_pcm_frames_s16(
+                fileBuffer.data(), fileBuffer.size(), &channels, &sampleRate, &totalPCMFrameCount, nullptr);
     }
 
-    // 2. 데이터 로드 실패 체크
+    // [4] 결과 확인
     if (!pSampleData)
     {
-        Logger::Error("Failed to decode audio file: {}", pathStr);
+        // IO는 성공했으나 디코딩 실패 -> 파일 포맷이 라이브러리와 맞지 않음
+        Logger::Error("Decode Error: File loaded but failed to decode. Is it a valid Native FLAC? {}", pathStr);
         return false;
     }
 
-    // 3. OpenAL 포맷 결정
+    // [5] OpenAL 버퍼링 (이하 동일)
     ALenum format = 0;
     if (channels == 1)
         format = AL_FORMAT_MONO16;
@@ -439,31 +453,25 @@ bool AudioClip::Load(const std::filesystem::path& path_) noexcept
 
     if (format == 0)
     {
-        Logger::Error("Unsupported channel count ({}) in: {}", channels, pathStr);
-        free(pSampleData); // dr_libs와 stb 모두 standard free 사용 가능
+        Logger::Error("Unsupported channel count: {}", channels);
+        if (ext == ".flac")
+            drflac_free(pSampleData, nullptr); // mp3/wav 생략
         return false;
     }
 
-    // 4. OpenAL 버퍼 생성 및 업로드
     if (bufferID == 0)
         alGenBuffers(1, &bufferID);
-
-    // 데이터 크기(Byte) 계산: 프레임 수 * 채널 수 * 샘플 크기(2bytes)
     ALsizei dataSize = static_cast<ALsizei>(totalPCMFrameCount * channels * sizeof(short));
-
     alBufferData(bufferID, format, pSampleData, dataSize, sampleRate);
 
-    // 5. 메모리 해제
-    free(pSampleData);
+    // 메모리 해제
+    if (ext == ".mp3")
+        drmp3_free(pSampleData, nullptr);
+    else if (ext == ".wav")
+        drwav_free(pSampleData, nullptr);
+    else if (ext == ".flac")
+        drflac_free(pSampleData, nullptr);
 
-    // 6. 에러 체크
-    if (alGetError() != AL_NO_ERROR)
-    {
-        Logger::Error("OpenAL Error while buffering: {}", pathStr);
-        return false;
-    }
-
-    Logger::Info("AudioClip Loaded: {} ({} Hz, {} ch)", pathStr, sampleRate, channels);
     return true;
 }
 #pragma endregion

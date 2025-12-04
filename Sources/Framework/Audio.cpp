@@ -123,7 +123,7 @@ void AudioSource::Pause()
     }
 }
 
-AudioListener::AudioListener(Object* const owner)
+AudioListener::AudioListener(Object* const owner) noexcept
     : Component(owner)
 {
 }

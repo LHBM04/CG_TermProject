@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "Scenes.h"
 #include "Time.h"
+#include "Audio.h"
 
 bool Application::Initialize(const Specification& specification_) noexcept
 {
@@ -104,6 +105,7 @@ bool Application::Initialize(const Specification& specification_) noexcept
 
     InputManager::Initialize(window); 
     TimeManager::Initialize();
+    AudioSystem::Initialize();
 
     return true;
 }

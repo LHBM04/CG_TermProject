@@ -5,8 +5,7 @@
 
 #include "Common.h"
 #include "Objects.h"
-
-class AudioClip;
+#include "Resources.h"
 
 namespace AudioSystem
 {

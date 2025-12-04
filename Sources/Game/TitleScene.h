@@ -6,6 +6,7 @@
 #include "../Framework/Resources.h"
 #include "../Framework/Scenes.h"
 #include "../Framework/Time.h"
+#include "../Framework/Audio.h"
 #include <vector>
 #include "Spline.h"
 
@@ -36,6 +37,8 @@ public:
         mainCamera                 = cameraObject->AddComponent<Camera>();
         mainCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 30.0f, 20.0f)); // 뷰 조정
         mainCamera->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
+        
+        cameraObject->AddComponent<AudioListener>();
 
         // 2. 조명 설정
         Object* const lightObject = AddObject("Directional Light", "Light");
@@ -48,6 +51,13 @@ public:
 
         // 4. 플레이어(공) 생성
         CreatePlayer();
+
+        auto bgmPlayer = AddObject("BGM Player", "Audio")->AddComponent<AudioSource>();
+        auto bgmClip   = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\Stickerbush Symphony Restored to HD.mp3");
+        bgmPlayer->SetLooping(true);
+        bgmPlayer->GetTransform()->SetPosition(cameraObject->GetTransform()->GetPosition());
+        bgmPlayer->SetClip(bgmClip);
+        bgmPlayer->Play();
     }
 
     virtual void OnUpdate() noexcept override

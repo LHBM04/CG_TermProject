@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../Framework/Objects.h"
+#include "../Framework/Audio.h" // 오디오 관련 헤더 포함
+#include "../Framework/Resources.h" // 리소스 매니저 헤더 포함
 #include "OBB.h" // OBB 헤더 포함
 
 class PlayerController : public Component
@@ -31,6 +33,13 @@ public:
     // 충돌 처리 함수
     void CheckCollision(OBB* targetOBB);
 
+    virtual void Awake() override
+    {
+        audioSource = owner->AddComponent<AudioSource>();
+        wallSound = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\ballSliding.wav");
+        rollingSound = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\hitWall.wav");
+    }
+
     virtual void Update() override;
 
 private:
@@ -56,4 +65,10 @@ private:
 
     // 내 OBB 컴포넌트 캐싱
     OBB* myOBB = nullptr;
+
+    // 앙 오디오띠
+    AudioSource* audioSource = nullptr;
+
+    AudioClip* wallSound = nullptr;
+    AudioClip* rollingSound = nullptr;
 };
