@@ -8,11 +8,14 @@
 #include "../Framework/Time.h"
 #include "../Framework/Audio.h"
 #include <vector>
-#include "Spline.h"
+
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
 
 // 게임 로직 헤더 포함
 #include "OBB.h"
 #include "PlayerController.h"
+#include "Spline.h"
 
 /**
  * @class TitleScene
@@ -64,10 +67,7 @@ public:
 
     virtual void OnUpdate() noexcept override
     {
-        glm::vec3 curPos = cameraSpline->GetTransform()->GetPosition();
-        SPDLOG_INFO("{}, {}, {}", curPos.x, curPos.y, curPos.z);
-
-        mainCamera->GetTransform()->SetPosition(curPos);
+        mainCamera->GetTransform()->SetPosition(cameraSpline->GetTransform()->GetPosition(););
         // (0,0,0) 이 맵 중앙 위치라 맵을 계속 바라보게 하는 용도
         mainCamera->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -233,6 +233,7 @@ private:
                    glm::vec3(0.0f, -0.5f, 0.0f), // 두꺼워진 만큼 위치를 조금 내려서 윗면 높이를 맞춤
                    glm::vec3(15.0f, 1.0f, 15.0f),
                    true);
+
 
         // 2. 보드판 외곽 벽 및 내부 벽
         // 기존 radius(0.5) -> Scale(1.0) : 이렇게 해야 1칸을 꽉 채웁니다.

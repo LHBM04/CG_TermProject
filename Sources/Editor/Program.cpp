@@ -13,11 +13,14 @@
 #include <string>
 #include <vector>
 
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
+
 // ==========================================
 // 1. 데이터 구조 및 상수
 // ==========================================
 // 맵 사이즈는 데이터 저장용 한계일 뿐, 시각적으로는 무한해보임
-const int MAP_LIMIT     = 100;
+const int MAP_LIMIT     = 15;
 const int WINDOW_WIDTH  = 1280;
 const int WINDOW_HEIGHT = 720;
 
@@ -78,22 +81,29 @@ EditorState g_State;
 // ==========================================
 void SaveMap(const char* filename, const MapData& map)
 {
-    std::ofstream out(filename);
-    if (!out.is_open())
-        return;
+    // 1. JSON 객체 생성
+    json j;
+    j["width"]  = map.width;
+    j["height"] = map.height;
 
-    // 헤더: 너비 높이
-    out << map.width << " " << map.height << "\n";
-
-    // 데이터: 띄어쓰기로 구분
-    for (int i = 0; i < map.tiles.size(); ++i)
+    // 2. 타일 데이터 변환 (Enum -> int 변환 필요)
+    // vector<TileType>을 바로 넣을 수 없으므로 int vector로 캐스팅하거나 반복문 사용
+    std::vector<int> tileInts(map.tiles.size());
+    for (size_t i = 0; i < map.tiles.size(); ++i)
     {
-        out << (int)map.tiles[i] << " ";
-        if ((i + 1) % map.width == 0)
-            out << "\n";
+        tileInts[i] = static_cast<int>(map.tiles[i]);
     }
-    out.close();
-    std::cout << "[System] Map Saved: " << filename << std::endl;
+    j["tiles"] = tileInts;
+
+    // 3. 파일 쓰기
+    // 확장자를 .json으로 저장하는 것을 권장 (예: level1.json)
+    std::ofstream out(filename);
+    if (out.is_open())
+    {
+        out << j.dump(4); // 4칸 들여쓰기로 예쁘게 저장
+        out.close();
+        std::cout << "[System] Map Saved (JSON): " << filename << std::endl;
+    }
 }
 
 void LoadMap(const char* filename, MapData& map)
