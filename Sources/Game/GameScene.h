@@ -77,6 +77,10 @@ private:
         auto resClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\resurrection.wav");
         resurrection = AddObject("Resurrection", "SFX")->AddComponent<AudioSource>();
         resurrection->SetClip(resClip);
+
+        auto hitWallClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\hitWall.wav");
+        ballSound        = AddObject("hitWall Sound", "SFX")->AddComponent<AudioSource>();
+        ballSound->SetClip(hitWallClip);
     }
 
     void CreateLabyrinthBoard()
@@ -122,8 +126,6 @@ private:
 
         CreateCube(boardPivot, meshCube, texWood5, glm::vec3(0.0f, -1.5f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), false);
         CreateCube(nullptr, meshCube, texWood4, glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(20.0f, 1.0f, 20.0f), false);
-
-        // (프레임, 핸들 등 장식 요소 생성 코드 생략 - TitleScene에서 가져오세요)
     }
 
     void CreateLabyrinthLevel(int levelNum)
@@ -229,6 +231,16 @@ private:
         if (boardPivot)
             boardPivot->GetTransform()->SetRotation(glm::vec3(rotatedAmountX, 0.0f, rotatedAmountZ));
 
+        if (xFramePivot)
+            xFramePivot->GetTransform()->SetRotation(glm::vec3(rotatedAmountX, 0.0f, 0.0f));
+        if (xHandlePivot)
+            xHandlePivot->GetTransform()->SetRotation(glm::vec3(rotatedAmountX, 0.0f, 0.0f));
+        if (zFramePivot)
+            zFramePivot->GetTransform()->SetRotation(glm::vec3(0.0f, 0.0f, rotatedAmountZ));
+        if (zHandlePivot)
+            zHandlePivot->GetTransform()->SetRotation(glm::vec3(0.0f, 0.0f, rotatedAmountZ));
+
+
         // R키 리셋
         if (InputManager::IsKeyPressed(Keyboard::R))
         {
@@ -271,6 +283,18 @@ private:
             goalSound->Play();
             // [TODO] 다음 레벨 로드 혹은 승리 처리
             // SceneManager::LoadScene("Title Scene"); // 예시: 타이틀로 복귀
+        }
+
+        // 소리 재생
+        float slidingSoundVolume = glm::clamp(0.0f, glm::length(playerController->GetDir()) / 7, 1.0f);
+        float hitVolume          = abs(slidingSoundVolume - checkHitWall);
+
+        if (hitVolume > 0.1f)
+        {
+            ballSound->SetVolume(hitVolume * 2.0f);
+            ballSound->SetPitch(hitVolume);
+            ballSound->Play();
+            checkHitWall = slidingSoundVolume;
         }
     }
 
@@ -344,8 +368,10 @@ private:
     float rotatedAmountX = 0.0f;
     float rotatedAmountZ = 0.0f;
 
-    AudioSource* goalSound    = nullptr;
     AudioSource* resurrection = nullptr;
+    AudioSource* goalSound    = nullptr;
+    AudioSource* ballSound    = nullptr;
+    float        checkHitWall = 0.0f;
 
     Mesh*    meshSphere = ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Ball.obj");
     Mesh*    meshCube   = ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj");

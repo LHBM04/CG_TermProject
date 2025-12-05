@@ -184,6 +184,15 @@ private:
 
         if (boardPivot)
             boardPivot->GetTransform()->SetRotation(glm::vec3(rotatedAmountX, 0.0f, rotatedAmountZ));
+
+        if (xFramePivot)
+            xFramePivot->GetTransform()->SetRotation(glm::vec3(rotatedAmountX, 0.0f, 0.0f));
+        if (xHandlePivot)
+            xHandlePivot->GetTransform()->SetRotation(glm::vec3(rotatedAmountX, 0.0f, 0.0f));
+        if (zFramePivot)
+            zFramePivot->GetTransform()->SetRotation(glm::vec3(0.0f, 0.0f, rotatedAmountZ));
+        if (zHandlePivot)
+            zHandlePivot->GetTransform()->SetRotation(glm::vec3(0.0f, 0.0f, rotatedAmountZ));
     }
 private:
     Camera* mainCamera = nullptr;
