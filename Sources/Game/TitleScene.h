@@ -65,19 +65,23 @@ public:
         bgmPlayer->Play();
 
         auto hitWallClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\hitWall.wav");
-        ballSound = AddObject("hitWall Sound", "SFX")->AddComponent<AudioSource>();
+        ballSound = AddObject("HitWall Sound", "SFX")->AddComponent<AudioSource>();
         ballSound->SetClip(hitWallClip);
 
         auto resurrectionClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\resurrection.wav");
-        resurrection          = AddObject("resurrection Sound", "SFX")->AddComponent<AudioSource>();
+        resurrection          = AddObject("Resurrection Sound", "SFX")->AddComponent<AudioSource>();
         resurrection->SetVolume(0.3f);
         resurrection->SetClip(resurrectionClip);
+
+        auto goalClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\goal.wav");
+        goalSound     = AddObject("Goal Sound", "SFX")->AddComponent<AudioSource>();
+        goalSound->SetVolume(0.6f);
+        goalSound->SetClip(goalClip);
     }
 
     virtual void OnUpdate() noexcept override
     {
         
-
         mainCamera->GetTransform()->SetPosition(cameraSpline->GetTransform()->GetPosition());
         // (0,0,0) 이 맵 중앙 위치라 맵을 계속 바라보게 하는 용도
         mainCamera->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -198,6 +202,7 @@ public:
 
 
         // 플레이어 업데이트
+        
         if (playerController && boardPivot)
         {
             // 바닥/벽의 물리 충돌체를 현재 렌더링 위치/회전으로 이동
@@ -225,6 +230,7 @@ public:
                 checkHitWall = slidingSoundVolume;
             }
 
+            // 낙하 감지
             glm::vec3 playerPos = playerObject->GetTransform()->GetPosition();
             if (playerPos.y < -5.0f)
             {
@@ -252,6 +258,36 @@ public:
                     wallOBBs[i]->GetOwner()->GetTransform()->SetScale(glm::vec3(org.x, yScale, org.z));
                 }
             }
+
+
+            // 골인했을 때 효과음 재생
+            if (playerController)
+            {
+                glm::vec3   playerPos         = playerObject->GetTransform()->GetPosition();
+                static bool isGoalSoundPlayed = false;
+                if (abs(goalPosition.x - playerPos.x) < 0.3f && abs(goalPosition.z - playerPos.z) < 0.3f &&
+                    !isGoalSoundPlayed)
+                {
+                    isGoalSoundPlayed = true;
+                    goalSound->Play();
+                }
+
+                // 지금은 약 5초 뒤에 다시 시작점 되돌아가기로 했음
+                // 이걸 다음 맵 바꾸고 그 맵의 시작점으로 가게 하면 될듯
+                if (isGoalSoundPlayed)
+                {
+                    static float time = 0.0f;
+                    time += 0.01f;
+
+                    if (time > 5.0f)
+                    {
+                        playerObject->GetTransform()->SetPosition(startPosition);
+                        isGoalSoundPlayed = false;
+                        time = 0.0f;
+                    }
+                }
+            }
+            
         }
     }
 
@@ -350,10 +386,9 @@ private:
                                glm::vec3(1.0f, 1.0f, 1.0f),
                                true); // true = OBB(충돌체) 포함
 
-                    // 2 (Wall) 인 경우 바닥 위에 벽 추가
+                    // 2 Wall
                     if (tileType == 2)
                     {
-                        // 벽 위치: y = 0.5 (바닥 위)
                         CreateCube(boardPivot,
                                    meshCube,
                                    wall,
@@ -362,10 +397,28 @@ private:
                                    true);
                     }
 
-                    // 3 (Start) 인 경우 시작 위치 저장
+                    // 3 Start
                     else if (tileType == 3)
                     {
                         startPosition = glm::vec3(posX, 2.0f, posZ);
+                        CreateCube(boardPivot,
+                                   meshCube,
+                                   texRed,
+                                   glm::vec3(posX, -0.5f, posZ),
+                                   glm::vec3(1.0f, 1.2f, 1.0f),
+                                   false);
+                    }
+
+                    // 4 Goal
+                    else if (tileType == 4)
+                    {
+                        goalPosition = glm::vec3(posX, 0.0f, posZ);
+                        CreateCube(boardPivot,
+                                   meshCube,
+                                   texGreen,
+                                   glm::vec3(posX, -0.5f, posZ),
+                                   glm::vec3(1.0f, 1.2f, 1.0f),
+                                   false);
                     }
                 }
             }
@@ -470,12 +523,14 @@ private:
     bool              isPlayerCreated  = false;
 
     // 사운드 관련
-    AudioSource*      ballSound     = nullptr;
+    AudioSource*      ballSound        = nullptr;
     AudioSource*      bgmPlayer        = nullptr;
     AudioSource*      resurrection     = nullptr;
+    AudioSource*      goalSound        = nullptr;
     float             checkHitWall     = 0.0f;
 
     glm::vec3 startPosition;
+    glm::vec3 goalPosition;
 
     // 회전 중심점들
     Object* boardPivot  = nullptr; // 미로 바닥 + 벽
@@ -503,6 +558,9 @@ private:
     Texture* texWood5  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\mapBase.png");
     Texture* texHandle = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle.png");
     Texture* texBar    = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle_bar.png");
+
+    Texture* texGreen = ResourceManager::LoadResource<Texture>("Assets\\Textures\\Green.png");
+    Texture* texRed = ResourceManager::LoadResource<Texture>("Assets\\Textures\\Red.png");
 
     // 게임 플레이 진입 여부 확인용
     bool gameStarted = false;
