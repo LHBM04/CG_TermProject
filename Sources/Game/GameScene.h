@@ -76,11 +76,20 @@ private:
 
         auto resClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\resurrection.wav");
         resurrection = AddObject("Resurrection", "SFX")->AddComponent<AudioSource>();
+        resurrection->SetVolume(0.5f);
         resurrection->SetClip(resClip);
 
         auto hitWallClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\hitWall.wav");
         ballSound        = AddObject("hitWall Sound", "SFX")->AddComponent<AudioSource>();
         ballSound->SetClip(hitWallClip);
+
+        // BGM
+        auto bgmClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\Stickerbush Symphony Restored to HD.mp3");
+        bgmPlayer    = AddObject("BGM Player", "Audio")->AddComponent<AudioSource>();
+        bgmPlayer->SetLooping(true);
+        bgmPlayer->SetVolume(0.5f);
+        bgmPlayer->SetClip(bgmClip);
+        bgmPlayer->Play();
     }
 
     void CreateLabyrinthBoard()
@@ -368,6 +377,7 @@ private:
     float rotatedAmountX = 0.0f;
     float rotatedAmountZ = 0.0f;
 
+    AudioSource* bgmPlayer    = nullptr;
     AudioSource* resurrection = nullptr;
     AudioSource* goalSound    = nullptr;
     AudioSource* ballSound    = nullptr;

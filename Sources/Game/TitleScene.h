@@ -63,7 +63,7 @@ public:
 
         // BGM
         auto bgmClip =
-                ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\Stickerbush Symphony Restored to HD.mp3");
+                ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\TitleSceneMusic.mp3");
         bgmPlayer = AddObject("BGM Player", "Audio")->AddComponent<AudioSource>();
         bgmPlayer->SetLooping(true);
         bgmPlayer->SetVolume(0.5f);
@@ -200,12 +200,8 @@ private:
 
     Light*  mainLight  = nullptr;
 
-    // 사운드 관련
-    AudioSource*      ballSound        = nullptr;
-    AudioSource*      bgmPlayer        = nullptr;
-    AudioSource*      resurrection     = nullptr;
-    AudioSource*      goalSound        = nullptr;
-    float             checkHitWall     = 0.0f;
+    // 메인화면 브금
+    AudioSource* bgmPlayer = nullptr;
 
     // 회전 중심점들
     Object* boardPivot  = nullptr; // 미로 바닥 + 벽
