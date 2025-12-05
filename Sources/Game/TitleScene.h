@@ -7,6 +7,7 @@
 #include "../Framework/Scenes.h"
 #include "../Framework/Time.h"
 #include "../Framework/Audio.h"
+#include "../Framework/UI.h"
 #include <vector>
 #include <fstream>
 #include <iostream>
@@ -38,26 +39,29 @@ public:
     virtual void OnEnter() noexcept override
     {
         // 카메라 설정
-        Object* const cameraObject = AddObject("Main Camera", "Camera");
-        mainCamera                 = cameraObject->AddComponent<Camera>();
-        cameraSpline               = cameraObject->AddComponent<Spline>();
+        Object* const cameraObject = AddGameObject("Main Camera", "Camera");
+        cameraObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 30.0f, 20.0f));
+        cameraObject->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
 
-        mainCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 30.0f, 20.0f));
-        mainCamera->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
+        mainCamera = cameraObject->AddComponent<Camera>();
+        mainCamera->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
+        
+        cameraSpline = cameraObject->AddComponent<Spline>();
 
         // 조명 설정
-        Object* const lightObject = AddObject("Directional Light", "Light");
+        Object* const lightObject = AddGameObject("Directional Light", "Light");
         lightObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 3.0f, 0.0f));
         lightObject->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
 
         mainLight = lightObject->AddComponent<Light>();
+        mainLight->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
         mainLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
 
         // 미로 구조 생성
         CreateLabyrinth();
 
-        auto bgmClip   = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\Stickerbush Symphony Restored to HD.mp3");
-        bgmPlayer = AddObject("BGM Player", "Audio")->AddComponent<AudioSource>();
+        auto bgmClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\Stickerbush Symphony Restored to HD.mp3");
+        bgmPlayer = AddGameObject("BGM Player", "Audio")->AddComponent<AudioSource>();
         bgmPlayer->SetLooping(true);
         bgmPlayer->GetTransform()->SetPosition(cameraObject->GetTransform()->GetPosition());
         bgmPlayer->SetVolume(0.5f);
@@ -65,23 +69,31 @@ public:
         bgmPlayer->Play();
 
         auto hitWallClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\hitWall.wav");
-        ballSound = AddObject("HitWall Sound", "SFX")->AddComponent<AudioSource>();
+        ballSound = AddGameObject("HitWall Sound", "SFX")->AddComponent<AudioSource>();
         ballSound->SetClip(hitWallClip);
 
         auto resurrectionClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\resurrection.wav");
-        resurrection          = AddObject("Resurrection Sound", "SFX")->AddComponent<AudioSource>();
+        resurrection          = AddGameObject("Resurrection Sound", "SFX")->AddComponent<AudioSource>();
         resurrection->SetVolume(0.3f);
         resurrection->SetClip(resurrectionClip);
 
         auto goalClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\goal.wav");
-        goalSound     = AddObject("Goal Sound", "SFX")->AddComponent<AudioSource>();
+        goalSound     = AddGameObject("Goal Sound", "SFX")->AddComponent<AudioSource>();
         goalSound->SetVolume(0.6f);
         goalSound->SetClip(goalClip);
+
+        auto testImage = AddUIObject("Test Image", "UI");
+        testImage->GetTransform()->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+        testImage->GetTransform()->SetScale(glm::vec3(200.0f, 200.0f, 1.0f));
+
+        auto imageComp = testImage->AddComponent<ImageRenderer>();
+        imageComp->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
+        imageComp->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
+        imageComp->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\White.png"));
     }
 
     virtual void OnUpdate() noexcept override
     {
-        
         mainCamera->GetTransform()->SetPosition(cameraSpline->GetTransform()->GetPosition());
         // (0,0,0) 이 맵 중앙 위치라 맵을 계속 바라보게 하는 용도
         mainCamera->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -296,12 +308,12 @@ private:
     void CreateLabyrinth()
     {
         // 피봇 생성 (회전 중심점)
-        boardPivot   = AddObject("BoardPivot", "Pivot");
-        xFramePivot  = AddObject("XFramePivot", "Pivot");
-        zFramePivot  = AddObject("ZFramePivot", "Pivot");
-        xHandlePivot = AddObject("XHandlePivot", "Pivot");
+        boardPivot   = AddGameObject("BoardPivot", "Pivot");
+        xFramePivot  = AddGameObject("XFramePivot", "Pivot");
+        zFramePivot  = AddGameObject("ZFramePivot", "Pivot");
+        xHandlePivot = AddGameObject("XHandlePivot", "Pivot");
         xHandlePivot->GetTransform()->SetPosition(glm::vec3(10.5f, -3.0f, 0.0f));
-        zHandlePivot = AddObject("ZHandlePivot", "Pivot");
+        zHandlePivot = AddGameObject("ZHandlePivot", "Pivot");
         zHandlePivot->GetTransform()->SetPosition(glm::vec3(0.0f, -3.0f, 10.5f));
 
         CreateCube(boardPivot,
@@ -510,7 +522,7 @@ private:
         auto texBall = ResourceManager::LoadResource<Texture>(
                 "Assets\\Textures\\Poketball.png"); // 혹은 Rendering/Poketball.png
 
-        playerObject = AddObject("Player", "Player");
+        playerObject = AddGameObject("Player", "Player");
 
         playerObject->GetTransform()->SetPosition(startPosition);
 
@@ -518,6 +530,7 @@ private:
         playerObject->GetTransform()->SetScale(glm::vec3(0.7f));
 
         MeshRenderer* renderer = playerObject->AddComponent<MeshRenderer>();
+        renderer->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
         renderer->SetMesh(meshSphere);
         renderer->SetTexture(texBall);
 
@@ -537,7 +550,7 @@ private:
     // 큐브 생성 헬퍼 함수
     void CreateCube(Object* parent, Mesh* mesh, Texture* texture, glm::vec3 position, glm::vec3 scale, bool isWall)
     {
-        Object* obj = AddObject("CubePart", isWall ? "Wall" : "Deco");
+        Object* obj = AddGameObject("CubePart", isWall ? "Wall" : "Deco");
         if (parent)
             obj->GetTransform()->SetParent(parent->GetTransform());
 
@@ -545,6 +558,7 @@ private:
         obj->GetTransform()->SetScale(scale);
 
         MeshRenderer* renderer = obj->AddComponent<MeshRenderer>();
+        renderer->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
         renderer->SetMesh(mesh);
         renderer->SetTexture(texture);
 

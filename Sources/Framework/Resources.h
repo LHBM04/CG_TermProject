@@ -20,7 +20,7 @@ public:
      * @return std::string 리소스 이름
      */
     [[nodiscard]]
-    inline std::string GetName() const noexcept
+    inline std::string GetWindowTitle() const noexcept
     {
         return name;
     }
@@ -161,6 +161,11 @@ public:
     {
         return height;
     }
+
+    /**
+     * @brief 해당 텍스쳐를 바인딩합니다.
+     */
+    void Bind() const;
 
 protected:
     /**
@@ -562,12 +567,12 @@ public:
     static TResource* GetResource(const std::filesystem::path& path_)
     {
         auto it = resources.find(path_);
-        if (it != resources.end())
+        if (it == resources.end())
         {
-            return dynamic_cast<TResource*>(it->second.get());
+            return GetResource<TResource>(path_);
         }
 
-        return nullptr;
+        return dynamic_cast<TResource*>(it->second.get());
     }
 
 private:

@@ -86,6 +86,17 @@ public:
      */
     void Ready() const noexcept;
 
+    [[nodiscard]]
+    inline Shader* const GetShader() const noexcept
+    {
+        return shader;
+    }
+
+    inline void SetShader(Shader* const shader_) noexcept
+    {
+        shader = shader_;
+    }
+
     /**
      * @brief 해당 카메라의 투영 방식을 반환합니다.
      *
@@ -239,20 +250,7 @@ public:
      * @return glm::fmat4x4 해당 카메라의 뷰 행렬
      */
     [[nodiscard]]
-    inline glm::fmat4x4 GetViewMatrix() const noexcept
-    {
-        Transform* const transform = GetOwner()->GetTransform();
-        if (!transform)
-        {
-            return glm::mat4(1.0f);
-        }
-
-        const glm::vec3 pos   = transform->GetPosition();
-        const glm::vec3 front = transform->GetForward();
-        const glm::vec3 up    = transform->GetUp();
-
-        return glm::lookAt(pos, pos + front, up);
-    }
+    glm::fmat4x4 GetViewMatrix() const noexcept;
 
     /**
      * @brief 해당 카메라의 투영 행렬을 반환합니다.
@@ -260,37 +258,14 @@ public:
      * @return glm::fmat4x4 해당 카메라의 투영 행렬
      */
     [[nodiscard]]
-    inline glm::fmat4x4 GetProjectionMatrix() const noexcept
-    {
-        const float aspectRatio = viewport.width / viewport.height;
-
-        switch (projection)
-        {
-            case Camera::Projection::Orthographic:
-            {
-                const float halfHeight = orthoSize * 0.5f;
-                const float halfWidth  = halfHeight * aspectRatio;
-
-                return glm::ortho(-halfWidth,
-                                  halfWidth,
-                                  -halfHeight,
-                                  halfHeight,
-                                  clipingPlanes.nearPlane,
-                                  clipingPlanes.farPlane);
-            }
-            case Camera::Projection::Perspective:
-            {
-                return glm::perspective(
-                        glm::radians(fieldOfView), aspectRatio, clipingPlanes.nearPlane, clipingPlanes.farPlane);
-            }
-            default:
-            {
-                return glm::fmat4x4(1.0f);
-            }
-        }
-    }
+    glm::fmat4x4 GetProjectionMatrix() const noexcept;
 
 private:
+    /**
+     * @brief 해당 카메라가 사용할 셰이더.
+     */
+    Shader* shader; 
+
     /**
      * @brief 해당 카메라의 투영 방식.
      */
@@ -334,6 +309,27 @@ public:
      * @brief 소멸자.
      */
     virtual ~Light() noexcept override;
+
+    /**
+     * @brief 해당 조명의 셰이더를 반환합니다.
+     * 
+     * @return Shader* 조명의 셰이더
+     */
+    [[nodiscard]]
+    inline Shader* const GetShader() const
+    {
+        return shader;
+    }
+
+    /**
+     * @brief 해당 조명의 셰이더를 설정합니다.
+     * 
+     * @param shader_ 설정할 셰이더
+     */
+    inline void SetShader(Shader* const shader_)
+    {
+        shader = shader_;
+    }
 
     /**
      * @brief 해당 조명의 색상을 반환합니다.
@@ -382,6 +378,11 @@ protected:
     virtual void Update() noexcept override;
 
 private:
+    /**
+     * @brief 해당 조명이 사용할 셰이더.
+     */
+    Shader* shader;
+
     /**
      * @brief 해당 조명의 색상.
      */
@@ -460,6 +461,27 @@ public:
         texture = texture_;
     }
 
+    /**
+     * @brief 해당 렌더러가 사용할 셰이더를 반환합니다.
+     * 
+     * @return Shader* 해당 렌더러가 사용할 셰이더
+     */
+    [[nodiscard]]
+    inline Shader* const GetShader() const noexcept
+    {
+        return shader;
+    }
+
+    /**
+     * @brief 해당 렌더러가 사용할 셰이더를 설정합니다.
+     * 
+     * @param shader_ 해당 렌더러가 사용할 셰이더
+     */
+    inline void SetShader(Shader* const shader_) noexcept
+    {
+        shader = shader_;
+    }
+
 private:
     /**
      * @brief 해당 렌더러가 그릴 메쉬.
@@ -470,4 +492,9 @@ private:
      * @brief 해당 렌더러가 사용할 텍스처.
      */
     Texture* texture;
+
+    /**
+     * @brief 해당 렌더러가 사용할 셰이더.
+     */
+    Shader* shader;
 };

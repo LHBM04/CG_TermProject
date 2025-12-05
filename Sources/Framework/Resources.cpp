@@ -42,6 +42,11 @@ Texture::~Texture() noexcept
     }
 }
 
+void Texture::Bind() const
+{
+    glBindTexture(GL_TEXTURE_2D, textureID);
+}
+
 bool Texture::Load(const std::filesystem::path& path_) noexcept
 {
     stbi_set_flip_vertically_on_load(true);

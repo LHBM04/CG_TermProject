@@ -38,20 +38,18 @@ public:
     void Render() noexcept;
 
     /**
+     * @brief 해당 씬의 UI를 렌더링합니다.
+     */
+    void RenderUI() noexcept;
+
+    /**
      * @brief 해당 씬에서 퇴장합니다.
      */
     void Exit() noexcept;
 
 protected:
-    /**
-     * @brief 해당 씬에 엔티티를 배치합니다.
-     * 
-     * @param name_ 배치할 엔티티의 이름
-     * @param tag_  배치할 엔티티의 태그
-     * 
-     * @return 배치된 엔티티
-     */
-    Object* AddObject(std::string_view name_, std::string_view tag_) noexcept;
+    Object* AddGameObject(std::string_view name_, std::string_view tag_) noexcept;
+    Object* AddUIObject(std::string_view name_, std::string_view tag_) noexcept;
 
     /**
      * @brief 씬에서 엔티티를 제거합니다.
@@ -82,9 +80,16 @@ protected:
     }
 
     /**
-     * @brief 해당 씬을 렌더링할 때 호출됩니다.
+     * @brief 해당 씬의 게임 오브젝트를 렌더링할 때 호출됩니다.
      */
     virtual void OnRender() noexcept
+    {
+    }
+
+    /**
+     * @brief 해당 씬의 UI 오브젝트를 렌더링할 때 호출됩니다.
+     */
+    virtual void OnRenderUI() noexcept
     {
     }
 
@@ -96,10 +101,8 @@ protected:
     }
 
 private:
-    /**
-     * @brief 해당 씬에 배치된 모든 오브젝트.
-     */
     std::vector<std::unique_ptr<Object>> objects;
+    std::vector<std::unique_ptr<Object>> uiObjects;
 };
 
 /**

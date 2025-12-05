@@ -65,7 +65,7 @@ public:
      * @return String 해당 오브젝트의 이름
      */
     [[nodiscard]]
-    inline std::string GetName() const noexcept
+    inline std::string GetWindowTitle() const noexcept
     {
         return name;
     }

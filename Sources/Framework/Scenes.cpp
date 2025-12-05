@@ -77,6 +77,22 @@ void Scene::Render() noexcept
     OnRender();
 }
 
+void Scene::RenderUI() noexcept
+{
+    for (const std::unique_ptr<Object>& object : uiObjects)
+    {
+        if (!object->IsEnabled())
+        {
+            continue;
+        }
+
+        object->Render();
+    }
+
+    // 3. 씬 별 추가 커스텀 UI 로직 호출
+    OnRenderUI();
+}
+
 void Scene::Exit() noexcept
 {
     objects.clear();
@@ -84,9 +100,14 @@ void Scene::Exit() noexcept
 	OnExit();
 }
 
-Object* Scene::AddObject(std::string_view name_, std::string_view tag_) noexcept
+Object* Scene::AddGameObject(std::string_view name_, std::string_view tag_) noexcept
 {
     return objects.emplace_back(std::make_unique<Object>(name_, tag_)).get();
+}
+
+Object* Scene::AddUIObject(std::string_view name_, std::string_view tag_) noexcept
+{
+    return uiObjects.emplace_back(std::make_unique<Object>(name_, tag_)).get();
 }
 
 void Scene::Remove(Object entity) noexcept

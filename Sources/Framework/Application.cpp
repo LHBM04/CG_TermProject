@@ -26,7 +26,7 @@ bool Application::Initialize(const Specification& specification_) noexcept
 
 	switch (specification.screenMode)
     {
-        case Application::WindowMode::Windowed:
+        case Application::ScreenMode::Windowed:
         {
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
             glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
@@ -36,7 +36,7 @@ bool Application::Initialize(const Specification& specification_) noexcept
 
             break;
         }
-        case Application::WindowMode::FullScreen:
+        case Application::ScreenMode::FullScreen:
         {
             GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 
@@ -58,7 +58,7 @@ bool Application::Initialize(const Specification& specification_) noexcept
 
             break;
         }
-        case Application::WindowMode::Borderless:
+        case Application::ScreenMode::Borderless:
         {
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
             glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
@@ -131,6 +131,24 @@ void Application::Quit() noexcept
     glfwSetWindowShouldClose(const_cast<GLFWwindow*>(window), GLFW_TRUE);
 }
 
+void Application::SetWindowTitle(std::string_view name_) noexcept
+{
+    specification.name = name_;
+    glfwSetWindowTitle(window, specification.name.c_str());
+}
+
+void Application::SetWindowWidth(int width_) noexcept
+{
+    specification.width = width_;
+    glfwSetWindowSize(window, specification.width, specification.height);
+}
+
+void Application::SetWindowHeight(const int height_) noexcept
+{
+    specification.height = height_;
+    glfwSetWindowSize(window, specification.width, specification.height);
+}
+
 void Application::Update() noexcept
 {
     Scene* const activeScene = SceneManager::GetActiveScene();
@@ -166,7 +184,11 @@ void Application::Render() noexcept
         return;
     }
 
+    glEnable(GL_DEPTH_TEST);
     activeScene->Render();
+    
+    glDisable(GL_DEPTH_TEST);
+    activeScene->RenderUI();
 
     glfwSwapBuffers(const_cast<GLFWwindow*>(window));
 }
