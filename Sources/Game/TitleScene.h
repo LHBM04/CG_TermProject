@@ -67,10 +67,17 @@ public:
         auto hitWallClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\hitWall.wav");
         ballSound = AddObject("hitWall Sound", "SFX")->AddComponent<AudioSource>();
         ballSound->SetClip(hitWallClip);
+
+        auto resurrectionClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\resurrection.wav");
+        resurrection          = AddObject("resurrection Sound", "SFX")->AddComponent<AudioSource>();
+        resurrection->SetVolume(0.3f);
+        resurrection->SetClip(resurrectionClip);
     }
 
     virtual void OnUpdate() noexcept override
     {
+        
+
         mainCamera->GetTransform()->SetPosition(cameraSpline->GetTransform()->GetPosition());
         // (0,0,0) 이 맵 중앙 위치라 맵을 계속 바라보게 하는 용도
         mainCamera->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -217,6 +224,15 @@ public:
                 ballSound->Play();
                 checkHitWall = slidingSoundVolume;
             }
+
+            glm::vec3 playerPos = playerObject->GetTransform()->GetPosition();
+            if (playerPos.y < -5.0f)
+            {
+                SPDLOG_INFO("player fall");
+                playerObject->GetTransform()->SetPosition(startPosition);
+                resurrection->Play();
+            }
+            
         }
 
         // ---------------------------------------------------------------------------------------------------------------------------
@@ -230,7 +246,7 @@ public:
             {
                 yScale += 0.002f;
 
-                for (int i{1}; i < wallOBBs.size(); ++i)
+                for (int i{}; i < wallOBBs.size(); ++i)
                 {
                     glm::vec3 org = wallOBBs[i]->GetOwner()->GetTransform()->GetScale();
                     wallOBBs[i]->GetOwner()->GetTransform()->SetScale(glm::vec3(org.x, yScale, org.z));
@@ -257,7 +273,7 @@ private:
                    texWood5,
                    glm::vec3(0.0f, -1.5f, 0.0f),
                    glm::vec3(15.0f, 1.0f, 15.0f),
-                   true);
+                   false);
         CreateCube(nullptr, meshCube, texWood4, glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(20.0f, 1.0f, 20.0f), false);
 
         // X축 핸들
@@ -284,7 +300,7 @@ private:
         CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(0.0f, 0.0f, 9.5f), glm::vec3(19.5f, 2.0f, 0.4f), false);
         CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(0.0f, 0.0f, -9.5f), glm::vec3(19.5f, 2.0f, 0.4f), false);
 
-        for (int i{1}; i < wallOBBs.size(); ++i)
+        for (int i{}; i < wallOBBs.size(); ++i)
         {
             glm::vec3 org = wallOBBs[i]->GetOwner()->GetTransform()->GetScale();
             wallOBBs[i]->GetOwner()->GetTransform()->SetScale(glm::vec3(org.x, 0.0f, org.z));
@@ -349,7 +365,7 @@ private:
                     // 3 (Start) 인 경우 시작 위치 저장
                     else if (tileType == 3)
                     {
-                        startPosition = glm::vec3(posX, 1.0f, posZ);
+                        startPosition = glm::vec3(posX, 2.0f, posZ);
                     }
                 }
             }
@@ -456,6 +472,7 @@ private:
     // 사운드 관련
     AudioSource*      ballSound     = nullptr;
     AudioSource*      bgmPlayer        = nullptr;
+    AudioSource*      resurrection     = nullptr;
     float             checkHitWall     = 0.0f;
 
     glm::vec3 startPosition;
