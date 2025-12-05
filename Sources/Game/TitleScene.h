@@ -216,6 +216,7 @@ private:
         auto texWood3  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture3.png");
         auto texWood4  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture4.png");
         auto texWood5  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\mapBase.png");
+        auto wall  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wall.png");
         auto texHandle = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle.png");
         auto texBar    = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle_bar.png");
         
@@ -282,8 +283,7 @@ private:
                 {
                     // 벽 위치: y = 0.5 (바닥 위)
                     CreateCube(boardPivot,
-                               meshCube,
-                               texWood2,
+                               meshCube, wall,
                                glm::vec3(posX, 0.5f, posZ),
                                glm::vec3(1.0f, 1.0f, 1.0f),
                                true);
