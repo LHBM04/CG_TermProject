@@ -55,23 +55,54 @@ void TitleScene::OnEnter() noexcept
 
 
     // 제목 설정
-    Object* uiObject = AddUIObject("Title Image", "UI");
     
-    uiObject->GetTransform()->SetPosition(
-            glm::vec3(Application::GetWindowWidth() * 0.5f, 0.0f, 0.0f));
-    uiObject->GetTransform()->SetScale(glm::vec3(600.0f, 200.0f, 1.0f));
-    imageTitle = uiObject->AddComponent<ImageRenderer>();
-
-    if (imageTitle)
-    {
-        imageTitle->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
-        imageTitle->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
-        imageTitle->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\TitleImage.png"));
-    }
 }
 
 void TitleScene::OnUpdate() noexcept
 {
+    // 음악에 맞춰서 드럼 나올 때 제목 띄워지게 해봄
+    static float titleTimer = TimeManager::GetDeltaTime();
+    if (titleTimer > 10.5f && !isTitleCreated)
+    {
+        SPDLOG_INFO("hi");
+        Object* titleObj = AddUIObject("Title Image", "UI");
+
+        titleObj->GetTransform()->SetPosition(glm::vec3(Application::GetWindowWidth() * 0.5f, 100.0f, 0.0f));
+        titleObj->GetTransform()->SetScale(glm::vec3(600.0f, 300.0f, 1.0f));
+        imageTitle = titleObj->AddComponent<ImageRenderer>();
+
+        if (imageTitle)
+        {
+            imageTitle->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
+            imageTitle->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
+            imageTitle->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\TitleImage.png"));
+        }
+
+        Object* titleBarObj = AddUIObject("Title Image", "UI");
+
+        titleBarObj->GetTransform()->SetPosition(glm::vec3(Application::GetWindowWidth() * 0.5f, Application::GetWindowHeight() * 0.5f, 0.0f));
+        titleBarObj->GetTransform()->SetScale(glm::vec3(600.0f, 300.0f, 1.0f));
+        imageTitleBar = titleBarObj->AddComponent<ImageRenderer>();
+
+        if (imageTitle)
+        {
+            imageTitleBar->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
+            imageTitleBar->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
+            imageTitleBar->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\TitleBar.png"));
+        }
+
+        isTitleCreated = true;
+    }
+    else
+    {
+        titleTimer += TimeManager::GetDeltaTime();
+    }
+
+    if (imageTitleBar)
+    {
+        HandleBarFlicking();
+    }
+
     // 카메라 연출
     mainCamera->GetTransform()->SetPosition(cameraSpline->GetTransform()->GetPosition());
     mainCamera->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -192,4 +223,21 @@ void TitleScene::HandleBoard()
         zFramePivot->GetTransform()->SetRotation(glm::vec3(0.0f, 0.0f, rotatedAmountZ));
     if (zHandlePivot)
         zHandlePivot->GetTransform()->SetRotation(glm::vec3(0.0f, 0.0f, rotatedAmountZ));
+}
+
+void TitleScene::HandleBarFlicking()
+{
+    static float barTimer = TimeManager::GetDeltaTime();
+    barTimer += TimeManager::GetDeltaTime();
+
+    if (barTimer > 0.6667f * 2.0f)
+    {
+        imageTitleBar->GetTransform()->SetScale(glm::vec3(600.0f, 300.0f, 1.0f));
+        barTimer = TimeManager::GetDeltaTime();
+    }
+    else if (barTimer > 0.6667f)
+    {
+        imageTitleBar->GetTransform()->SetScale(glm::vec3(550.0f, 250.0f, 1.0f));
+    }
+    
 }

@@ -31,6 +31,7 @@ private:
     void CreateCube(Object* parent, Mesh* mesh, Texture* texture, glm::vec3 position, glm::vec3 scale);
     void HandleCameraAnimation();
     void HandleBoard();
+    void HandleBarFlicking();
 
 private:
     Camera* mainCamera   = nullptr;
@@ -42,7 +43,9 @@ private:
     AudioSource* bgmPlayer = nullptr;
 
     // 제목
-    ImageRenderer* imageTitle = nullptr;
+    ImageRenderer* imageTitle    = nullptr;
+    ImageRenderer* imageTitleBar = nullptr;
+    bool           isTitleCreated = false;
 
     // 회전 중심점들
     Object* boardPivot   = nullptr; // 미로 바닥 + 벽
