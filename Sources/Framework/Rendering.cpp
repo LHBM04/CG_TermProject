@@ -67,8 +67,9 @@ void Light::Update() noexcept
     }
 
     shader->Use();
+    shader->SetUniformVector3("lightDir", GetTransform()->GetForward());
     shader->SetUniformVector3("lightColor", color * intensity);
-    shader->SetUniformVector3("lightPos", GetTransform()->GetPosition());
+    // shader->SetUniformVector3("lightPos", GetTransform()->GetPosition());
 }
 
 MeshRenderer::MeshRenderer(Object* const owner_) noexcept

@@ -11,6 +11,11 @@ public:
     explicit PlayerController(Object* const owner);
     virtual ~PlayerController() noexcept;
 
+    inline const glm::vec3 GetDir() noexcept
+    {
+        return dir;
+    }
+
     inline void SetGravityScale(const float gravityScale_) noexcept
     {
         gravityScale = gravityScale_;
@@ -25,12 +30,12 @@ public:
     }
 
     // 외부(Scene)에서 현재 바닥의 기울기를 넣어주는 함수
-    void SetGroundNormal(const glm::vec3& normal)
+    inline void SetGroundNormal(const glm::vec3& normal) noexcept
     {
         groundNormal = normal;
     }
 
-    void setDir(const glm::vec3 v)
+    inline void setDir(const glm::vec3 v) noexcept
     {
         dir = v;
     }
