@@ -10,7 +10,7 @@ int main(int, char**)
     spec.width       = 1280;
     spec.height      = 720;
     spec.screenMode  = Application::WindowMode::Windowed;
-    spec.sholudVSync = true;
+    spec.isVSync = true;
 
     if (!Application::Initialize(spec))
     {

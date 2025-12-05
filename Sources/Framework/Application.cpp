@@ -80,7 +80,7 @@ bool Application::Initialize(const Specification& specification_) noexcept
     }
 
     glfwMakeContextCurrent(const_cast<GLFWwindow*>(window));
-    glfwSwapInterval(specification.sholudVSync ? 1 : 0);
+    glfwSwapInterval(specification.isVSync ? 1 : 0);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {

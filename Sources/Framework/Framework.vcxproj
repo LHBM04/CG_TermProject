@@ -31,7 +31,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Core\Application.cpp" />
+    <ClCompile Include="Core\Debug\Debugger.cpp" />
+    <ClCompile Include="Core\Debug\Logger.cpp" />
+    <ClCompile Include="Core\Input.cpp" />
+    <ClCompile Include="Core\IO\Path.cpp" />
+    <ClCompile Include="Core\Platform\Window.cpp" />
+    <ClCompile Include="Core\Time.cpp" />
     <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="Directory.cpp" />
+    <ClCompile Include="File.cpp" />
+    <ClCompile Include="Graphics\Graphics.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="IO.cpp" />
     <ClCompile Include="Objects.cpp" />
@@ -43,8 +53,23 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Audio.h" />
+    <ClInclude Include="Audio\AudioEngine.h" />
+    <ClInclude Include="Audio\AudioListener.h" />
+    <ClInclude Include="Audio\AudioSource.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Core\Application.hpp" />
+    <ClInclude Include="Core\Debug\Debugger.hpp" />
+    <ClInclude Include="Core\Debug\Logger.hpp" />
+    <ClInclude Include="Core\Platform\Events\EventDispatcher.hpp" />
+    <ClInclude Include="Core\Platform\Window.hpp" />
+    <ClInclude Include="Core\Input.hpp" />
+    <ClInclude Include="Core\Path.hpp" />
+    <ClInclude Include="Core\Time.hpp" />
+    <ClInclude Include="Core\Utilities\Random.hpp" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="Directory.hpp" />
+    <ClInclude Include="File.hpp" />
+    <ClInclude Include="Graphics\Graphics.hpp" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="IO.h" />
     <ClInclude Include="Objects.h" />
@@ -52,6 +77,9 @@
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Scenes.h" />
     <ClInclude Include="Time.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Core\Platform\Events\Event.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

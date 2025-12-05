@@ -60,7 +60,7 @@ public:
         /**
          * @brief 수직 동기화 활성화 여부.
          */
-        bool sholudVSync;
+        bool isVSync;
     };
 
     /**

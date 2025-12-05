@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include "Debug.h"
+#include "Path.h"
 
 // -----------------------------------------------------------------------------
 // Path Implementation
