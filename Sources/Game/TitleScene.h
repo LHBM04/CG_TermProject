@@ -37,17 +37,15 @@ public:
 
     virtual void OnEnter() noexcept override
     {
-        // 1. 카메라 설정
+        // 카메라 설정
         Object* const cameraObject = AddObject("Main Camera", "Camera");
         mainCamera                 = cameraObject->AddComponent<Camera>();
         cameraSpline               = cameraObject->AddComponent<Spline>();
 
-        mainCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 30.0f, 20.0f)); // 뷰 조정
+        mainCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 30.0f, 20.0f));
         mainCamera->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
 
-        
-
-        // 2. 조명 설정
+        // 조명 설정
         Object* const lightObject = AddObject("Directional Light", "Light");
         lightObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 3.0f, 0.0f));
         lightObject->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
@@ -55,20 +53,28 @@ public:
         mainLight = lightObject->AddComponent<Light>();
         mainLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
 
-        // 3. 미로 구조 생성
+        // 미로 구조 생성
         CreateLabyrinth();
-        for (int i{1}; i < wallOBBs.size(); ++i)
-        {
-            glm::vec3 org = wallOBBs[i]->GetOwner()->GetTransform()->GetScale();
-            wallOBBs[i]->GetOwner()->GetTransform()->SetScale(glm::vec3(org.x, 0.0f, org.z));
-        }
 
-        auto bgmPlayer = AddObject("BGM Player", "Audio")->AddComponent<AudioSource>();
+        
         auto bgmClip   = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\Stickerbush Symphony Restored to HD.mp3");
+        bgmPlayer = AddObject("BGM Player", "Audio")->AddComponent<AudioSource>();
         bgmPlayer->SetLooping(true);
         bgmPlayer->GetTransform()->SetPosition(cameraObject->GetTransform()->GetPosition());
+        bgmPlayer->SetVolume(0.3f);
         bgmPlayer->SetClip(bgmClip);
         bgmPlayer->Play();
+
+        auto ballSlidingClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\ballSliding.wav");
+        slidingSound = AddObject("sliding Sound", "SFX")->AddComponent<AudioSource>();
+        slidingSound->SetClip(ballSlidingClip);
+        slidingSound->SetLooping(true);
+        slidingSound->SetVolume(0.0f);
+        slidingSound->Play();
+
+        auto hitWallClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\hitWall.wav");
+        hitWallSound = AddObject("hitWall Sound", "SFX")->AddComponent<AudioSource>();
+        hitWallSound->SetClip(hitWallClip);
     }
 
     virtual void OnUpdate() noexcept override
@@ -149,23 +155,6 @@ public:
             CreatePlayer();
         }
 
-        if (gameStarted)
-        {
-            static float yScale = 0.0f;
-
-            if (yScale <= 1.0f)
-            {
-                yScale += 0.002f;
-
-                for (int i{1}; i < wallOBBs.size(); ++i)
-                {
-                    glm::vec3 org = wallOBBs[i]->GetOwner()->GetTransform()->GetScale();
-                    wallOBBs[i]->GetOwner()->GetTransform()->SetScale(glm::vec3(org.x, yScale, org.z));
-                }
-            }
-        }
-
-
         // 마우스 움직임으로 맵 회전
         float dt          = TimeManager::GetDeltaTime();
         float rotateSpeed = 50.0f;
@@ -225,13 +214,49 @@ public:
                 playerController->CheckCollision(wallOBB);
             }
         }
+
+        // ---------------------------------------------------------------------------------------------------------------------------
+        // < 게임 시작 되었을 때 부분 >
+        // 
+        // 게임 시작 되었을 때 애니메이션, 공 소리 적용
+        if (gameStarted)
+        {
+            static float yScale = 0.0f;
+
+            if (yScale <= 1.0f)
+            {
+                yScale += 0.002f;
+
+                for (int i{1}; i < wallOBBs.size(); ++i)
+                {
+                    glm::vec3 org = wallOBBs[i]->GetOwner()->GetTransform()->GetScale();
+                    wallOBBs[i]->GetOwner()->GetTransform()->SetScale(glm::vec3(org.x, yScale, org.z));
+                }
+            }
+
+            if (playerController)
+            {
+                float slidingSoundVolume = glm::clamp(0.0f, glm::length(playerController->GetDir()) / 7, 1.0f);
+                SPDLOG_INFO("sliding volume : {}", slidingSoundVolume);
+                slidingSound->SetVolume(slidingSoundVolume);
+
+                float hitVolume = abs(slidingSoundVolume - checkHitWall);
+                if (hitVolume > 0.3f)
+                {
+                    hitWallSound->SetVolume(hitVolume);
+                    hitWallSound->SetPitch(hitVolume);
+                    hitWallSound->Play();
+                    checkHitWall = slidingSoundVolume;
+                }
+            }
+            else
+            {
+                slidingSound->SetVolume(0.0f);
+            }
+        }
     }
 
 private:
-    void startMap()
-    {
-
-    }
 
     void CreateLabyrinth()
     {
@@ -275,6 +300,12 @@ private:
         CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(-9.5f, 0.0f, 0.0f), glm::vec3(0.4f, 2.0f, 19.5f), false);
         CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(0.0f, 0.0f, 9.5f), glm::vec3(19.5f, 2.0f, 0.4f), false);
         CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(0.0f, 0.0f, -9.5f), glm::vec3(19.5f, 2.0f, 0.4f), false);
+
+        for (int i{1}; i < wallOBBs.size(); ++i)
+        {
+            glm::vec3 org = wallOBBs[i]->GetOwner()->GetTransform()->GetScale();
+            wallOBBs[i]->GetOwner()->GetTransform()->SetScale(glm::vec3(org.x, 0.0f, org.z));
+        }
     }
 
     void CreateLabyrinthLevel(int levelNum)
@@ -438,6 +469,12 @@ private:
     Object*           playerObject     = nullptr;
     PlayerController* playerController = nullptr;
     bool              isPlayerCreated  = false;
+
+    // 사운드 관련
+    AudioSource*      slidingSound     = nullptr;
+    AudioSource*      hitWallSound     = nullptr;
+    AudioSource*      bgmPlayer        = nullptr;
+    float             checkHitWall     = 0.0f;
 
     glm::vec3 startPosition;
 
