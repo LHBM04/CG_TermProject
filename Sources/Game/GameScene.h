@@ -1,0 +1,362 @@
+#pragma once
+
+#include "../Framework/Audio.h"
+#include "../Framework/Input.h"
+#include "../Framework/Resources.h"
+#include "../Framework/Scenes.h"
+#include "../Framework/Time.h"
+#include "GameManager.h"
+
+#include "OBB.h"
+#include "PlayerController.h"
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
+
+class GameScene : public Scene
+{
+public:
+    explicit GameScene() noexcept
+        : Scene()
+    {
+    }
+    virtual ~GameScene() noexcept override
+    {
+    }
+
+    virtual void OnEnter() noexcept override
+    {
+        // 카메라 및 라이트 설정
+        SetupCameraAndLight();
+
+        // 미로 생성
+        CreateLabyrinthBoard();
+
+        // 현재 레벨 로드
+        CreateLabyrinthLevel(GameManager::currentLevel);
+
+        // 플레이어 생성
+        CreatePlayer();
+
+        // 배경음악 및 효과음 로드
+        SetupAudio();
+    }
+
+    virtual void OnUpdate() noexcept override
+    {
+        HandleInput();
+
+        UpdateGameLogic();
+    }
+
+private:
+    // -------------------------------------------------------
+    // [초기화 관련 함수들]
+    // -------------------------------------------------------
+    void SetupCameraAndLight()
+    {
+        Object* cameraObj = AddObject("Main Camera", "Camera");
+        mainCamera        = cameraObj->AddComponent<Camera>();
+
+        cameraObj->GetTransform()->SetPosition(glm::vec3(0.0f, 20.0f, 5.0f));
+        cameraObj->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+
+        Object* lightObj = AddObject("Directional Light", "Light");
+        lightObj->GetTransform()->SetPosition(glm::vec3(0.0f, 10.0f, 0.0f));
+        lightObj->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+        lightObj->AddComponent<Light>()->SetColor(glm::vec3(1.0f));
+    }
+
+    void SetupAudio()
+    {
+        auto goalClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\goal.wav");
+        goalSound     = AddObject("Goal Sound", "SFX")->AddComponent<AudioSource>();
+        goalSound->SetClip(goalClip);
+
+        auto resClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\resurrection.wav");
+        resurrection = AddObject("Resurrection", "SFX")->AddComponent<AudioSource>();
+        resurrection->SetClip(resClip);
+    }
+
+    void CreateLabyrinthBoard()
+    {
+        // 피봇 생성
+        boardPivot = AddObject("BoardPivot", "Pivot");
+        xFramePivot  = AddObject("XFramePivot", "Pivot");
+        zFramePivot  = AddObject("ZFramePivot", "Pivot");
+        xHandlePivot = AddObject("XHandlePivot", "Pivot");
+        xHandlePivot->GetTransform()->SetPosition(glm::vec3(10.5f, -3.0f, 0.0f));
+        zHandlePivot = AddObject("ZHandlePivot", "Pivot");
+        zHandlePivot->GetTransform()->SetPosition(glm::vec3(0.0f, -3.0f, 10.5f));
+
+        // X축 핸들
+        CreateCube(xHandlePivot, meshCube, texHandle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 2.0f), false);
+        CreateCube(nullptr, meshCube, texBar, glm::vec3(0.7f, -3.0f, 0.0f), glm::vec3(18.8f, 0.4f, 0.4f), false);
+        CreateCube(nullptr, meshCube, texBar, glm::vec3(8.5f, -1.5f, 0.0f), glm::vec3(0.4f, 3.0f, 0.4f), false);
+        CreateCube(nullptr, meshCube, texBar, glm::vec3(-8.5f, -1.5f, 0.0f), glm::vec3(0.4f, 3.0f, 0.4f), false);
+
+        // X축 프레임
+        CreateCube(xFramePivot, meshCube, texWood2, glm::vec3(8.5f, 0.0f, 0.0f), glm::vec3(0.4f, 2.0f, 17.5f), false);
+        CreateCube(xFramePivot, meshCube, texWood2, glm::vec3(-8.5f, 0.0f, 0.0f), glm::vec3(0.4f, 2.0f, 17.5f), false);
+        CreateCube(xFramePivot, meshCube, texWood2, glm::vec3(0.0f, 0.0f, 8.5f), glm::vec3(17.5f, 2.0f, 0.4f), false);
+        CreateCube(xFramePivot, meshCube, texWood2, glm::vec3(0.0f, 0.0f, -8.5f), glm::vec3(17.5f, 2.0f, 0.4f), false);
+
+        // Z축 핸들
+        CreateCube(zHandlePivot, meshCube, texHandle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 2.0f, 1.0f), false);
+        CreateCube(nullptr, meshCube, texBar, glm::vec3(0.0f, -3.0f, 0.7f), glm::vec3(0.4f, 0.4f, 19.4f), false);
+        CreateCube(nullptr, meshCube, texBar, glm::vec3(0.0f, -1.5f, 9.5f), glm::vec3(0.4f, 3.0f, 0.4f), false);
+        CreateCube(nullptr, meshCube, texBar, glm::vec3(0.0f, -1.5f, -9.5f), glm::vec3(0.4f, 3.0f, 0.4f), false);
+
+        // Z축 프레임
+        CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(9.5f, 0.0f, 0.0f), glm::vec3(0.4f, 2.0f, 19.5f), false);
+        CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(-9.5f, 0.0f, 0.0f), glm::vec3(0.4f, 2.0f, 19.5f), false);
+        CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(0.0f, 0.0f, 9.5f), glm::vec3(19.5f, 2.0f, 0.4f), false);
+        CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(0.0f, 0.0f, -9.5f), glm::vec3(19.5f, 2.0f, 0.4f), false);
+
+        for (int i{}; i < wallOBBs.size(); ++i)
+        {
+            glm::vec3 org = wallOBBs[i]->GetOwner()->GetTransform()->GetScale();
+            wallOBBs[i]->GetOwner()->GetTransform()->SetScale(glm::vec3(org.x, 0.0f, org.z));
+        }
+
+        CreateCube(boardPivot, meshCube, texWood5, glm::vec3(0.0f, -1.5f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), false);
+        CreateCube(nullptr, meshCube, texWood4, glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(20.0f, 1.0f, 20.0f), false);
+
+        // (프레임, 핸들 등 장식 요소 생성 코드 생략 - TitleScene에서 가져오세요)
+    }
+
+    void CreateLabyrinthLevel(int levelNum)
+    {
+        // TitleScene의 CreateLabyrinthLevel 내용을 그대로 가져오되
+        // parent를 this->boardPivot으로 설정해야 회전이 적용됩니다.
+        std::string   path = "Assets/Map/level" + std::to_string(levelNum) + ".json";
+        std::ifstream file(path);
+        if (!file.is_open())
+            return;
+
+        json data;
+        file >> data;
+        file.close();
+
+        int              width   = data["width"];
+        int              height  = data["height"];
+        std::vector<int> tiles   = data["tiles"];
+        float            offsetX = width / 2.0f;
+        float            offsetZ = height / 2.0f;
+
+        for (int z = 0; z < height; ++z)
+        {
+            for (int x = 0; x < width; ++x)
+            {
+                int type = tiles[z * width + x];
+                if (type == 0)
+                    continue;
+
+                float posX = (float)x - offsetX + 0.5f;
+                float posZ = (float)z - offsetZ + 0.5f;
+
+                // 바닥 생성
+                CreateCube(boardPivot, meshCube, texWood3, glm::vec3(posX, -0.5f, posZ), glm::vec3(1.0f), true);
+
+                // 벽 생성
+                if (type == 2)
+                {
+                    CreateCube(boardPivot, meshCube, texWall, glm::vec3(posX, 0.5f, posZ), glm::vec3(1.0f), true);
+                }
+                // 시작 지점
+                else if (type == 3) 
+                {
+                    startPosition = glm::vec3(posX, 2.0f, posZ);
+                    CreateCube(boardPivot,
+                               meshCube,
+                               texRed,
+                               glm::vec3(posX, -0.5f, posZ),
+                               glm::vec3(1.0f, 1.2f, 1.0f),
+                               false);
+                }
+                // 골인 지점
+                else if (type == 4)
+                {
+                    goalPosition = glm::vec3(posX, 0.0f, posZ);
+                    CreateCube(boardPivot,
+                               meshCube,
+                               texGreen,
+                               glm::vec3(posX, -0.5f, posZ),
+                               glm::vec3(1.0f, 1.2f, 1.0f),
+                               false);
+                }
+            }
+        }
+    }
+
+    void CreatePlayer()
+    {
+        playerObject = AddObject("Player", "Player");
+        playerObject->GetTransform()->SetPosition(startPosition);
+        playerObject->GetTransform()->SetScale(glm::vec3(0.7f));
+
+        playerObject->AddComponent<MeshRenderer>()->SetMesh(meshSphere);
+        playerObject->GetComponent<MeshRenderer>()->SetTexture(texBall);
+
+        OBB* obb = playerObject->AddComponent<OBB>();
+        obb->resize(glm::vec3(0.35f)); // 반지름
+        obb->teleport(startPosition);
+
+        playerController = playerObject->AddComponent<PlayerController>();
+        playerController->SetGravityScale(1.0f);
+        playerController->SetSlopeBoost(2.5f);
+    }
+
+    // -------------------------------------------------------
+    // [업데이트 관련 함수들]
+    // -------------------------------------------------------
+    void HandleInput()
+    {
+        float     dt          = TimeManager::GetDeltaTime();
+        float     rotateSpeed = 50.0f;
+        glm::vec2 mouseDelta  = InputManager::GetMousePositionDelta();
+
+        if (mouseDelta.y != 0)
+            rotatedAmountX += (mouseDelta.y > 0 ? 1 : -1) * rotateSpeed * dt;
+        if (mouseDelta.x != 0)
+            rotatedAmountZ += (mouseDelta.x < 0 ? 1 : -1) * rotateSpeed * dt;
+
+        float maxRotation = 10.0f;
+        rotatedAmountX    = glm::clamp(rotatedAmountX, -maxRotation, maxRotation);
+        rotatedAmountZ    = glm::clamp(rotatedAmountZ, -maxRotation, maxRotation);
+
+        if (boardPivot)
+            boardPivot->GetTransform()->SetRotation(glm::vec3(rotatedAmountX, 0.0f, rotatedAmountZ));
+
+        // R키 리셋
+        if (InputManager::IsKeyPressed(Keyboard::R))
+        {
+            playerObject->GetTransform()->SetPosition(startPosition);
+            playerController->setDir(glm::vec3(0));
+            resurrection->Play();
+        }
+    }
+
+    void UpdateGameLogic()
+    {
+        if (!playerController || !boardPivot)
+            return;
+
+        // 물리 벽 위치 동기화
+        UpdatePhysicsWalls();
+
+        // 바닥 기울기 전달
+        glm::vec3 normal = boardPivot->GetTransform()->GetUp();
+        playerController->SetGroundNormal(normal);
+
+        // 충돌 체크
+        for (OBB* wall : wallOBBs)
+        {
+            playerController->CheckCollision(wall);
+        }
+
+        // 낙하 체크
+        if (playerObject->GetTransform()->GetPosition().y < -10.0f)
+        {
+            playerObject->GetTransform()->SetPosition(startPosition);
+            playerController->setDir(glm::vec3(0));
+            resurrection->Play();
+        }
+
+        // 골인 체크
+        glm::vec3 pPos = playerObject->GetTransform()->GetPosition();
+        if (glm::distance(pPos, goalPosition) < 0.5f)
+        {
+            goalSound->Play();
+            // [TODO] 다음 레벨 로드 혹은 승리 처리
+            // SceneManager::LoadScene("Title Scene"); // 예시: 타이틀로 복귀
+        }
+    }
+
+    void UpdatePhysicsWalls()
+    {
+        for (OBB* obb : wallOBBs)
+        {
+            Transform* tr = obb->GetTransform();
+            if (tr)
+            {
+                // 1. 월드 행렬 가져오기
+                glm::mat4 worldMat = tr->GetWorldMatrix();
+
+                // 2. 위치 추출
+                glm::vec3 pos = glm::vec3(worldMat[3]);
+
+                // 회전 추출 (스케일 제거 후 순수 회전만 뽑기)
+                glm::vec3 axisX = glm::normalize(glm::vec3(worldMat[0]));
+                glm::vec3 axisY = glm::normalize(glm::vec3(worldMat[1]));
+                glm::vec3 axisZ = glm::normalize(glm::vec3(worldMat[2]));
+
+                glm::mat3 rotMat;
+                rotMat[0]     = axisX;
+                rotMat[1]     = axisY;
+                rotMat[2]     = axisZ;
+                glm::quat rot = glm::quat_cast(rotMat);
+
+                // 동기화
+                obb->teleport(pos);
+                obb->setRotation(rot);
+            }
+        }
+    }
+
+    void CreateCube(Object* parent, Mesh* mesh, Texture* texture, glm::vec3 pos, glm::vec3 scale, bool isWall)
+    {
+        Object* obj = AddObject("Cube", isWall ? "Wall" : "Deco");
+        if (parent)
+            obj->GetTransform()->SetParent(parent->GetTransform());
+        obj->GetTransform()->SetPosition(pos);
+        obj->GetTransform()->SetScale(scale);
+
+        auto render = obj->AddComponent<MeshRenderer>();
+        render->SetMesh(mesh);
+        render->SetTexture(texture);
+
+        if (isWall)
+        {
+            OBB* obb = obj->AddComponent<OBB>();
+            obb->resize(scale * 0.5f);
+            obb->teleport(pos);
+            wallOBBs.push_back(obb);
+        }
+    }
+
+private:
+    Camera*           mainCamera       = nullptr;
+    Object*           boardPivot       = nullptr;
+    Object*           xFramePivot      = nullptr;
+    Object*           zFramePivot      = nullptr;
+    Object*           xHandlePivot     = nullptr;
+    Object*           zHandlePivot     = nullptr;
+    Object*           playerObject     = nullptr;
+    PlayerController* playerController = nullptr;
+
+    std::vector<OBB*> wallOBBs;
+
+    glm::vec3 startPosition;
+    glm::vec3 goalPosition;
+
+    float rotatedAmountX = 0.0f;
+    float rotatedAmountZ = 0.0f;
+
+    AudioSource* goalSound    = nullptr;
+    AudioSource* resurrection = nullptr;
+
+    Mesh*    meshSphere = ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Ball.obj");
+    Mesh*    meshCube   = ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj");
+
+    Texture* texBall    = ResourceManager::LoadResource<Texture>("Assets\\Textures\\Poketball.png");
+    Texture* texWood1   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture1.png");
+    Texture* texWood2   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture2.png");
+    Texture* texWood3   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture3.png");
+    Texture* texWood4   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture4.png");
+    Texture* texWood5   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\mapBase.png");
+    Texture* texWall    = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wall.png");
+    Texture* texHandle  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle.png");
+    Texture* texBar     = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle_bar.png");
+    Texture* texRed     = ResourceManager::LoadResource<Texture>("Assets\\Textures\\Red.png");
+    Texture* texGreen   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\Green.png");
+};

@@ -173,6 +173,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="OBB.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="Spline.h" />
