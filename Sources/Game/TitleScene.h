@@ -56,25 +56,17 @@ public:
         // 미로 구조 생성
         CreateLabyrinth();
 
-        
         auto bgmClip   = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\Stickerbush Symphony Restored to HD.mp3");
         bgmPlayer = AddObject("BGM Player", "Audio")->AddComponent<AudioSource>();
         bgmPlayer->SetLooping(true);
         bgmPlayer->GetTransform()->SetPosition(cameraObject->GetTransform()->GetPosition());
-        bgmPlayer->SetVolume(0.3f);
+        bgmPlayer->SetVolume(0.5f);
         bgmPlayer->SetClip(bgmClip);
         bgmPlayer->Play();
 
-        auto ballSlidingClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\ballSliding.wav");
-        slidingSound = AddObject("sliding Sound", "SFX")->AddComponent<AudioSource>();
-        slidingSound->SetClip(ballSlidingClip);
-        slidingSound->SetLooping(true);
-        slidingSound->SetVolume(0.0f);
-        slidingSound->Play();
-
         auto hitWallClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\hitWall.wav");
-        hitWallSound = AddObject("hitWall Sound", "SFX")->AddComponent<AudioSource>();
-        hitWallSound->SetClip(hitWallClip);
+        ballSound = AddObject("hitWall Sound", "SFX")->AddComponent<AudioSource>();
+        ballSound->SetClip(hitWallClip);
     }
 
     virtual void OnUpdate() noexcept override
@@ -198,27 +190,38 @@ public:
             zHandlePivot->GetTransform()->SetRotation(glm::vec3(0.0f, 0.0f, rotatedAmountZ));
 
 
-        // 플레이어 물리 업데이트
+        // 플레이어 업데이트
         if (playerController && boardPivot)
         {
-            // 1. 바닥/벽의 물리 충돌체를 현재 렌더링 위치/회전으로 이동
+            // 바닥/벽의 물리 충돌체를 현재 렌더링 위치/회전으로 이동
             UpdatePhysicsWalls();
 
-            // 2. 바닥 Normal 계산
+            // 바닥 Normal 계산
             glm::vec3 groundNormal = boardPivot->GetTransform()->GetUp();
             playerController->SetGroundNormal(groundNormal);
 
-            // 3. 충돌 체크
+            // 충돌 체크
             for (OBB* wallOBB : wallOBBs)
             {
                 playerController->CheckCollision(wallOBB);
+            }
+
+            // 소리 재생
+            float slidingSoundVolume = glm::clamp(0.0f, glm::length(playerController->GetDir()) / 7, 1.0f);
+            float hitVolume = abs(slidingSoundVolume - checkHitWall);
+
+            if (hitVolume > 0.1f)
+            {
+                ballSound->SetVolume(hitVolume * 2.0f);
+                ballSound->SetPitch(hitVolume);
+                ballSound->Play();
+                checkHitWall = slidingSoundVolume;
             }
         }
 
         // ---------------------------------------------------------------------------------------------------------------------------
         // < 게임 시작 되었을 때 부분 >
         // 
-        // 게임 시작 되었을 때 애니메이션, 공 소리 적용
         if (gameStarted)
         {
             static float yScale = 0.0f;
@@ -232,26 +235,6 @@ public:
                     glm::vec3 org = wallOBBs[i]->GetOwner()->GetTransform()->GetScale();
                     wallOBBs[i]->GetOwner()->GetTransform()->SetScale(glm::vec3(org.x, yScale, org.z));
                 }
-            }
-
-            if (playerController)
-            {
-                float slidingSoundVolume = glm::clamp(0.0f, glm::length(playerController->GetDir()) / 7, 1.0f);
-                SPDLOG_INFO("sliding volume : {}", slidingSoundVolume);
-                slidingSound->SetVolume(slidingSoundVolume);
-
-                float hitVolume = abs(slidingSoundVolume - checkHitWall);
-                if (hitVolume > 0.3f)
-                {
-                    hitWallSound->SetVolume(hitVolume);
-                    hitWallSound->SetPitch(hitVolume);
-                    hitWallSound->Play();
-                    checkHitWall = slidingSoundVolume;
-                }
-            }
-            else
-            {
-                slidingSound->SetVolume(0.0f);
             }
         }
     }
@@ -471,8 +454,7 @@ private:
     bool              isPlayerCreated  = false;
 
     // 사운드 관련
-    AudioSource*      slidingSound     = nullptr;
-    AudioSource*      hitWallSound     = nullptr;
+    AudioSource*      ballSound     = nullptr;
     AudioSource*      bgmPlayer        = nullptr;
     float             checkHitWall     = 0.0f;
 
