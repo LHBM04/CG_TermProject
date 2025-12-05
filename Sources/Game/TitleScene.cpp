@@ -14,6 +14,7 @@ void TitleScene::OnEnter() noexcept
     // 카메라
     Object* const cameraObject = AddGameObject("Main Camera", "Camera");
     mainCamera                 = cameraObject->AddComponent<Camera>();
+    mainCamera->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
     cameraSpline               = cameraObject->AddComponent<Spline>();
 
     cameraSpline->AddPoint(glm::vec3(0.0f, 5.0f, 9.0f));
@@ -38,6 +39,7 @@ void TitleScene::OnEnter() noexcept
     lightObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 3.0f, 0.0f));
     lightObject->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
     mainLight = lightObject->AddComponent<Light>();
+    mainLight->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
     mainLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
 
     // 배경 미로
@@ -52,6 +54,13 @@ void TitleScene::OnEnter() noexcept
     bgmPlayer->Play();
 
     auto testImage = AddUIObject("Test Image", "UI");
+    testImage->GetTransform()->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    testImage->GetTransform()->SetScale(glm::vec3(200.0f, 200.0f, 1.0f));
+
+    imageTitle->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
+    imageTitle->SetMesh(
+            ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
+    imageTitle->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Poketball.png"));
 }
 
 void TitleScene::OnUpdate() noexcept
@@ -119,6 +128,7 @@ void TitleScene::CreateCube(Object* parent, Mesh* mesh, Texture* texture, glm::v
     obj->GetTransform()->SetScale(scale);
 
     MeshRenderer* renderer = obj->AddComponent<MeshRenderer>();
+    renderer->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
     renderer->SetMesh(mesh);
     renderer->SetTexture(texture);
 

@@ -64,6 +64,8 @@ private:
 
 private:
     Camera*           mainCamera       = nullptr;
+    Light*            mainLight        = nullptr;
+
     Object*           boardPivot       = nullptr;
     Object*           xFramePivot      = nullptr;
     Object*           zFramePivot      = nullptr;

@@ -15,15 +15,19 @@ GameScene::~GameScene() noexcept
 void GameScene::SetupCameraAndLight()
 {
     Object* cameraObj = AddGameObject("Main Camera", "Camera");
-    mainCamera        = cameraObj->AddComponent<Camera>();
-
     cameraObj->GetTransform()->SetPosition(glm::vec3(0.0f, 20.0f, 5.0f));
     cameraObj->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+
+    mainCamera = cameraObj->AddComponent<Camera>();
+    mainCamera->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
 
     Object* lightObj = AddGameObject("Directional Light", "Light");
     lightObj->GetTransform()->SetPosition(glm::vec3(0.0f, 10.0f, 0.0f));
     lightObj->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
     lightObj->AddComponent<Light>()->SetColor(glm::vec3(1.0f));
+
+    mainLight = lightObj->AddComponent<Light>();
+    mainLight->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
 }
 
 void GameScene::SetupAudio()
@@ -156,12 +160,13 @@ void GameScene::CreateLabyrinthLevel(int levelNum)
 
 void GameScene::CreatePlayer()
 {
-    playerObject = AddObject("Player", "Player");
+    playerObject = AddGameObject("Player", "Player");
     playerObject->GetTransform()->SetPosition(startPosition);
     playerObject->GetTransform()->SetScale(glm::vec3(0.7f));
 
     playerObject->AddComponent<MeshRenderer>()->SetMesh(meshSphere);
     playerObject->GetComponent<MeshRenderer>()->SetTexture(texBall);
+    playerObject->GetComponent<MeshRenderer>()->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
 
     OBB* obb = playerObject->AddComponent<OBB>();
     obb->resize(glm::vec3(0.35f)); // 반지름
@@ -290,13 +295,14 @@ void GameScene::UpdatePhysicsWalls()
 
 void GameScene::CreateCube(Object* parent, Mesh* mesh, Texture* texture, glm::vec3 pos, glm::vec3 scale, bool isWall)
 {
-    Object* obj = AddObject("Cube", isWall ? "Wall" : "Deco");
+    Object* obj = AddGameObject("Cube", isWall ? "Wall" : "Deco");
     if (parent)
         obj->GetTransform()->SetParent(parent->GetTransform());
     obj->GetTransform()->SetPosition(pos);
     obj->GetTransform()->SetScale(scale);
 
     auto render = obj->AddComponent<MeshRenderer>();
+    render->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
     render->SetMesh(mesh);
     render->SetTexture(texture);
 

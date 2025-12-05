@@ -41,6 +41,9 @@ private:
     // 메인화면 브금
     AudioSource* bgmPlayer = nullptr;
 
+    // 제목
+    ImageRenderer* imageTitle = nullptr;
+
     // 회전 중심점들
     Object* boardPivot   = nullptr; // 미로 바닥 + 벽
     Object* xFramePivot  = nullptr; // X축 프레임
