@@ -2,6 +2,7 @@
 #include "../Framework/Scenes.h"
 
 #include "TitleScene.h"
+#include "GameScene.h"
 
 int main(int, char**)
 {
@@ -9,7 +10,7 @@ int main(int, char**)
     spec.name        = "Labyrinth Application";
     spec.width       = 1280;
     spec.height      = 720;
-    spec.screenMode  = Application::WindowMode::Windowed;
+    spec.screenMode  = Application::ScreenMode::Windowed;
     spec.sholudVSync = true;
 
     if (!Application::Initialize(spec))
@@ -18,6 +19,8 @@ int main(int, char**)
     }
 
     SceneManager::AddScene("Title Scene", std::make_unique<TitleScene>());
+    SceneManager::AddScene("Game Scene", std::make_unique<GameScene>());
+
     SceneManager::LoadScene("Title Scene");
 
     return Application::Run();

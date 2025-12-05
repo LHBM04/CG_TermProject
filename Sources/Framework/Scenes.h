@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Common.h"
-#include "Rendering.h"
 #include "Objects.h"
+#include "Rendering.h"
 
 /**
  * @class Scene
- * 
+ *
  * @brief 씬을 정의합니다.
  */
 class Scene
@@ -38,24 +38,22 @@ public:
     void Render() noexcept;
 
     /**
+     * @brief 해당 씬의 UI를 렌더링합니다.
+     */
+    void RenderUI() noexcept;
+
+    /**
      * @brief 해당 씬에서 퇴장합니다.
      */
     void Exit() noexcept;
 
 protected:
-    /**
-     * @brief 해당 씬에 엔티티를 배치합니다.
-     * 
-     * @param name_ 배치할 엔티티의 이름
-     * @param tag_  배치할 엔티티의 태그
-     * 
-     * @return 배치된 엔티티
-     */
-    Object* AddObject(std::string_view name_, std::string_view tag_) noexcept;
+    Object* AddGameObject(std::string_view name_, std::string_view tag_) noexcept;
+    Object* AddUIObject(std::string_view name_, std::string_view tag_) noexcept;
 
     /**
      * @brief 씬에서 엔티티를 제거합니다.
-     * 
+     *
      * @param entity 제거할 엔티티
      */
     void Remove(Object entity) noexcept;
@@ -82,9 +80,16 @@ protected:
     }
 
     /**
-     * @brief 해당 씬을 렌더링할 때 호출됩니다.
+     * @brief 해당 씬의 게임 오브젝트를 렌더링할 때 호출됩니다.
      */
     virtual void OnRender() noexcept
+    {
+    }
+
+    /**
+     * @brief 해당 씬의 UI 오브젝트를 렌더링할 때 호출됩니다.
+     */
+    virtual void OnRenderUI() noexcept
     {
     }
 
@@ -96,16 +101,14 @@ protected:
     }
 
 private:
-    /**
-     * @brief 해당 씬에 배치된 모든 오브젝트.
-     */
     std::vector<std::unique_ptr<Object>> objects;
+    std::vector<std::unique_ptr<Object>> uiObjects;
 };
 
 /**
  * @class SceneManager
- * 
- * @brief 
+ *
+ * @brief
  */
 class SceneManager final
 {
@@ -114,7 +117,7 @@ class SceneManager final
 public:
     /**
      * @brief 씬을 추가합니다.
-     * 
+     *
      * @param name_  추가할 씬의 이름
      * @param scene_ 추가할 씬
      */
@@ -122,14 +125,14 @@ public:
 
     /**
      * @brief 씬을 제거합니다.
-     * 
+     *
      * @param name_ 제거할 씬의 이름.
      */
     static void RemoveScene(std::string_view name_) noexcept;
 
     /**
      * @brief 씬을 로드합니다.
-     * 
+     *
      * @param name_ 로드할 씬의 이름.
      */
     static void LoadScene(std::string_view name_) noexcept;
@@ -141,7 +144,7 @@ public:
 
     /**
      * @brief 현재 로드된 씬을 반환합니다.
-     * 
+     *
      * @return Scene* 현재 로드된 씬
      */
     [[nodiscard]]
