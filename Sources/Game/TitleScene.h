@@ -64,7 +64,10 @@ public:
 
     virtual void OnUpdate() noexcept override
     {
-        mainCamera->GetTransform()->SetPosition(cameraSpline->GetTransform()->GetPosition());
+        glm::vec3 curPos = cameraSpline->GetTransform()->GetPosition();
+        SPDLOG_INFO("{}, {}, {}", curPos.x, curPos.y, curPos.z);
+
+        mainCamera->GetTransform()->SetPosition(curPos);
         // (0,0,0) 이 맵 중앙 위치라 맵을 계속 바라보게 하는 용도
         mainCamera->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -106,20 +109,35 @@ public:
             cameraSpline->deletePoint();
             cameraSpline->AddPoint(glm::vec3(5.0f, 15.0f, 15.0f));
 
+            cameraSpline->AddPoint(glm::vec3(3.0f, 15.0f, 15.0f));
             cameraSpline->AddPoint(glm::vec3(1.0f, 15.0f, 15.0f));
+
+            cameraSpline->AddPoint(glm::vec3(-1.0f, 15.0f, 15.0f));
             cameraSpline->AddPoint(glm::vec3(-3.0f, 15.0f, 15.0f));
 
+            cameraSpline->AddPoint(glm::vec3(-5.0f, 15.0f, 15.0f));
+            cameraSpline->AddPoint(glm::vec3(-3.0f, 15.0f, 15.0f));
+
+            cameraSpline->AddPoint(glm::vec3(-1.0f, 15.0f, 15.0f));
             cameraSpline->AddPoint(glm::vec3(1.0f, 15.0f, 15.0f));
+
+            cameraSpline->AddPoint(glm::vec3(3.0f, 15.0f, 15.0f));
             cameraSpline->AddPoint(glm::vec3(5.0f, 15.0f, 15.0f));
         }
 
         // 2번 누르면 게임이 시작되었을 때 카메라의 이동
         if (InputManager::IsKeyPressed(Keyboard::D2))
         {
-            glm::vec3 curPos = cameraSpline->GetOwner()->GetTransform()->GetPosition();
-            SPDLOG_INFO("{}, {}, {}", curPos.x, curPos.y, curPos.z);
-            cameraSpline->AddPoint(glm::vec3(3.0f, 20.0f, 3.0f));
-            cameraSpline->AddPoint(glm::vec3(0.0f, 25.0f, 1.0f));
+            cameraSpline->AddPoint(glm::vec3(3.0f, 15.0f, 3.0f));
+            cameraSpline->AddPoint(glm::vec3(0.0f, 15.0f, 1.0f));
+        }
+
+        if (cameraSpline->GetTransform()->GetPosition() == glm::vec3(glm::vec3(0.0f, 15.0f, 1.0f)) &&
+            isPlayerCreated == false)
+        {
+            isPlayerCreated = true;
+            playerObject->GetTransform()->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
+            playerController->setDir(glm::vec3(0.0f, 0.0f, 0.0f));
         }
 
 
@@ -382,6 +400,7 @@ private:
 
     Object*           playerObject     = nullptr;
     PlayerController* playerController = nullptr;
+    bool              isPlayerCreated  = false;
 
     // 회전 중심점들
     Object* boardPivot  = nullptr; // 미로 바닥 + 벽
