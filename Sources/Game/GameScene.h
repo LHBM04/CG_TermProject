@@ -39,6 +39,9 @@ public:
 
     void OnUpdate() noexcept
     {
+        mainCamera->GetOwner()->GetComponent<Camera>()->GetTransform()->SetPosition(glm::vec3(0.0f, 20.0f, 5.0f));
+        mainCamera->GetOwner()->GetComponent<Camera>()->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+
         HandleInput();
 
         UpdateGameLogic();

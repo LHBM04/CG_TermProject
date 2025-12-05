@@ -53,14 +53,17 @@ void TitleScene::OnEnter() noexcept
     bgmPlayer->SetClip(bgmClip);
     bgmPlayer->Play();
 
-    auto testImage = AddUIObject("Test Image", "UI");
-    testImage->GetTransform()->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-    testImage->GetTransform()->SetScale(glm::vec3(200.0f, 200.0f, 1.0f));
+    Object* uiObject = AddUIObject("Title Image", "UI");
+    uiObject->GetTransform()->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    uiObject->GetTransform()->SetScale(glm::vec3(200.0f, 200.0f, 1.0f));
+    imageTitle = uiObject->AddComponent<ImageRenderer>();
 
-    imageTitle->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
-    imageTitle->SetMesh(
-            ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
-    imageTitle->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Poketball.png"));
+    if (imageTitle)
+    {
+        imageTitle->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
+        imageTitle->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
+        imageTitle->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Poketball.png"));
+    }
 }
 
 void TitleScene::OnUpdate() noexcept

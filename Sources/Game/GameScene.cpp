@@ -24,10 +24,13 @@ void GameScene::SetupCameraAndLight()
     Object* lightObj = AddGameObject("Directional Light", "Light");
     lightObj->GetTransform()->SetPosition(glm::vec3(0.0f, 10.0f, 0.0f));
     lightObj->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-    lightObj->AddComponent<Light>()->SetColor(glm::vec3(1.0f));
 
     mainLight = lightObj->AddComponent<Light>();
-    mainLight->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
+    if (mainLight)
+    {
+        mainLight->SetColor(glm::vec3(1.0f));
+        mainLight->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
+    }
 }
 
 void GameScene::SetupAudio()
