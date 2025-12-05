@@ -8,6 +8,8 @@
 #include "../Framework/Time.h"
 #include "../Framework/Audio.h"
 #include <vector>
+#include <fstream>
+#include <iostream>
 
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
@@ -67,7 +69,7 @@ public:
 
     virtual void OnUpdate() noexcept override
     {
-        mainCamera->GetTransform()->SetPosition(cameraSpline->GetTransform()->GetPosition(););
+        mainCamera->GetTransform()->SetPosition(cameraSpline->GetTransform()->GetPosition());
         // (0,0,0) 이 맵 중앙 위치라 맵을 계속 바라보게 하는 용도
         mainCamera->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -76,7 +78,7 @@ public:
         // 게임 시작되면 스타트 위치에서 떨어뜨리게 하면 끝
         if (InputManager::IsKeyPressed(Keyboard::R))
         {
-            playerObject->GetTransform()->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
+            playerObject->GetTransform()->SetPosition(startPosition);
             playerController->setDir(glm::vec3(0.0f, 0.0f, 0.0f));
         }
 
@@ -129,14 +131,15 @@ public:
         if (InputManager::IsKeyPressed(Keyboard::D2))
         {
             cameraSpline->AddPoint(glm::vec3(3.0f, 15.0f, 3.0f));
-            cameraSpline->AddPoint(glm::vec3(0.0f, 15.0f, 1.0f));
+            cameraSpline->AddPoint(glm::vec3(0.0f, 15.0f, 5.0f));
         }
 
         if (cameraSpline->GetTransform()->GetPosition() == glm::vec3(glm::vec3(0.0f, 15.0f, 1.0f)) &&
             isPlayerCreated == false)
         {
             isPlayerCreated = true;
-            playerObject->GetTransform()->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
+            // JSON에서 읽어온 시작 위치 사용
+            playerObject->GetTransform()->SetPosition(startPosition);
             playerController->setDir(glm::vec3(0.0f, 0.0f, 0.0f));
         }
 
@@ -212,8 +215,10 @@ private:
         auto texWood2  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture2.png");
         auto texWood3  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture3.png");
         auto texWood4  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture4.png");
+        auto texWood5  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\mapBase.png");
         auto texHandle = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle.png");
         auto texBar    = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle_bar.png");
+        
 
         // 피봇 생성 (회전 중심점)
         boardPivot   = AddObject("BoardPivot", "Pivot");
@@ -224,81 +229,105 @@ private:
         zHandlePivot = AddObject("ZHandlePivot", "Pivot");
         zHandlePivot->GetTransform()->SetPosition(glm::vec3(0.0f, -3.0f, 10.5f));
 
-        // 1. 보드판 바닥 (Floor)
-        // 기존 radius(7.5) -> Scale(15.0)
-        // 높이는 얇게 0.2로 설정
-        CreateCube(boardPivot,
-                   meshCube,
-                   texWood3,
-                   glm::vec3(0.0f, -0.5f, 0.0f), // 두꺼워진 만큼 위치를 조금 내려서 윗면 높이를 맞춤
-                   glm::vec3(15.0f, 1.0f, 15.0f),
-                   true);
-
-
-        // 2. 보드판 외곽 벽 및 내부 벽
-        // 기존 radius(0.5) -> Scale(1.0) : 이렇게 해야 1칸을 꽉 채웁니다.
-        glm::vec3 wallScale = glm::vec3(1.0f, 1.0f, 1.0f);
-
-        for (int i = -7; i <= 7; ++i)
+        // ====================================================
+        // [변경됨] 레벨 파일 로드 및 생성
+        // ====================================================
+        std::ifstream file("Assets/Map/level1.json"); // 실행 파일 경로에 level1.json이 있어야 합니다.
+        if (!file.is_open())
         {
-            for (int j = -7; j <= 7; ++j)
+            std::cout << "[Error] Failed to load level1.json" << std::endl;
+            // 파일 로드 실패 시 안전장치 (기존 바닥 하나 생성 등)를 추가할 수도 있습니다.
+            return;
+        }
+
+        json data;
+        file >> data;
+        file.close();
+
+        int              mapWidth  = data["width"];
+        int              mapHeight = data["height"];
+        std::vector<int> tiles     = data["tiles"];
+
+        // 맵의 중심을 (0,0,0)에 맞추기 위한 오프셋 계산
+        float offsetX = mapWidth / 2.0f;
+        float offsetZ = mapHeight / 2.0f;
+
+        // 1. 타일 생성 (바닥 및 벽)
+        // 기존의 통짜 바닥 및 하드코딩된 벽 생성 코드를 모두 대체합니다.
+        for (int z = 0; z < mapHeight; ++z)
+        {
+            for (int x = 0; x < mapWidth; ++x)
             {
-                // 외곽 벽
-                if (i == -7 || i == 7 || j == -7 || j == 7)
+                int tileType = tiles[z * mapWidth + x];
+
+                // 월드 좌표 계산 (큐브의 중심 위치)
+                float posX = (float)x - offsetX + 0.5f; // +0.5f는 그리드 칸 중앙 보정
+                float posZ = (float)z - offsetZ + 0.5f;
+
+                // 0(Empty)인 경우 아무것도 만들지 않음 -> 구멍이 됨
+                if (tileType == 0)
+                    continue;
+
+                // 1(Floor), 2(Wall), 3(Start), 4(Goal)은 모두 바닥이 필요함
+                // 바닥 위치: y = -0.5 (두께 1.0인 큐브의 윗면이 0.0이 되도록)
+                CreateCube(boardPivot,
+                           meshCube,
+                           texWood3,
+                           glm::vec3(posX, -0.5f, posZ),
+                           glm::vec3(1.0f, 1.0f, 1.0f),
+                           true); // true = OBB(충돌체) 포함
+
+                // 2(Wall)인 경우 바닥 위에 벽 추가
+                if (tileType == 2)
                 {
-                    // 위치는 좌표 그대로 사용 (i, 0.5, j)
-                    CreateCube(boardPivot, meshCube, texWood3, glm::vec3((float)i, 0.5f, (float)j), wallScale, true);
+                    // 벽 위치: y = 0.5 (바닥 위)
+                    CreateCube(boardPivot,
+                               meshCube,
+                               texWood2,
+                               glm::vec3(posX, 0.5f, posZ),
+                               glm::vec3(1.0f, 1.0f, 1.0f),
+                               true);
+                }
+                // 3(Start)인 경우 시작 위치 저장
+                else if (tileType == 3)
+                {
+                    startPosition = glm::vec3(posX, 2.0f, posZ);
                 }
             }
         }
+        CreateCube(boardPivot,
+                   meshCube,
+                   texWood5,
+                   glm::vec3(0.0f, -1.5f, 0.0f), // 두꺼워진 만큼 위치를 조금 내려서 윗면 높이를 맞춤
+                   glm::vec3(15.0f, 1.0f, 15.0f),
+                   true);
 
-        // 3. 내부 장애물 벽
-        // 마찬가지로 Scale을 1.0으로 설정
-        int wallIdx[10][2] = {
-                {-5, -6}, {-4, -6}, {-3, -6}, {-2, -6}, {-1, -6}, {-1, -6}, {2, -4}, {1, -4}, {0, -4}, {-1, -4}};
+        // ====================================================
+        // 장식물 (핸들, 프레임 등) - 기존 코드 유지
+        // ====================================================
 
-        for (int i = 0; i < 10; ++i)
-        {
-            CreateCube(boardPivot, meshCube, texHandle, glm::vec3(wallIdx[i][0], 0.5f, wallIdx[i][1]), wallScale, true);
-        }
-
-        // 4. 밑바닥 베이스 (Base)
-        // 기존 radius(10.0, 0.5, 10.0) -> Scale(20.0, 1.0, 20.0)
+        // 4. 밑바닥 베이스 (Base) - 미로 전체를 받치는 큰 판 (물리 충돌 X)
         CreateCube(nullptr, meshCube, texWood4, glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(20.0f, 1.0f, 20.0f), false);
 
-        // ====================================================
-        // 장식물 (핸들, 프레임 등) - 모든 Scale 값을 기존 radius * 2로 설정
-        // ====================================================
-
-        // X축 핸들 (기존 radius: 0.5, 1.0, 1.0 -> Scale: 1.0, 2.0, 2.0)
+        // X축 핸들
         CreateCube(xHandlePivot, meshCube, texHandle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 2.0f), false);
-
-        // 바 (radius: 9.4, 0.2, 0.2 -> Scale: 18.8, 0.4, 0.4)
         CreateCube(nullptr, meshCube, texBar, glm::vec3(0.7f, -3.0f, 0.0f), glm::vec3(18.8f, 0.4f, 0.4f), false);
-
-        // 연결부 (radius: 0.2, 1.5, 0.2 -> Scale: 0.4, 3.0, 0.4)
         CreateCube(nullptr, meshCube, texBar, glm::vec3(8.5f, -1.5f, 0.0f), glm::vec3(0.4f, 3.0f, 0.4f), false);
         CreateCube(nullptr, meshCube, texBar, glm::vec3(-8.5f, -1.5f, 0.0f), glm::vec3(0.4f, 3.0f, 0.4f), false);
 
-        // X축 프레임 (radius: 0.2, 1.0, 8.75 -> Scale: 0.4, 2.0, 17.5)
+        // X축 프레임
         CreateCube(xFramePivot, meshCube, texWood2, glm::vec3(8.5f, 0.0f, 0.0f), glm::vec3(0.4f, 2.0f, 17.5f), false);
         CreateCube(xFramePivot, meshCube, texWood2, glm::vec3(-8.5f, 0.0f, 0.0f), glm::vec3(0.4f, 2.0f, 17.5f), false);
-
-        // X축 프레임 가로 (radius: 8.75, 1.0, 0.2 -> Scale: 17.5, 2.0, 0.4)
         CreateCube(xFramePivot, meshCube, texWood2, glm::vec3(0.0f, 0.0f, 8.5f), glm::vec3(17.5f, 2.0f, 0.4f), false);
         CreateCube(xFramePivot, meshCube, texWood2, glm::vec3(0.0f, 0.0f, -8.5f), glm::vec3(17.5f, 2.0f, 0.4f), false);
 
-        // Z축 핸들 (radius: 1.0, 1.0, 0.5 -> Scale: 2.0, 2.0, 1.0)
+        // Z축 핸들
         CreateCube(zHandlePivot, meshCube, texHandle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 2.0f, 1.0f), false);
-
-        // Z축 바 (radius: 0.2, 0.2, 9.7 -> Scale: 0.4, 0.4, 19.4)
         CreateCube(nullptr, meshCube, texBar, glm::vec3(0.0f, -3.0f, 0.7f), glm::vec3(0.4f, 0.4f, 19.4f), false);
-
-        // Z축 연결부
         CreateCube(nullptr, meshCube, texBar, glm::vec3(0.0f, -1.5f, 9.5f), glm::vec3(0.4f, 3.0f, 0.4f), false);
         CreateCube(nullptr, meshCube, texBar, glm::vec3(0.0f, -1.5f, -9.5f), glm::vec3(0.4f, 3.0f, 0.4f), false);
 
-        // Z축 프레임 (radius: 0.2, 1.0, 9.75 -> Scale: 0.4, 2.0, 19.5)
+        // Z축 프레임
         CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(9.5f, 0.0f, 0.0f), glm::vec3(0.4f, 2.0f, 19.5f), false);
         CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(-9.5f, 0.0f, 0.0f), glm::vec3(0.4f, 2.0f, 19.5f), false);
         CreateCube(zFramePivot, meshCube, texWood1, glm::vec3(0.0f, 0.0f, 9.5f), glm::vec3(19.5f, 2.0f, 0.4f), false);
@@ -314,8 +343,7 @@ private:
 
         playerObject = AddObject("Player", "Player");
 
-        // 높이를 조금 더 높여서(5.0f) 바닥에 닿지 않고 떨어지도록 시작
-        playerObject->GetTransform()->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
+        playerObject->GetTransform()->SetPosition(startPosition);
 
         // 공의 크기 설정 (기존 반지름 0.4 -> 지름 0.8)
         playerObject->GetTransform()->SetScale(glm::vec3(0.7f));
@@ -327,7 +355,7 @@ private:
         OBB* obb = playerObject->AddComponent<OBB>();
         // OBB는 반경(Half-extents)을 사용하므로 Scale의 절반인 0.4를 입력
         obb->resize(glm::vec3(0.2f));
-        obb->teleport(glm::vec3(0.0f, 5.0f, 0.0f));
+        obb->teleport(startPosition);
 
         // 컨트롤러 추가
         playerController = playerObject->AddComponent<PlayerController>();
@@ -402,6 +430,8 @@ private:
     Object*           playerObject     = nullptr;
     PlayerController* playerController = nullptr;
     bool              isPlayerCreated  = false;
+
+    glm::vec3 startPosition;
 
     // 회전 중심점들
     Object* boardPivot  = nullptr; // 미로 바닥 + 벽

@@ -20,7 +20,7 @@ using json = nlohmann::json;
 // 1. 데이터 구조 및 상수
 // ==========================================
 // 맵 사이즈는 데이터 저장용 한계일 뿐, 시각적으로는 무한해보임
-const int MAP_LIMIT     = 15;
+const int MAP_LIMIT     = 16;
 const int WINDOW_WIDTH  = 1280;
 const int WINDOW_HEIGHT = 720;
 
