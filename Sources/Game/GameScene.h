@@ -25,6 +25,8 @@ public:
 
     virtual void OnEnter() noexcept override
     {
+        SPDLOG_INFO("GameScene Enter");
+
         // 카메라 및 라이트 설정
         SetupCameraAndLight();
 
