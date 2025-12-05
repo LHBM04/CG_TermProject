@@ -30,6 +30,11 @@ public:
         groundNormal = normal;
     }
 
+    void setDir(const glm::vec3 v)
+    {
+        dir = v;
+    }
+
     // 충돌 처리 함수
     void CheckCollision(OBB* targetOBB);
 

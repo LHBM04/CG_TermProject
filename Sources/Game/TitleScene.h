@@ -35,14 +35,16 @@ public:
         // 1. 카메라 설정
         Object* const cameraObject = AddObject("Main Camera", "Camera");
         mainCamera                 = cameraObject->AddComponent<Camera>();
+        cameraSpline               = cameraObject->AddComponent<Spline>();
+
         mainCamera->GetTransform()->SetPosition(glm::fvec3(0.0f, 30.0f, 20.0f)); // 뷰 조정
         mainCamera->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
+
         
-        cameraObject->AddComponent<AudioListener>();
 
         // 2. 조명 설정
         Object* const lightObject = AddObject("Directional Light", "Light");
-        lightObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 10.0f, 0.0f));
+        lightObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 2.0f, 0.0f));
         mainLight = lightObject->AddComponent<Light>();
         mainLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
 
@@ -62,32 +64,96 @@ public:
 
     virtual void OnUpdate() noexcept override
     {
+        mainCamera->GetTransform()->SetPosition(cameraSpline->GetTransform()->GetPosition());
+        // (0,0,0) 이 맵 중앙 위치라 맵을 계속 바라보게 하는 용도
+        mainCamera->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+
+
+        // 지금 R키로 공을 위에서 떨어뜨리고 있음.
+        // 게임 시작되면 스타트 위치에서 떨어뜨리게 하면 끝
         if (InputManager::IsKeyPressed(Keyboard::R))
         {
-            playerObject->GetTransform()->SetPosition(glm::vec3(0.0f, 20.0f, 0.0f));
+            playerObject->GetTransform()->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
+            playerController->setDir(glm::vec3(0.0f, 0.0f, 0.0f));
         }
 
+        // 1번 누르면 메인화면에서 카메라의 이동 
+        if (InputManager::IsKeyPressed(Keyboard::D1))
+        {
+            cameraSpline->deletePoint();
+            
+            cameraSpline->AddPoint(glm::vec3(0.0f, 5.0f, 9.0f));
+
+            cameraSpline->AddPoint(glm::vec3(-9.0f, 6.0f, 9.0f));
+            cameraSpline->AddPoint(glm::vec3(-10.0f, 7.0f, 0.0f));
+
+            cameraSpline->AddPoint(glm::vec3(-11.0f, 8.0f, -10.0f));
+            cameraSpline->AddPoint(glm::vec3(0.0f, 9.0f, -10.0f));
+
+            cameraSpline->AddPoint(glm::vec3(10.0f, 10.0f, -10.0f));
+            cameraSpline->AddPoint(glm::vec3(10.0f, 11.0f, 0.0f));
+
+            cameraSpline->AddPoint(glm::vec3(9.5f, 12.0f, 6.0f));
+            cameraSpline->AddPoint(glm::vec3(9.0f, 13.0f, 12.0f));
+
+            cameraSpline->AddPoint(glm::vec3(7.0f, 14.0f, 13.0f));
+            cameraSpline->AddPoint(glm::vec3(5.0f, 15.0f, 15.0f));
+        }
+
+        // 메인화면에서 카메라 처음 이동 끝나고 게임시작 버튼이나 게임 제목 등등이 표시된 후에도 계속 조금은 움직이게 설정
+        if (cameraSpline->GetTransform()->GetPosition() == glm::vec3(glm::vec3(5.0f, 15.0f, 15.0f)))
+        {
+            cameraSpline->deletePoint();
+            cameraSpline->AddPoint(glm::vec3(5.0f, 15.0f, 15.0f));
+
+            cameraSpline->AddPoint(glm::vec3(1.0f, 15.0f, 15.0f));
+            cameraSpline->AddPoint(glm::vec3(-3.0f, 15.0f, 15.0f));
+
+            cameraSpline->AddPoint(glm::vec3(1.0f, 15.0f, 15.0f));
+            cameraSpline->AddPoint(glm::vec3(5.0f, 15.0f, 15.0f));
+        }
+
+        // 2번 누르면 게임이 시작되었을 때 카메라의 이동
+        if (InputManager::IsKeyPressed(Keyboard::D2))
+        {
+            glm::vec3 curPos = cameraSpline->GetOwner()->GetTransform()->GetPosition();
+            SPDLOG_INFO("{}, {}, {}", curPos.x, curPos.y, curPos.z);
+            cameraSpline->AddPoint(glm::vec3(3.0f, 20.0f, 3.0f));
+            cameraSpline->AddPoint(glm::vec3(0.0f, 25.0f, 1.0f));
+        }
+
+
+        // 마우스 움직임으로 맵 회전
         float dt          = TimeManager::GetDeltaTime();
-        float rotateSpeed = 30.0f;
+        float rotateSpeed = 50.0f;
+        glm::vec2 mouseDelta = InputManager::GetMousePositionDelta();
 
-        // 키 입력 처리
-        if (InputManager::IsKeyHeld(Keyboard::Up))
+        if (mouseDelta.y < 0)
+        {
             rotatedAmountX -= rotateSpeed * dt;
-        if (InputManager::IsKeyHeld(Keyboard::Down))
+        }
+        else if (mouseDelta.y > 0)
+        {
             rotatedAmountX += rotateSpeed * dt;
-        if (InputManager::IsKeyHeld(Keyboard::Right))
-            rotatedAmountZ -= rotateSpeed * dt;
-        if (InputManager::IsKeyHeld(Keyboard::Left))
-            rotatedAmountZ += rotateSpeed * dt;
+        }
 
+        if (mouseDelta.x > 0)
+        {
+            rotatedAmountZ -= rotateSpeed * dt;
+        }
+        else if (mouseDelta.x < 0)
+        {
+            rotatedAmountZ += rotateSpeed * dt;
+        }
+            
         rotatedAmountX = glm::clamp(rotatedAmountX, -maxRotation, maxRotation);
         rotatedAmountZ = glm::clamp(rotatedAmountZ, -maxRotation, maxRotation);
 
-        // 1) 보드(맵) 회전 적용
         if (boardPivot)
         {
             boardPivot->GetTransform()->SetRotation(glm::vec3(rotatedAmountX, 0.0f, rotatedAmountZ));
         }
+
 
         // 장식물 회전
         if (xFramePivot)
@@ -99,7 +165,8 @@ public:
         if (zHandlePivot)
             zHandlePivot->GetTransform()->SetRotation(glm::vec3(0.0f, 0.0f, rotatedAmountZ));
 
-        // 2) 플레이어 물리 업데이트
+
+        // 플레이어 물리 업데이트
         if (playerController && boardPivot)
         {
             // 1. 바닥/벽의 물리 충돌체를 현재 렌더링 위치/회전으로 이동
@@ -309,6 +376,8 @@ private:
 
 private:
     Camera* mainCamera = nullptr;
+    Spline* cameraSpline = nullptr;
+
     Light*  mainLight  = nullptr;
 
     Object*           playerObject     = nullptr;

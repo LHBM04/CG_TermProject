@@ -36,7 +36,7 @@ void Spline::LateUpdate()
 Spline::Spline(Object* const owner)
     : Component(owner)
     , t(0.0f)
-    , speed(1.0f)
+    , speed(0.5f)
 {
 }
 
