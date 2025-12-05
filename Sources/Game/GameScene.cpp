@@ -14,13 +14,13 @@ GameScene::~GameScene() noexcept
 
 void GameScene::SetupCameraAndLight()
 {
-    Object* cameraObj = AddObject("Main Camera", "Camera");
+    Object* cameraObj = AddGameObject("Main Camera", "Camera");
     mainCamera        = cameraObj->AddComponent<Camera>();
 
     cameraObj->GetTransform()->SetPosition(glm::vec3(0.0f, 20.0f, 5.0f));
     cameraObj->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
-    Object* lightObj = AddObject("Directional Light", "Light");
+    Object* lightObj = AddGameObject("Directional Light", "Light");
     lightObj->GetTransform()->SetPosition(glm::vec3(0.0f, 10.0f, 0.0f));
     lightObj->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
     lightObj->AddComponent<Light>()->SetColor(glm::vec3(1.0f));
@@ -29,21 +29,21 @@ void GameScene::SetupCameraAndLight()
 void GameScene::SetupAudio()
 {
     auto goalClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\goal.wav");
-    goalSound     = AddObject("Goal Sound", "SFX")->AddComponent<AudioSource>();
+    goalSound     = AddGameObject("Goal Sound", "SFX")->AddComponent<AudioSource>();
     goalSound->SetClip(goalClip);
 
     auto resClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\resurrection.wav");
-    resurrection = AddObject("Resurrection", "SFX")->AddComponent<AudioSource>();
+    resurrection = AddGameObject("Resurrection", "SFX")->AddComponent<AudioSource>();
     resurrection->SetVolume(0.5f);
     resurrection->SetClip(resClip);
 
     auto hitWallClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\hitWall.wav");
-    ballSound        = AddObject("hitWall Sound", "SFX")->AddComponent<AudioSource>();
+    ballSound        = AddGameObject("hitWall Sound", "SFX")->AddComponent<AudioSource>();
     ballSound->SetClip(hitWallClip);
 
     // BGM
     auto bgmClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\Stickerbush Symphony Restored to HD.mp3");
-    bgmPlayer    = AddObject("BGM Player", "Audio")->AddComponent<AudioSource>();
+    bgmPlayer    = AddGameObject("BGM Player", "Audio")->AddComponent<AudioSource>();
     bgmPlayer->SetLooping(true);
     bgmPlayer->SetVolume(0.5f);
     bgmPlayer->SetClip(bgmClip);
@@ -53,12 +53,12 @@ void GameScene::SetupAudio()
 void GameScene::CreateLabyrinthBoard()
 {
     // 피봇 생성
-    boardPivot   = AddObject("BoardPivot", "Pivot");
-    xFramePivot  = AddObject("XFramePivot", "Pivot");
-    zFramePivot  = AddObject("ZFramePivot", "Pivot");
-    xHandlePivot = AddObject("XHandlePivot", "Pivot");
+    boardPivot   = AddGameObject("BoardPivot", "Pivot");
+    xFramePivot  = AddGameObject("XFramePivot", "Pivot");
+    zFramePivot  = AddGameObject("ZFramePivot", "Pivot");
+    xHandlePivot = AddGameObject("XHandlePivot", "Pivot");
     xHandlePivot->GetTransform()->SetPosition(glm::vec3(10.5f, -3.0f, 0.0f));
-    zHandlePivot = AddObject("ZHandlePivot", "Pivot");
+    zHandlePivot = AddGameObject("ZHandlePivot", "Pivot");
     zHandlePivot->GetTransform()->SetPosition(glm::vec3(0.0f, -3.0f, 10.5f));
 
     // X축 핸들

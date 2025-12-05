@@ -8,6 +8,7 @@
 #include "../Framework/Resources.h"
 #include "../Framework/Scenes.h"
 #include "../Framework/Time.h"
+#include "../Framework/UI.h"
 
 #include "Spline.h"
 

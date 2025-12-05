@@ -12,7 +12,7 @@ TitleScene::~TitleScene() noexcept
 void TitleScene::OnEnter() noexcept
 {
     // 카메라
-    Object* const cameraObject = AddObject("Main Camera", "Camera");
+    Object* const cameraObject = AddGameObject("Main Camera", "Camera");
     mainCamera                 = cameraObject->AddComponent<Camera>();
     cameraSpline               = cameraObject->AddComponent<Spline>();
 
@@ -34,7 +34,7 @@ void TitleScene::OnEnter() noexcept
     cameraSpline->AddPoint(glm::vec3(5.0f, 15.0f, 15.0f));
 
     // 조명
-    Object* const lightObject = AddObject("Directional Light", "Light");
+    Object* const lightObject = AddGameObject("Directional Light", "Light");
     lightObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 3.0f, 0.0f));
     lightObject->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
     mainLight = lightObject->AddComponent<Light>();
@@ -45,11 +45,13 @@ void TitleScene::OnEnter() noexcept
 
     // BGM
     auto bgmClip = ResourceManager::LoadResource<AudioClip>("Assets\\Audio\\TitleSceneMusic.mp3");
-    bgmPlayer    = AddObject("BGM Player", "Audio")->AddComponent<AudioSource>();
+    bgmPlayer    = AddGameObject("BGM Player", "Audio")->AddComponent<AudioSource>();
     bgmPlayer->SetLooping(true);
     bgmPlayer->SetVolume(0.5f);
     bgmPlayer->SetClip(bgmClip);
     bgmPlayer->Play();
+
+    auto testImage = AddUIObject("Test Image", "UI");
 }
 
 void TitleScene::OnUpdate() noexcept
@@ -72,12 +74,12 @@ void TitleScene::OnUpdate() noexcept
 
 void TitleScene::CreateLabyrinthBackground()
 {
-    boardPivot   = AddObject("BoardPivot", "Pivot");
-    xFramePivot  = AddObject("XFramePivot", "Pivot");
-    zFramePivot  = AddObject("ZFramePivot", "Pivot");
-    xHandlePivot = AddObject("XHandlePivot", "Pivot");
+    boardPivot   = AddGameObject("BoardPivot", "Pivot");
+    xFramePivot  = AddGameObject("XFramePivot", "Pivot");
+    zFramePivot  = AddGameObject("ZFramePivot", "Pivot");
+    xHandlePivot = AddGameObject("XHandlePivot", "Pivot");
     xHandlePivot->GetTransform()->SetPosition(glm::vec3(10.5f, -3.0f, 0.0f));
-    zHandlePivot = AddObject("ZHandlePivot", "Pivot");
+    zHandlePivot = AddGameObject("ZHandlePivot", "Pivot");
     zHandlePivot->GetTransform()->SetPosition(glm::vec3(0.0f, -3.0f, 10.5f));
 
     CreateCube(boardPivot, meshCube, texWood5, glm::vec3(0.0f, -1.5f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f));
@@ -110,7 +112,7 @@ void TitleScene::CreateLabyrinthBackground()
 
 void TitleScene::CreateCube(Object* parent, Mesh* mesh, Texture* texture, glm::vec3 position, glm::vec3 scale)
 {
-    Object* obj = AddObject("Deco", "Deco");
+    Object* obj = AddGameObject("Deco", "Deco");
     if (parent)
         obj->GetTransform()->SetParent(parent->GetTransform());
     obj->GetTransform()->SetPosition(position);
