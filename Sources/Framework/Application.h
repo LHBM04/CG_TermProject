@@ -13,11 +13,11 @@ class Application final
 
 public:
     /**
-     * @enum WindowMode
+     * @enum ScreenMode
      *
-     * @brief 윈도우가 가질 수 있는 상태를 정의합니다.
+     * @brief 스크린 모드를 정의합니다.
      */
-    enum class WindowMode : unsigned char
+    enum class ScreenMode : unsigned char
     {
         /**
          * @brief 창 모드.
@@ -35,27 +35,27 @@ public:
         Borderless
     };
 
-	struct Specification final
-	{
+    struct Specification final
+    {
         /**
          * @brief 애플리케이션 이름.
          */
         std::string name;
 
-		/**
+        /**
          * @brief 애플리케이션 창 너비.
-		 */
+         */
         int width;
 
-		/**
-		 * @brief 애플리케이션 창 높이.
+        /**
+         * @brief 애플리케이션 창 높이.
          */
         int height;
 
-		/**
+        /**
          * @brief 전체 화면 모드 사용 여부.
          */
-        Application::WindowMode screenMode;
+        Application::ScreenMode screenMode;
 
         /**
          * @brief 수직 동기화 활성화 여부.
@@ -97,29 +97,18 @@ public:
 
     /**
      * @brief 애플리케이션 이름을 반환합니다.
-     * 
+     *
      * @return char* 애플리케이션 이름.
      */
     [[nodiscard]]
-    static inline char* GetName() noexcept
+    static inline const std::string& GetWindowTitle() noexcept
     {
-        return specification.name.data();
-    }
-
-    /**
-     * @brief 애플리케이션 이름을 설정합니다.
-     * 
-     * @param name_ 설정할 애플리케이션 이름.
-     */
-    static inline void SetName(std::string_view name_) noexcept
-    {
-        specification.name = name_;
-        glfwSetWindowTitle(window, specification.name.c_str());
+        return specification.name;
     }
 
     /**
      * @brief 해당 애플리케이션의 창 너비를 반환합니다.
-     * 
+     *
      * @return int 해당 애플리케이션의 창 너비.
      */
     [[nodiscard]]
@@ -129,19 +118,8 @@ public:
     }
 
     /**
-     * @brief 해당 애플리케이션의 창 너비를 지정한 사이즈로 설정합니다.
-     * 
-     * @param width_ 지정할 사이즈
-     */
-    static inline void SetWidth(int width_) noexcept
-    {
-        specification.width = width_;
-        glfwSetWindowSize(window, specification.width, specification.height);
-    }
-
-    /**
      * @brief 해당 애플리케이션의 창 높이를 반환합니다.
-     * 
+     *
      * @return int 해당 애플리케이션의 창 높이.
      */
     [[nodiscard]]
@@ -151,15 +129,25 @@ public:
     }
 
     /**
+     * @brief 애플리케이션 이름을 설정합니다.
+     *
+     * @param name_ 설정할 애플리케이션 이름.
+     */
+    static void SetWindowTitle(std::string_view name_) noexcept;
+
+    /**
+     * @brief 해당 애플리케이션의 창 너비를 지정한 사이즈로 설정합니다.
+     *
+     * @param width_ 지정할 사이즈
+     */
+    static void SetWindowWidth(const int width_) noexcept;
+
+    /**
      * @brief 해당 애플리케이션의 창 높이를 지정한 사이즈로 설정합니다.
-     * 
+     *
      * @param height_ 지정할 사이즈
      */
-    static inline void SetHeight(int height_) noexcept
-    {
-        specification.height = height_;
-        glfwSetWindowSize(window, specification.width, specification.height);
-    }
+    static void SetWindowHeight(const int height_) noexcept;
 
 private:
     /**

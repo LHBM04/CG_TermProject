@@ -16,18 +16,18 @@ public:
 
     /**
      * @brief 리소스 이름을 반환합니다.
-     * 
+     *
      * @return std::string 리소스 이름
      */
     [[nodiscard]]
-    inline std::string GetName() const noexcept
+    inline std::string GetWindowTitle() const noexcept
     {
         return name;
     }
 
     /**
      * @brief 리소스 이름을 설정합니다.
-     * 
+     *
      * @param name_ 리소스 이름
      */
     inline void SetName(std::string_view name_) noexcept
@@ -37,7 +37,7 @@ public:
 
     /**
      * @brief 리소스 경로를 반환합니다.
-     * 
+     *
      * @return std::string 리소스 경로
      */
     [[nodiscard]]
@@ -48,7 +48,7 @@ public:
 
     /**
      * @brief 리소스 경로를 설정합니다.
-     * 
+     *
      * @param path_ 리소스 경로
      */
     inline void SetPath(const std::filesystem::path& path_) noexcept
@@ -58,7 +58,7 @@ public:
 
     /**
      * @brief 리소스가 로드되었는지 여부를 반환합니다.
-     * 
+     *
      * @return bool 리소스 로드 여부
      */
     [[nodiscard]]
@@ -70,9 +70,9 @@ public:
 protected:
     /**
      * @brief 지정한 경로에 위치한 리소스를 불러옵니다.
-     * 
+     *
      * @param path_ 불러올 리소스의 경로.
-     * 
+     *
      * @return bool 리소스가 성공적으로 불러와졌는지 여부.
      */
     virtual bool Load(const std::filesystem::path& path_) noexcept = 0;
@@ -131,7 +131,7 @@ public:
 
     /**
      * @brief 해당 텍스쳐의 ID를 반환합니다.
-     * 
+     *
      * @return unsigned int 해당 텍스쳐의 ID.
      */
     [[nodiscard]]
@@ -142,7 +142,7 @@ public:
 
     /**
      * @brief 해당 텍스쳐의 너비를 반환합니다.
-     * 
+     *
      * @return int 해당 텍스쳐의 너비.
      */
     [[nodiscard]]
@@ -153,7 +153,7 @@ public:
 
     /**
      * @brief 해당 텍스쳐의 높이를 반환합니다.
-     * 
+     *
      * @return int 해당 텍스쳐의 높이.
      */
     [[nodiscard]]
@@ -161,6 +161,11 @@ public:
     {
         return height;
     }
+
+    /**
+     * @brief 해당 텍스쳐를 바인딩합니다.
+     */
+    void Bind() const;
 
 protected:
     /**
@@ -325,9 +330,9 @@ public:
 protected:
     /**
      * @brief 셰이더를 로드합니다.
-     * 
+     *
      * @param path_ 셰이더 이름
-     * 
+     *
      * @return bool 셰이더 로드 성공 여부
      */
     virtual bool Load(const std::filesystem::path& path_) noexcept override;
@@ -335,7 +340,7 @@ protected:
 private:
     /**
      * @brief 셰이더를 컴파일합니다.
-     * 
+     *
      * @param type_   셰이더 타입 (GL_VERTEX_SHADER, GL_FRAGMENT_SHADER 등)
      * @param source_ 셰이더 소스 코드
      */
@@ -470,12 +475,12 @@ private:
     unsigned int ebo;
 
     /**
-     * @brief 
+     * @brief
      */
     std::vector<Mesh::Vertex> vertices;
 
     /**
-     * @brief 
+     * @brief
      */
     std::vector<unsigned int> indices;
 };
@@ -495,7 +500,7 @@ public:
 
     /**
      * @brief 버퍼 ID를 반환합니다.
-     * 
+     *
      * @return unsigned int 버퍼 ID
      */
     [[nodiscard]]
@@ -523,8 +528,8 @@ private:
 
 /**
  * @class ResourceManager
- * 
- * @brief 
+ *
+ * @brief
  */
 class ResourceManager final
 {
@@ -562,12 +567,12 @@ public:
     static TResource* GetResource(const std::filesystem::path& path_)
     {
         auto it = resources.find(path_);
-        if (it != resources.end())
+        if (it == resources.end())
         {
-            return dynamic_cast<TResource*>(it->second.get());
+            return GetResource<TResource>(path_);
         }
 
-        return nullptr;
+        return dynamic_cast<TResource*>(it->second.get());
     }
 
 private:

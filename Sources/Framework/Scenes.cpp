@@ -1,8 +1,8 @@
 #include "Scenes.h"
 
+#include "Debug.h"
 #include "Objects.h"
 #include "Rendering.h"
-#include "Debug.h"
 
 Scene::~Scene() noexcept
 {
@@ -10,7 +10,7 @@ Scene::~Scene() noexcept
 
 void Scene::Enter() noexcept
 {
-	OnEnter();
+    OnEnter();
 }
 
 void Scene::Update() noexcept
@@ -20,7 +20,7 @@ void Scene::Update() noexcept
         entity->Update();
     }
 
-	OnUpdate();
+    OnUpdate();
 }
 
 void Scene::FixedUpdate() noexcept
@@ -77,16 +77,37 @@ void Scene::Render() noexcept
     OnRender();
 }
 
+void Scene::RenderUI() noexcept
+{
+    for (const std::unique_ptr<Object>& object : uiObjects)
+    {
+        if (!object->IsEnabled())
+        {
+            continue;
+        }
+
+        object->Render();
+    }
+
+    // 3. 씬 별 추가 커스텀 UI 로직 호출
+    OnRenderUI();
+}
+
 void Scene::Exit() noexcept
 {
     objects.clear();
 
-	OnExit();
+    OnExit();
 }
 
-Object* Scene::AddObject(std::string_view name_, std::string_view tag_) noexcept
+Object* Scene::AddGameObject(std::string_view name_, std::string_view tag_) noexcept
 {
     return objects.emplace_back(std::make_unique<Object>(name_, tag_)).get();
+}
+
+Object* Scene::AddUIObject(std::string_view name_, std::string_view tag_) noexcept
+{
+    return uiObjects.emplace_back(std::make_unique<Object>(name_, tag_)).get();
 }
 
 void Scene::Remove(Object entity) noexcept
@@ -102,7 +123,7 @@ void SceneManager::AddScene(std::string_view name_, std::unique_ptr<Scene> scene
         return;
     }
 
-	scenes.emplace(name_.data(), std::move(scene_));
+    scenes.emplace(name_.data(), std::move(scene_));
 }
 
 void SceneManager::RemoveScene(std::string_view name_) noexcept
@@ -113,16 +134,16 @@ void SceneManager::RemoveScene(std::string_view name_) noexcept
         return;
     }
 
-	scenes.erase(name_.data());
+    scenes.erase(name_.data());
 }
 
 void SceneManager::LoadScene(std::string_view name_) noexcept
 {
     if (!scenes.contains(name_.data()))
-	{
+    {
         Logger::Error("Scene '{}' does not exist.", name_);
         return;
-	}
+    }
 
     if (activeScene)
     {

@@ -39,6 +39,7 @@
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="Scenes.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -52,6 +53,7 @@
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Scenes.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="UI.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

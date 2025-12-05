@@ -53,7 +53,7 @@ public:
 
     /**
      * @struct ClipingPlanes
-     * 
+     *
      * @brief 해당 카메라의 가시 범위를 정의합니다.
      */
     struct ClipingPlanes final
@@ -71,7 +71,7 @@ public:
 
     /**
      * @brief 생성자.
-     * 
+     *
      * @param owner_ 해당 컴포넌트의 오너 엔티티
      */
     explicit Camera(Object* const owner_) noexcept;
@@ -85,6 +85,17 @@ public:
      * @brief 렌더링을 시작하기 전 해당 카메라를 준비합니다.
      */
     void Ready() const noexcept;
+
+    [[nodiscard]]
+    inline Shader* const GetShader() const noexcept
+    {
+        return shader;
+    }
+
+    inline void SetShader(Shader* const shader_) noexcept
+    {
+        shader = shader_;
+    }
 
     /**
      * @brief 해당 카메라의 투영 방식을 반환합니다.
@@ -130,7 +141,7 @@ public:
 
     /**
      * @brief 해당 카메라의 근평면 거리를 반환합니다.
-     * 
+     *
      * @return float 해당 카메라의 근평면 거리
      */
     [[nodiscard]]
@@ -141,7 +152,7 @@ public:
 
     /**
      * @brief 해당 카메라의 뷰포트 영역을 설정합니다.
-     * 
+     *
      * @param viewport_ 해당 카메라의 뷰포트 영역
      */
     inline void SetViewport(const Viewport& viewport_) noexcept
@@ -151,7 +162,7 @@ public:
 
     /**
      * @brief 해당 카메라의 가시 범위를 반환합니다.
-     * 
+     *
      * @return ClipingPlanes 해당 카메라의 가시 범위
      */
     [[nodiscard]]
@@ -162,7 +173,7 @@ public:
 
     /**
      * @brief 해당 카메라의 가시 범위를 설정합니다.
-     * 
+     *
      * @param clipPlanes_ 해당 카메라의 가시 범위
      */
     inline void SetClipingPlanes(const ClipingPlanes& clipingPlanes_) noexcept
@@ -172,7 +183,7 @@ public:
 
     /**
      * @brief 해당 카메라의 근평면 거리를 반환합니다.
-     * 
+     *
      * @return float 해당 카메라의 근평면 거리
      */
     [[nodiscard]]
@@ -183,7 +194,7 @@ public:
 
     /**
      * @brief 해당 카메라의 근평면 거리를 설정합니다.
-     * 
+     *
      * @param nearPlane_ 해당 카메라의 근평면 거리
      */
     inline void SetNearPlane(const float nearPlane_) noexcept
@@ -193,7 +204,7 @@ public:
 
     /**
      * @brief 해당 카메라의 원평면 거리를 반환합니다.
-     * 
+     *
      * @return float 해당 카메라의 원평면 거리
      */
     [[nodiscard]]
@@ -204,7 +215,7 @@ public:
 
     /**
      * @brief 해당 카메라의 원평면 거리를 설정합니다.
-     * 
+     *
      * @param farPlane_ 해당 카메라의 원평면 거리
      */
     inline void SetFarPlane(const float farPlane_) noexcept
@@ -214,7 +225,7 @@ public:
 
     /**
      * @brief 해당 카메라의 직교 투영 크기를 반환합니다.
-     * 
+     *
      * @return float 해당 카메라의 직교 투영 크기
      */
     [[nodiscard]]
@@ -225,7 +236,7 @@ public:
 
     /**
      * @brief 해당 카메라의 직교 투영 크기를 설정합니다.
-     * 
+     *
      * @param orthoSize_ 해당 카메라의 직교 투영 크기
      */
     inline void SetOrthoSize(const float orthoSize_) noexcept
@@ -235,62 +246,26 @@ public:
 
     /**
      * @brief 해당 카메라의 뷰 행렬을 반환합니다.
-     * 
+     *
      * @return glm::fmat4x4 해당 카메라의 뷰 행렬
      */
     [[nodiscard]]
-    inline glm::fmat4x4 GetViewMatrix() const noexcept
-    {
-        Transform* const transform = GetOwner()->GetTransform();
-        if (!transform)
-        {
-            return glm::mat4(1.0f);
-        }
-
-        const glm::vec3 pos   = transform->GetPosition();
-        const glm::vec3 front = transform->GetForward();
-        const glm::vec3 up    = transform->GetUp();
-
-        return glm::lookAt(pos, pos + front, up);
-    }
+    glm::fmat4x4 GetViewMatrix() const noexcept;
 
     /**
      * @brief 해당 카메라의 투영 행렬을 반환합니다.
-     * 
+     *
      * @return glm::fmat4x4 해당 카메라의 투영 행렬
      */
     [[nodiscard]]
-    inline glm::fmat4x4 GetProjectionMatrix() const noexcept
-    {
-        const float aspectRatio = viewport.width / viewport.height;
-
-        switch (projection)
-        {
-            case Camera::Projection::Orthographic:
-            {
-                const float halfHeight = orthoSize * 0.5f;
-                const float halfWidth  = halfHeight * aspectRatio;
-
-                return glm::ortho(-halfWidth,
-                                  halfWidth,
-                                  -halfHeight,
-                                  halfHeight,
-                                  clipingPlanes.nearPlane,
-                                  clipingPlanes.farPlane);
-            }
-            case Camera::Projection::Perspective:
-            {
-                return glm::perspective(
-                        glm::radians(fieldOfView), aspectRatio, clipingPlanes.nearPlane, clipingPlanes.farPlane);
-            }
-            default:
-            {
-                return glm::fmat4x4(1.0f);
-            }
-        }
-    }
+    glm::fmat4x4 GetProjectionMatrix() const noexcept;
 
 private:
+    /**
+     * @brief 해당 카메라가 사용할 셰이더.
+     */
+    Shader* shader;
+
     /**
      * @brief 해당 카메라의 투영 방식.
      */
@@ -318,14 +293,14 @@ private:
 };
 
 /**
- * @brief 
+ * @brief
  */
 class Light : public Component
 {
 public:
     /**
      * @brief 생성자.
-     * 
+     *
      * @param owner_ 해당 컴포넌트의 오너
      */
     explicit Light(Object* const owner_) noexcept;
@@ -334,6 +309,27 @@ public:
      * @brief 소멸자.
      */
     virtual ~Light() noexcept override;
+
+    /**
+     * @brief 해당 조명의 셰이더를 반환합니다.
+     *
+     * @return Shader* 조명의 셰이더
+     */
+    [[nodiscard]]
+    inline Shader* const GetShader() const
+    {
+        return shader;
+    }
+
+    /**
+     * @brief 해당 조명의 셰이더를 설정합니다.
+     *
+     * @param shader_ 설정할 셰이더
+     */
+    inline void SetShader(Shader* const shader_)
+    {
+        shader = shader_;
+    }
 
     /**
      * @brief 해당 조명의 색상을 반환합니다.
@@ -356,7 +352,7 @@ public:
 
     /**
      * @brief 해당 조명의 세기를 반환합니다.
-     * 
+     *
      * @return float 조명의 세기
      */
     [[nodiscard]]
@@ -367,7 +363,7 @@ public:
 
     /**
      * @brief 해당 조명의 세기를 설정합니다.
-     * 
+     *
      * @param intensity_ 조명의 세기
      */
     inline void SetIntensity(const float intensity_) noexcept
@@ -382,6 +378,11 @@ protected:
     virtual void Update() noexcept override;
 
 private:
+    /**
+     * @brief 해당 조명이 사용할 셰이더.
+     */
+    Shader* shader;
+
     /**
      * @brief 해당 조명의 색상.
      */
@@ -403,7 +404,7 @@ class MeshRenderer : public Component
 public:
     /**
      * @brief 생성자.
-     * 
+     *
      * @param owner_ 해당 컴포넌트의 오너
      */
     explicit MeshRenderer(Object* const owner_) noexcept;
@@ -420,7 +421,7 @@ public:
 
     /**
      * @brief 해당 렌더러가 그릴 메쉬를 설정합니다.
-     * 
+     *
      * @param mesh_ 해당 렌더러가 그릴 메쉬
      */
     [[nodiscard]]
@@ -431,7 +432,7 @@ public:
 
     /**
      * @brief 해당 렌더러가 그릴 메쉬를 설정합니다.
-     * 
+     *
      * @param mesh_ 해당 렌더러가 그릴 메쉬
      */
     inline void SetMesh(Mesh* const mesh_) noexcept
@@ -441,7 +442,7 @@ public:
 
     /**
      * @brief 해당 렌더러가 사용할 텍스처를 반환합니다.
-     * 
+     *
      * @return Texture* 해당 렌더러가 사용할 텍스처
      */
     [[nodiscard]]
@@ -452,12 +453,33 @@ public:
 
     /**
      * @brief 해당 렌더러가 사용할 텍스처를 설정합니다.
-     * 
+     *
      * @param texture_ 해당 렌더러가 사용할 텍스처
      */
     inline void SetTexture(Texture* const texture_) noexcept
     {
         texture = texture_;
+    }
+
+    /**
+     * @brief 해당 렌더러가 사용할 셰이더를 반환합니다.
+     *
+     * @return Shader* 해당 렌더러가 사용할 셰이더
+     */
+    [[nodiscard]]
+    inline Shader* const GetShader() const noexcept
+    {
+        return shader;
+    }
+
+    /**
+     * @brief 해당 렌더러가 사용할 셰이더를 설정합니다.
+     *
+     * @param shader_ 해당 렌더러가 사용할 셰이더
+     */
+    inline void SetShader(Shader* const shader_) noexcept
+    {
+        shader = shader_;
     }
 
 private:
@@ -470,4 +492,9 @@ private:
      * @brief 해당 렌더러가 사용할 텍스처.
      */
     Texture* texture;
+
+    /**
+     * @brief 해당 렌더러가 사용할 셰이더.
+     */
+    Shader* shader;
 };
