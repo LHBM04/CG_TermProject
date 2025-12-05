@@ -162,10 +162,12 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OBB.cpp" />
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="Spline.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.vcxproj">

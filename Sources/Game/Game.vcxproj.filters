@@ -5,6 +5,8 @@
     <ClCompile Include="Spline.cpp" />
     <ClCompile Include="OBB.cpp" />
     <ClCompile Include="PlayerController.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="GameScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TitleScene.h" />
