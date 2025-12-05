@@ -53,16 +53,20 @@ void TitleScene::OnEnter() noexcept
     bgmPlayer->SetClip(bgmClip);
     bgmPlayer->Play();
 
+
+    // 제목 설정
     Object* uiObject = AddUIObject("Title Image", "UI");
-    uiObject->GetTransform()->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-    uiObject->GetTransform()->SetScale(glm::vec3(200.0f, 200.0f, 1.0f));
+    
+    uiObject->GetTransform()->SetPosition(
+            glm::vec3(Application::GetWindowWidth() * 0.5f, 0.0f, 0.0f));
+    uiObject->GetTransform()->SetScale(glm::vec3(600.0f, 200.0f, 1.0f));
     imageTitle = uiObject->AddComponent<ImageRenderer>();
 
     if (imageTitle)
     {
         imageTitle->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
-        imageTitle->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj"));
-        imageTitle->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Poketball.png"));
+        imageTitle->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
+        imageTitle->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\TitleImage.png"));
     }
 }
 
