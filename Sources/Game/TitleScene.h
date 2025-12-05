@@ -423,6 +423,84 @@ private:
                 }
             }
         }
+        else if (levelNum == 2)
+        {
+            std::ifstream file("Assets/Map/level2.json");
+            if (!file.is_open())
+            {
+                std::cout << "[Error] Failed to load level2.json" << std::endl;
+                return;
+            }
+
+            json data;
+            file >> data;
+            file.close();
+
+            int              mapWidth  = data["width"];
+            int              mapHeight = data["height"];
+            std::vector<int> tiles     = data["tiles"];
+
+            float offsetX = mapWidth / 2.0f;
+            float offsetZ = mapHeight / 2.0f;
+
+            // 타일 생성 (바닥 및 벽)
+            for (int z = 0; z < mapHeight; ++z)
+            {
+                for (int x = 0; x < mapWidth; ++x)
+                {
+                    int tileType = tiles[z * mapWidth + x];
+
+                    float posX = (float)x - offsetX + 0.5f;
+                    float posZ = (float)z - offsetZ + 0.5f;
+
+                    // 0 Empty
+                    if (tileType == 0)
+                        continue;
+
+                    CreateCube(boardPivot,
+                               meshCube,
+                               texWood3,
+                               glm::vec3(posX, -0.5f, posZ),
+                               glm::vec3(1.0f, 1.0f, 1.0f),
+                               true); // true = OBB(충돌체) 포함
+
+                    // 2 Wall
+                    if (tileType == 2)
+                    {
+                        CreateCube(boardPivot,
+                                   meshCube,
+                                   wall,
+                                   glm::vec3(posX, 0.5f, posZ),
+                                   glm::vec3(1.0f, 1.0f, 1.0f),
+                                   true);
+                    }
+
+                    // 3 Start
+                    else if (tileType == 3)
+                    {
+                        startPosition = glm::vec3(posX, 2.0f, posZ);
+                        CreateCube(boardPivot,
+                                   meshCube,
+                                   texRed,
+                                   glm::vec3(posX, -0.5f, posZ),
+                                   glm::vec3(1.0f, 1.2f, 1.0f),
+                                   false);
+                    }
+
+                    // 4 Goal
+                    else if (tileType == 4)
+                    {
+                        goalPosition = glm::vec3(posX, 0.0f, posZ);
+                        CreateCube(boardPivot,
+                                   meshCube,
+                                   texGreen,
+                                   glm::vec3(posX, -0.5f, posZ),
+                                   glm::vec3(1.0f, 1.2f, 1.0f),
+                                   false);
+                    }
+                }
+            }
+        }
     }
 
     void CreatePlayer()
