@@ -1,8 +1,10 @@
 #include "Scenes.h"
 
+#include "Application.h"
 #include "Debug.h"
 #include "Objects.h"
 #include "Rendering.h"
+#include "Time.h"
 
 Scene::~Scene() noexcept
 {
@@ -126,6 +128,69 @@ void SceneManager::AddScene(std::string_view name_, std::unique_ptr<Scene> scene
     scenes.emplace(name_.data(), std::move(scene_));
 }
 
+void SceneManager::Initialize() noexcept
+{
+    loadingShader = ResourceManager::LoadResource<Shader>("Assets/Shaders/UIObject");
+    loadingMesh   = ResourceManager::LoadResource<Mesh>("Assets/Meshes/Rect.obj");
+    loadingTex    = ResourceManager::LoadResource<Texture>("Assets/Textures/Loading.png");
+}
+
+void SceneManager::Update() noexcept
+{
+    if (nextScene)
+    {
+        texAlpha += TimeManager::GetUnscaledDeltaTime() * 2.0f;
+        if (texAlpha >= 1.0f)
+        {
+            if (currentScene)
+            {
+                currentScene->Exit();
+            }
+
+            texAlpha     = 1.0f;
+            currentScene = nextScene;
+            currentScene->Enter();
+            nextScene = nullptr;
+        }
+    }
+    else
+    {
+        texAlpha -= TimeManager::GetUnscaledDeltaTime() * 2.0f;
+        if (texAlpha <= 0.0f)
+        {
+            texAlpha = 0.0f;
+        }
+    }
+}
+
+void SceneManager::Render() noexcept
+{
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    loadingShader->Use();
+
+    float width  = (float)Application::GetWindowWidth();
+    float height = (float)Application::GetWindowHeight();
+
+    glm::mat4 projection = glm::ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+    loadingShader->SetUniformMatrix4x4("projection", projection);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model           = glm::translate(model, glm::vec3(width / 2.0f, height / 2.0f, 0.0f));
+    model           = glm::scale(model, glm::vec3(width, height, 1.0f));
+
+    loadingShader->SetUniformMatrix4x4("model", model);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, loadingTex->GetTextureID());
+    loadingShader->SetUniformInt("outTexture", 0);
+
+    loadingShader->SetUniformVector4("color", glm::vec4(1.0f, 1.0f, 1.0f, texAlpha));
+
+    loadingMesh->Draw();
+}
+
 void SceneManager::RemoveScene(std::string_view name_) noexcept
 {
     if (!scenes.contains(name_.data()))
@@ -145,27 +210,25 @@ void SceneManager::LoadScene(std::string_view name_) noexcept
         return;
     }
 
-    if (activeScene)
-    {
-        UnloadScene();
-    }
-
-    activeScene = scenes[name_.data()].get();
-    activeScene->Enter();
+    nextScene = scenes[name_.data()].get();
 }
 
 void SceneManager::UnloadScene() noexcept
 {
-    if (!activeScene)
+    if (!currentScene)
     {
         Logger::Error("No active scene to unload.");
         return;
     }
 
-    activeScene->Exit();
-    activeScene = nullptr;
+    currentScene = nullptr;
 }
 
 std::unordered_map<std::string, std::unique_ptr<Scene>> SceneManager::scenes;
 
-Scene* SceneManager::activeScene = nullptr;
+Scene*   SceneManager::currentScene  = nullptr;
+Scene*   SceneManager::nextScene     = nullptr;
+Shader*  SceneManager::loadingShader = nullptr;
+Mesh*    SceneManager::loadingMesh   = nullptr;
+Texture* SceneManager::loadingTex    = nullptr;
+float    SceneManager::texAlpha      = 0.0f;

@@ -7,6 +7,7 @@
 #include "../Framework/UI.h"
 #include "../Framework/Scenes.h"
 #include "../Framework/Time.h"
+#include "../Framework/Rendering.h"
 #include "GameManager.h"
 
 #include "OBB.h"
