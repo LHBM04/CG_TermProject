@@ -9,6 +9,7 @@
 #include "../Framework/Time.h"
 #include "../Framework/Rendering.h"
 #include "GameManager.h"
+#include "TitleScene.h"
 
 #include "OBB.h"
 #include "PlayerController.h"

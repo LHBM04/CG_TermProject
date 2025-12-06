@@ -262,7 +262,7 @@ void GameScene::UpdateGameLogic()
 
     // 골인 체크
     glm::vec3 pPos = playerObject->GetTransform()->GetPosition();
-    if (glm::distance(pPos, goalPosition) < 1.0f && !isGoalReached)
+    if (glm::distance(pPos, goalPosition) < 1.1f && !isGoalReached)
     {
         SPDLOG_INFO("goal in..!");
         isGoalReached = true;
@@ -286,9 +286,10 @@ void GameScene::UpdateGameLogic()
 
         if (goalDelayTimer >= 3.0f)
         {
-            std::ifstream file(std::string("Assets/Map/level" + std::to_string(GameManager::currentLevel) + ".json"));
-            if (file.good())
+            if (GameManager::currentLevel <= GameManager::maxLevel)
             {
+                std::ifstream file(
+                        std::string("Assets/Map/level" + std::to_string(GameManager::currentLevel) + ".json"));
                 file.close();
                 SceneManager::LoadScene("Game Scene");
                 return;

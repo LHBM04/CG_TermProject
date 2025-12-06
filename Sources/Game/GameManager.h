@@ -6,6 +6,7 @@ class GameManager
 {
 public:
     static int currentLevel;
+    static int maxLevel;
 
     static void Initialize()
     {
@@ -19,3 +20,4 @@ public:
 };
 
 inline int GameManager::currentLevel = 1;
+inline int GameManager::maxLevel     = 2;
