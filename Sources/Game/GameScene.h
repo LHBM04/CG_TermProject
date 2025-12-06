@@ -1,8 +1,10 @@
 #pragma once
 
+#include "../Framework/Application.h"
 #include "../Framework/Audio.h"
 #include "../Framework/Input.h"
 #include "../Framework/Resources.h"
+#include "../Framework/UI.h"
 #include "../Framework/Scenes.h"
 #include "../Framework/Time.h"
 #include "GameManager.h"
@@ -20,6 +22,9 @@ public:
     void OnEnter() noexcept
     {
         SPDLOG_INFO("GameScene Enter");
+
+        // 변수 초기화
+        InitializeVariables();
 
         // 카메라 및 라이트 설정
         SetupCameraAndLight();
@@ -51,6 +56,7 @@ private:
     // -------------------------------------------------------
     // [초기화 관련 함수들]
     // -------------------------------------------------------
+    void InitializeVariables();
     void SetupCameraAndLight();
     void SetupAudio();
     void CreateLabyrinthBoard();
@@ -81,16 +87,18 @@ private:
 
     glm::vec3 startPosition;
     glm::vec3 goalPosition;
-    bool      isGoalReached = false;
+    ImageRenderer* goalImage = nullptr;
+    bool      isGoalReached;
+    float     goalDelayTimer; // 골인 시 효과음 들릴 시간을 좀 주기 위한 용도
 
-    float rotatedAmountX = 0.0f;
-    float rotatedAmountZ = 0.0f;
+    float rotatedAmountX;
+    float rotatedAmountZ;
 
     AudioSource* bgmPlayer    = nullptr;
     AudioSource* resurrection = nullptr;
     AudioSource* goalSound    = nullptr;
     AudioSource* ballSound    = nullptr;
-    float        checkHitWall = 0.0f;
+    float        checkHitWall;
 
     Mesh* meshSphere = ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Ball.obj");
     Mesh* meshCube   = ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj");
