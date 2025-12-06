@@ -105,6 +105,7 @@ bool Application::Initialize(const Specification& specification_) noexcept
 
     InputManager::Initialize(window);
     TimeManager::Initialize();
+    SceneManager::Initialize();
     AudioSystem::Initialize();
 
     return true;
@@ -151,8 +152,10 @@ void Application::SetWindowHeight(const int height_) noexcept
 
 void Application::Update() noexcept
 {
-    Scene* const activeScene = SceneManager::GetActiveScene();
-    if (!activeScene)
+    SceneManager::Update();
+
+    Scene* const currentScene = SceneManager::GetActiveScene();
+    if (!currentScene)
     {
         return;
     }
@@ -170,7 +173,7 @@ void Application::Update() noexcept
         fixedUpdateTime = 0.0f;
     }
 
-    activeScene->Update();
+    currentScene->Update();
 }
 
 void Application::Render() noexcept
@@ -178,20 +181,21 @@ void Application::Render() noexcept
     glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    Scene* const activeScene = SceneManager::GetActiveScene();
-    if (!activeScene)
+    Scene* const currentScene = SceneManager::GetActiveScene();
+    if (!currentScene)
     {
         return;
     }
 
     glEnable(GL_DEPTH_TEST);
-    activeScene->Render();
+    currentScene->Render();
     
     glDisable(GL_DEPTH_TEST);
-    activeScene->RenderUI();
+    currentScene->RenderUI();
 
     glDisable(GL_DEPTH_TEST);
-    activeScene->RenderUI();
+    currentScene->RenderUI();
+    SceneManager::Render();
 
     glfwSwapBuffers(const_cast<GLFWwindow*>(window));
 }

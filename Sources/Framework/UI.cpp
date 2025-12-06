@@ -34,7 +34,7 @@ void ImageRenderer::Render() noexcept
     glBindTexture(GL_TEXTURE_2D, texture->GetTextureID());
     shader->SetUniformInt("outTexture", 0);
 
-    shader->SetUniformVector3("color", glm::vec3(1.0f, 1.0f, 1.0f));
+    shader->SetUniformVector4("color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0));
 
     mesh->Draw();
 }

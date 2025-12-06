@@ -2,7 +2,10 @@
 
 #include "Common.h"
 #include "Objects.h"
-#include "Rendering.h"
+
+class Shader;
+class Texture;
+class Mesh;
 
 /**
  * @class Scene
@@ -123,6 +126,10 @@ public:
      */
     static void AddScene(std::string_view name_, std::unique_ptr<Scene> scene_) noexcept;
 
+    static void Initialize() noexcept;
+    static void Update() noexcept;
+    static void Render() noexcept;
+
     /**
      * @brief 씬을 제거합니다.
      *
@@ -150,7 +157,7 @@ public:
     [[nodiscard]]
     inline static Scene* GetActiveScene() noexcept
     {
-        return activeScene;
+        return currentScene;
     }
 
 private:
@@ -162,5 +169,15 @@ private:
     /**
      * @brief 현재 로드된 씬.
      */
-    static Scene* activeScene;
+    static Scene* currentScene;
+
+    /**
+     * @brief 다음에 로드할 씬.
+     */
+    static Scene* nextScene;
+
+    static Shader*  loadingShader;
+    static Mesh*    loadingMesh;
+    static Texture* loadingTex;
+    static float    texAlpha;
 };
