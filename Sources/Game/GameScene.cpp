@@ -27,6 +27,12 @@ void GameScene::InitializeVariables()
     {
         goalImage->Destroy();
     }
+
+    if (spectatorImage)
+    {
+        spectatorImage->Destroy();
+    }
+    
 }
 
 void GameScene::SetupCameraAndLight()
@@ -175,6 +181,15 @@ void GameScene::CreateLabyrinthLevel(int levelNum)
             }
         }
     }
+
+    Object* tmp = AddUIObject("Spectator Image", "UI");
+    tmp->GetTransform()->SetScale(glm::vec3(600.0f, 300.0f, 1.0f));
+    spectatorImage = tmp->AddComponent<ImageRenderer>();
+    spectatorImage->GetTransform()->SetPosition(glm::vec3(200.0f, Application::GetWindowHeight() - 100.0f, 0.0f));
+    spectatorImage->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
+    spectatorImage->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
+    spectatorImage->SetTexture(ResourceManager::LoadResource<Texture>(
+            std::string("Assets\\Textures\\level" + std::to_string(GameManager::currentLevel) + "Text.png")));
 }
 
 void GameScene::CreatePlayer()
@@ -198,6 +213,9 @@ void GameScene::CreatePlayer()
 
 void GameScene::HandleInput()
 {
+    if (isGoalReached)
+        return;
+
     float     dt          = TimeManager::GetDeltaTime();
     float     rotateSpeed = 50.0f;
     glm::vec2 mouseDelta  = InputManager::GetMousePositionDelta();

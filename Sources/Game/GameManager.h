@@ -20,4 +20,4 @@ public:
 };
 
 inline int GameManager::currentLevel = 0;
-inline int GameManager::maxLevel     = 2;
+inline int GameManager::maxLevel     = 3;
