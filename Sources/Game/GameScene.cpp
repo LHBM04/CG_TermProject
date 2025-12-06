@@ -12,6 +12,23 @@ GameScene::~GameScene() noexcept
 {
 }
 
+void GameScene::InitializeVariables()
+{
+    wallOBBs.clear();
+
+    isGoalReached  = false;
+    goalDelayTimer = 0.0f;
+
+    rotatedAmountX = 0.0f;
+    rotatedAmountZ = 0.0f;
+    checkHitWall   = 0.0f;
+
+    if (goalImage)
+    {
+        goalImage->Destroy();
+    }
+}
+
 void GameScene::SetupCameraAndLight()
 {
     Object* cameraObj = AddGameObject("Main Camera", "Camera");
@@ -245,15 +262,48 @@ void GameScene::UpdateGameLogic()
 
     // 골인 체크
     glm::vec3 pPos = playerObject->GetTransform()->GetPosition();
-    if (glm::distance(pPos, goalPosition) < 0.5f)
+    if (glm::distance(pPos, goalPosition) < 1.0f && !isGoalReached)
     {
+        SPDLOG_INFO("goal in..!");
+        isGoalReached = true;
         goalSound->Play();
-        // [TODO] 다음 레벨 로드 혹은 승리 처리
-        // SceneManager::LoadScene("Title Scene"); // 예시: 타이틀로 복귀
+
+        GameManager::NextLevel();
+
+        Object* goalObj = AddUIObject("Goal Image", "UI");
+        goalObj->GetTransform()->SetScale(glm::vec3(600.0f, 300.0f, 1.0f));
+        goalImage = goalObj->AddComponent<ImageRenderer>();
+        goalImage->GetTransform()->SetPosition(glm::vec3(Application::GetWindowWidth() * 0.5f, Application::GetWindowHeight() * 0.5f, 0.0f));
+        goalImage->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
+        goalImage->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
+        goalImage->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Congratulations.png"));
+    }
+
+    // 골인하면 효과음 재생할 시간정도만 딜레이 후 다음 레벨 진입
+    if (isGoalReached)
+    {
+        goalDelayTimer += TimeManager::GetDeltaTime();
+
+        if (goalDelayTimer >= 3.0f)
+        {
+            std::ifstream file(std::string("Assets/Map/level" + std::to_string(GameManager::currentLevel) + ".json"));
+            if (file.good())
+            {
+                file.close();
+                SceneManager::LoadScene("Game Scene");
+                return;
+            }
+            else
+            {
+                GameManager::currentLevel = 1;
+                SceneManager::LoadScene("Title Scene");
+                return;
+            }
+        }
     }
 
     // 소리 재생
-    float slidingSoundVolume = glm::clamp(0.0f, glm::length(playerController->GetDir()) / 7, 1.0f);
+    float slidingSoundVolume = glm::clamp(glm::length(playerController->GetDir()) * 0.14f, 0.0f, 1.0f);
     float hitVolume          = abs(slidingSoundVolume - checkHitWall);
 
     if (hitVolume > 0.1f)
