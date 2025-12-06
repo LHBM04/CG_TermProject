@@ -296,7 +296,6 @@ void GameScene::UpdateGameLogic()
             }
             else
             {
-                GameManager::currentLevel = 1;
                 SceneManager::LoadScene("Title Scene");
                 return;
             }

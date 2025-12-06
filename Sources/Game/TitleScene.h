@@ -10,6 +10,7 @@
 #include "../Framework/Time.h"
 #include "../Framework/UI.h"
 
+#include "GameManager.h"
 #include "Spline.h"
 
 /**

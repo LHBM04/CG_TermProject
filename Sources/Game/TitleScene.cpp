@@ -11,6 +11,8 @@ TitleScene::~TitleScene() noexcept
 
 void TitleScene::OnEnter() noexcept
 {
+    GameManager::Initialize();
+
     // 카메라
     Object* const cameraObject = AddGameObject("Main Camera", "Camera");
     mainCamera                 = cameraObject->AddComponent<Camera>();
