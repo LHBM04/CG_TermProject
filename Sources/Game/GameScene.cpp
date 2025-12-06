@@ -189,7 +189,7 @@ void GameScene::CreateLabyrinthLevel(int levelNum)
     spectatorImage->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
     spectatorImage->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
     spectatorImage->SetTexture(ResourceManager::LoadResource<Texture>(
-            std::string("Assets\\Textures\\level" + std::to_string(GameManager::currentLevel) + "Text.png")));
+            std::string("Assets\\Textures\\level" + std::to_string(GameManager::currentLevel % 4)  + "Text.png")));
 }
 
 void GameScene::CreatePlayer()
