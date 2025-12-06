@@ -66,7 +66,7 @@ class TextRenderer : public Component
 public:
     /**
      * @brief 생성자.
-     *
+     * 
      * @param owner 해당 컴포넌트의 오너
      */
     explicit TextRenderer(Object* const owner) noexcept;
@@ -119,4 +119,5 @@ private:
 class Button : public Component
 {
 private:
+
 };

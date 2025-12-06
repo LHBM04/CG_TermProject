@@ -30,7 +30,7 @@ void Camera::Ready() const noexcept
     {
         Logger::Error("Camera: Failed to load default shader.");
         return;
-    }
+    }   
 
     glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
@@ -145,14 +145,12 @@ void MeshRenderer::Render() noexcept
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture->GetTextureID());
 
-    GLint samplerLoc = glGetUniformLocation(shader->GetProgramID(), "outTexture");
-    glUniform1i(samplerLoc, 0);
-    // if (texture)
-    // {
-    //     texture->Bind();
-    // }
-    //
-    // shader->SetUniformInt("outTexture", 0);
+    if (texture)
+    {
+        texture->Bind();
+    }
+
+    shader->SetUniformInt("outTexture", 0);
 
     mesh->Draw();
 }
