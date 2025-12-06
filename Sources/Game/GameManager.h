@@ -10,7 +10,7 @@ public:
 
     static void Initialize()
     {
-        currentLevel = 1;
+        currentLevel = 0;
     }
 
     static void NextLevel()
@@ -19,5 +19,5 @@ public:
     }
 };
 
-inline int GameManager::currentLevel = 1;
+inline int GameManager::currentLevel = 0;
 inline int GameManager::maxLevel     = 2;

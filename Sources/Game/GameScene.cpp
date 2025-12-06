@@ -121,7 +121,6 @@ void GameScene::CreateLabyrinthBoard()
 
 void GameScene::CreateLabyrinthLevel(int levelNum)
 {
-    // Assets/Map 경로가 실행 파일 기준 상대 경로인지 확인 필요
     std::string   path = "Assets/Map/level" + std::to_string(levelNum) + ".json";
     std::ifstream file(path);
     if (!file.is_open())
