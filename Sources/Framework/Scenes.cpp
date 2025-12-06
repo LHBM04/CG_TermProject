@@ -1,8 +1,8 @@
 #include "Scenes.h"
 
+#include "Debug.h"
 #include "Objects.h"
 #include "Rendering.h"
-#include "Debug.h"
 
 Scene::~Scene() noexcept
 {
@@ -10,7 +10,7 @@ Scene::~Scene() noexcept
 
 void Scene::Enter() noexcept
 {
-	OnEnter();
+    OnEnter();
 }
 
 void Scene::Update() noexcept
@@ -20,7 +20,7 @@ void Scene::Update() noexcept
         entity->Update();
     }
 
-	OnUpdate();
+    OnUpdate();
 }
 
 void Scene::FixedUpdate() noexcept
@@ -97,7 +97,7 @@ void Scene::Exit() noexcept
 {
     objects.clear();
 
-	OnExit();
+    OnExit();
 }
 
 Object* Scene::AddGameObject(std::string_view name_, std::string_view tag_) noexcept
@@ -123,7 +123,7 @@ void SceneManager::AddScene(std::string_view name_, std::unique_ptr<Scene> scene
         return;
     }
 
-	scenes.emplace(name_.data(), std::move(scene_));
+    scenes.emplace(name_.data(), std::move(scene_));
 }
 
 void SceneManager::RemoveScene(std::string_view name_) noexcept
@@ -134,16 +134,16 @@ void SceneManager::RemoveScene(std::string_view name_) noexcept
         return;
     }
 
-	scenes.erase(name_.data());
+    scenes.erase(name_.data());
 }
 
 void SceneManager::LoadScene(std::string_view name_) noexcept
 {
     if (!scenes.contains(name_.data()))
-	{
+    {
         Logger::Error("Scene '{}' does not exist.", name_);
         return;
-	}
+    }
 
     if (activeScene)
     {

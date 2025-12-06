@@ -1,30 +1,30 @@
 #include "Application.h"
 
+#include "Audio.h"
 #include "Debug.h"
 #include "Input.h"
 #include "Scenes.h"
 #include "Time.h"
-#include "Audio.h"
 
 bool Application::Initialize(const Specification& specification_) noexcept
 {
     specification = specification_;
 
-	Logger::Initialize();
+    Logger::Initialize();
 
-	if (!glfwInit())
-	{
+    if (!glfwInit())
+    {
         Logger::Critical("Failed to initialize GLFW.");
-		return false;
-	}
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        return false;
+    }
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #if defined(DEBUG) || defined(_DEBUG)
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 
-	switch (specification.screenMode)
+    switch (specification.screenMode)
     {
         case Application::ScreenMode::Windowed:
         {
@@ -103,7 +103,7 @@ bool Application::Initialize(const Specification& specification_) noexcept
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE);
 #endif
 
-    InputManager::Initialize(window); 
+    InputManager::Initialize(window);
     TimeManager::Initialize();
     AudioSystem::Initialize();
 
@@ -190,18 +190,20 @@ void Application::Render() noexcept
     glDisable(GL_DEPTH_TEST);
     activeScene->RenderUI();
 
+    glDisable(GL_DEPTH_TEST);
+    activeScene->RenderUI();
+
     glfwSwapBuffers(const_cast<GLFWwindow*>(window));
 }
 
 #if defined(DEBUG) || defined(_DEBUG)
-void APIENTRY Application::OnDebugMessage(
-    const GLenum  source_,
-    const GLenum  type_,
-    const GLuint  id_,
-    const GLenum  severity_,
-    const GLsizei length_,
-    const GLchar* message_,
-    const GLvoid* userParam_) noexcept
+void APIENTRY Application::OnDebugMessage(const GLenum  source_,
+                                          const GLenum  type_,
+                                          const GLuint  id_,
+                                          const GLenum  severity_,
+                                          const GLsizei length_,
+                                          const GLchar* message_,
+                                          const GLvoid* userParam_) noexcept
 {
     switch (severity_)
     {

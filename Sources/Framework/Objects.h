@@ -288,7 +288,7 @@ public:
 
     /**
      * @brief 생성자.
-     * 
+     *
      * @param owner_ 해당 컴포넌트의 오너 엔티티
      */
     Component(Object* const owner_);
@@ -366,7 +366,7 @@ public:
      */
     inline void SetStarted() noexcept
     {
-        isStarted = true; 
+        isStarted = true;
     }
 
     /**
@@ -489,7 +489,7 @@ class Transform : public Component
 public:
     /**
      * @brief 생성자.
-     * 
+     *
      * @param owner 해당 컴포넌트의 오너
      */
     explicit Transform(Object* const owner);
@@ -585,10 +585,10 @@ public:
 
     /**
      * @brief 해당 트랜스폼의 앞쪽 벡터를 반환합니다.
-     * 
+     *
      * @return glm::fvec3 해당 트랜스폼의 앞쪽 벡터
      */
-    [[nodiscard]] 
+    [[nodiscard]]
     inline glm::fvec3 GetForward() const noexcept
     {
         return glm::normalize(rotation * glm::fvec3(0.0f, 0.0f, -1.0f));
@@ -599,7 +599,7 @@ public:
      *
      * @return glm::fvec3 해당 트랜스폼의 윗쪽 벡터
      */
-    [[nodiscard]] 
+    [[nodiscard]]
     inline glm::fvec3 GetUp() const noexcept
     {
         return glm::normalize(rotation * glm::fvec3(0.0f, 1.0f, 0.0f));
@@ -607,10 +607,10 @@ public:
 
     /**
      * @brief 해당 트랜스폼의 오른쪽 벡터를 반환합니다.
-     * 
+     *
      * @return glm::fvec3 해당 트랜스폼의 오른쪽 벡터
      */
-    [[nodiscard]] 
+    [[nodiscard]]
     inline glm::fvec3 GetRight() const noexcept
     {
         return glm::normalize(rotation * glm::fvec3(1.0f, 0.0f, 0.0f));
@@ -648,7 +648,7 @@ public:
         }
 
         const glm::quat rotationDelta = glm::rotation(currentUp, targetUp);
-        rotation = rotationDelta * rotation;
+        rotation                      = rotationDelta * rotation;
     }
 
     /**
@@ -670,24 +670,24 @@ public:
         }
 
         const glm::quat rotationDelta = glm::rotation(currentRight, targetRight);
-        rotation = rotationDelta * rotation;
+        rotation                      = rotationDelta * rotation;
     }
 
     /**
      * @brief 해당 트랜스폼이 지정한 위치를 바라보도록 설정합니다.
-     * 
+     *
      * @param target  지정할 위치
      * @param worldUp 월드 좌표계 내 윗쪽 벡터
      */
     inline void LookAt(const glm::fvec3& target, const glm::fvec3& worldUp = glm::fvec3(0, 1, 0)) noexcept
     {
         const glm::fvec3 direction = glm::normalize(target - position);
-        rotation = glm::quatLookAt(direction, worldUp);
+        rotation                   = glm::quatLookAt(direction, worldUp);
     }
 
     /**
      * @brief 해당 트랜프폼의 위치 값을 지정한 값만큼 이동시킵니다.
-     * 
+     *
      * @param translation_ 지정할 값
      * @param space_       이동을 수행할 좌표계 종류
      */
@@ -705,7 +705,7 @@ public:
 
     /**
      * @brief 해당 트랜스폼의 회전 값을 지정한 값만큼 회전시킵니다.
-     * 
+     *
      * @param eulerAngles_ 지정할 값
      * @param space_       회전을 수행할 좌표계 종류
      */
@@ -725,16 +725,16 @@ public:
 
     /**
      * @brief 로컬 좌표계에서의 변환 행렬을 반환합니다.
-     * 
+     *
      * @return glm::fmat4x4 로컬 좌표계에서의 변환 행렬
      */
     [[nodiscard]]
     inline glm::fmat4x4 GetLocalMatrix() const noexcept
     {
         glm::fmat4x4 model(1.0f);
-        model  = glm::translate(model, position);
+        model = glm::translate(model, position);
         model *= glm::mat4_cast(rotation);
-        model  = glm::scale(model, scale);
+        model = glm::scale(model, scale);
 
         return model;
     }

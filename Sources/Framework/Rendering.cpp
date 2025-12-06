@@ -33,12 +33,12 @@ void Camera::Ready() const noexcept
     }   
 
     glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-    
+
     shader->Use();
 
     const glm::mat4 view = GetViewMatrix();
     shader->SetUniformMatrix4x4("view", view);
-    
+
     const glm::mat4 projection = GetProjectionMatrix();
     shader->SetUniformMatrix4x4("projection", projection);
 
@@ -145,14 +145,12 @@ void MeshRenderer::Render() noexcept
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture->GetTextureID());
 
-    GLint samplerLoc = glGetUniformLocation(shader->GetProgramID(), "outTexture");
-    glUniform1i(samplerLoc, 0);
-    // if (texture)
-    // {
-    //     texture->Bind();
-    // }
-    // 
-    // shader->SetUniformInt("outTexture", 0);
+    if (texture)
+    {
+        texture->Bind();
+    }
+
+    shader->SetUniformInt("outTexture", 0);
 
     mesh->Draw();
 }

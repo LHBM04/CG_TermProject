@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Common.h"
-#include "Rendering.h"
 #include "Objects.h"
+#include "Rendering.h"
 
 /**
  * @class Scene
- * 
+ *
  * @brief 씬을 정의합니다.
  */
 class Scene
@@ -53,7 +53,7 @@ protected:
 
     /**
      * @brief 씬에서 엔티티를 제거합니다.
-     * 
+     *
      * @param entity 제거할 엔티티
      */
     void Remove(Object entity) noexcept;
@@ -107,8 +107,8 @@ private:
 
 /**
  * @class SceneManager
- * 
- * @brief 
+ *
+ * @brief
  */
 class SceneManager final
 {
@@ -117,7 +117,7 @@ class SceneManager final
 public:
     /**
      * @brief 씬을 추가합니다.
-     * 
+     *
      * @param name_  추가할 씬의 이름
      * @param scene_ 추가할 씬
      */
@@ -125,14 +125,14 @@ public:
 
     /**
      * @brief 씬을 제거합니다.
-     * 
+     *
      * @param name_ 제거할 씬의 이름.
      */
     static void RemoveScene(std::string_view name_) noexcept;
 
     /**
      * @brief 씬을 로드합니다.
-     * 
+     *
      * @param name_ 로드할 씬의 이름.
      */
     static void LoadScene(std::string_view name_) noexcept;
@@ -144,7 +144,7 @@ public:
 
     /**
      * @brief 현재 로드된 씬을 반환합니다.
-     * 
+     *
      * @return Scene* 현재 로드된 씬
      */
     [[nodiscard]]

@@ -53,7 +53,7 @@ public:
 
     /**
      * @struct ClipingPlanes
-     * 
+     *
      * @brief 해당 카메라의 가시 범위를 정의합니다.
      */
     struct ClipingPlanes final
@@ -71,7 +71,7 @@ public:
 
     /**
      * @brief 생성자.
-     * 
+     *
      * @param owner_ 해당 컴포넌트의 오너 엔티티
      */
     explicit Camera(Object* const owner_) noexcept;
@@ -141,7 +141,7 @@ public:
 
     /**
      * @brief 해당 카메라의 근평면 거리를 반환합니다.
-     * 
+     *
      * @return float 해당 카메라의 근평면 거리
      */
     [[nodiscard]]
@@ -152,7 +152,7 @@ public:
 
     /**
      * @brief 해당 카메라의 뷰포트 영역을 설정합니다.
-     * 
+     *
      * @param viewport_ 해당 카메라의 뷰포트 영역
      */
     inline void SetViewport(const Viewport& viewport_) noexcept
@@ -162,7 +162,7 @@ public:
 
     /**
      * @brief 해당 카메라의 가시 범위를 반환합니다.
-     * 
+     *
      * @return ClipingPlanes 해당 카메라의 가시 범위
      */
     [[nodiscard]]
@@ -173,7 +173,7 @@ public:
 
     /**
      * @brief 해당 카메라의 가시 범위를 설정합니다.
-     * 
+     *
      * @param clipPlanes_ 해당 카메라의 가시 범위
      */
     inline void SetClipingPlanes(const ClipingPlanes& clipingPlanes_) noexcept
@@ -183,7 +183,7 @@ public:
 
     /**
      * @brief 해당 카메라의 근평면 거리를 반환합니다.
-     * 
+     *
      * @return float 해당 카메라의 근평면 거리
      */
     [[nodiscard]]
@@ -194,7 +194,7 @@ public:
 
     /**
      * @brief 해당 카메라의 근평면 거리를 설정합니다.
-     * 
+     *
      * @param nearPlane_ 해당 카메라의 근평면 거리
      */
     inline void SetNearPlane(const float nearPlane_) noexcept
@@ -204,7 +204,7 @@ public:
 
     /**
      * @brief 해당 카메라의 원평면 거리를 반환합니다.
-     * 
+     *
      * @return float 해당 카메라의 원평면 거리
      */
     [[nodiscard]]
@@ -215,7 +215,7 @@ public:
 
     /**
      * @brief 해당 카메라의 원평면 거리를 설정합니다.
-     * 
+     *
      * @param farPlane_ 해당 카메라의 원평면 거리
      */
     inline void SetFarPlane(const float farPlane_) noexcept
@@ -225,7 +225,7 @@ public:
 
     /**
      * @brief 해당 카메라의 직교 투영 크기를 반환합니다.
-     * 
+     *
      * @return float 해당 카메라의 직교 투영 크기
      */
     [[nodiscard]]
@@ -236,7 +236,7 @@ public:
 
     /**
      * @brief 해당 카메라의 직교 투영 크기를 설정합니다.
-     * 
+     *
      * @param orthoSize_ 해당 카메라의 직교 투영 크기
      */
     inline void SetOrthoSize(const float orthoSize_) noexcept
@@ -246,7 +246,7 @@ public:
 
     /**
      * @brief 해당 카메라의 뷰 행렬을 반환합니다.
-     * 
+     *
      * @return glm::fmat4x4 해당 카메라의 뷰 행렬
      */
     [[nodiscard]]
@@ -254,7 +254,7 @@ public:
 
     /**
      * @brief 해당 카메라의 투영 행렬을 반환합니다.
-     * 
+     *
      * @return glm::fmat4x4 해당 카메라의 투영 행렬
      */
     [[nodiscard]]
@@ -293,14 +293,14 @@ private:
 };
 
 /**
- * @brief 
+ * @brief
  */
 class Light : public Component
 {
 public:
     /**
      * @brief 생성자.
-     * 
+     *
      * @param owner_ 해당 컴포넌트의 오너
      */
     explicit Light(Object* const owner_) noexcept;
@@ -352,7 +352,7 @@ public:
 
     /**
      * @brief 해당 조명의 세기를 반환합니다.
-     * 
+     *
      * @return float 조명의 세기
      */
     [[nodiscard]]
@@ -363,7 +363,7 @@ public:
 
     /**
      * @brief 해당 조명의 세기를 설정합니다.
-     * 
+     *
      * @param intensity_ 조명의 세기
      */
     inline void SetIntensity(const float intensity_) noexcept
@@ -404,7 +404,7 @@ class MeshRenderer : public Component
 public:
     /**
      * @brief 생성자.
-     * 
+     *
      * @param owner_ 해당 컴포넌트의 오너
      */
     explicit MeshRenderer(Object* const owner_) noexcept;
@@ -421,7 +421,7 @@ public:
 
     /**
      * @brief 해당 렌더러가 그릴 메쉬를 설정합니다.
-     * 
+     *
      * @param mesh_ 해당 렌더러가 그릴 메쉬
      */
     [[nodiscard]]
@@ -432,7 +432,7 @@ public:
 
     /**
      * @brief 해당 렌더러가 그릴 메쉬를 설정합니다.
-     * 
+     *
      * @param mesh_ 해당 렌더러가 그릴 메쉬
      */
     inline void SetMesh(Mesh* const mesh_) noexcept
@@ -442,7 +442,7 @@ public:
 
     /**
      * @brief 해당 렌더러가 사용할 텍스처를 반환합니다.
-     * 
+     *
      * @return Texture* 해당 렌더러가 사용할 텍스처
      */
     [[nodiscard]]
@@ -453,7 +453,7 @@ public:
 
     /**
      * @brief 해당 렌더러가 사용할 텍스처를 설정합니다.
-     * 
+     *
      * @param texture_ 해당 렌더러가 사용할 텍스처
      */
     inline void SetTexture(Texture* const texture_) noexcept

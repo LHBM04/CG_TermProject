@@ -35,24 +35,24 @@ public:
         Borderless
     };
 
-	struct Specification final
-	{
+    struct Specification final
+    {
         /**
          * @brief 애플리케이션 이름.
          */
         std::string name;
 
-		/**
+        /**
          * @brief 애플리케이션 창 너비.
-		 */
+         */
         int width;
 
-		/**
-		 * @brief 애플리케이션 창 높이.
+        /**
+         * @brief 애플리케이션 창 높이.
          */
         int height;
 
-		/**
+        /**
          * @brief 전체 화면 모드 사용 여부.
          */
         Application::ScreenMode screenMode;
@@ -97,7 +97,7 @@ public:
 
     /**
      * @brief 애플리케이션 이름을 반환합니다.
-     * 
+     *
      * @return char* 애플리케이션 이름.
      */
     [[nodiscard]]
@@ -144,7 +144,7 @@ public:
 
     /**
      * @brief 해당 애플리케이션의 창 높이를 지정한 사이즈로 설정합니다.
-     * 
+     *
      * @param height_ 지정할 사이즈
      */
     static void SetWindowHeight(const int height_) noexcept;

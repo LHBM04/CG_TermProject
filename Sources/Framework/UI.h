@@ -22,7 +22,7 @@ public:
      * @brief 소멸자.
      */
     virtual ~ImageRenderer() noexcept override;
-    
+
     [[nodiscard]]
     inline Shader* GetShader() const noexcept
     {
@@ -41,7 +41,7 @@ public:
     {
         mesh = mesh_;
     }
- 
+
     [[nodiscard]]
     inline Texture* GetTexture() const noexcept
     {
@@ -119,5 +119,5 @@ private:
 class Button : public Component
 {
 private:
-    
+
 };
