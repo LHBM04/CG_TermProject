@@ -130,14 +130,14 @@ public:
 
     /**
      * @brief 애플리케이션 이름을 설정합니다.
-     * 
+     *
      * @param name_ 설정할 애플리케이션 이름.
      */
     static void SetWindowTitle(std::string_view name_) noexcept;
 
     /**
      * @brief 해당 애플리케이션의 창 너비를 지정한 사이즈로 설정합니다.
-     * 
+     *
      * @param width_ 지정할 사이즈
      */
     static void SetWindowWidth(const int width_) noexcept;

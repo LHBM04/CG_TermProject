@@ -264,7 +264,7 @@ private:
     /**
      * @brief 해당 카메라가 사용할 셰이더.
      */
-    Shader* shader; 
+    Shader* shader;
 
     /**
      * @brief 해당 카메라의 투영 방식.
@@ -312,7 +312,7 @@ public:
 
     /**
      * @brief 해당 조명의 셰이더를 반환합니다.
-     * 
+     *
      * @return Shader* 조명의 셰이더
      */
     [[nodiscard]]
@@ -323,7 +323,7 @@ public:
 
     /**
      * @brief 해당 조명의 셰이더를 설정합니다.
-     * 
+     *
      * @param shader_ 설정할 셰이더
      */
     inline void SetShader(Shader* const shader_)
@@ -463,7 +463,7 @@ public:
 
     /**
      * @brief 해당 렌더러가 사용할 셰이더를 반환합니다.
-     * 
+     *
      * @return Shader* 해당 렌더러가 사용할 셰이더
      */
     [[nodiscard]]
@@ -474,7 +474,7 @@ public:
 
     /**
      * @brief 해당 렌더러가 사용할 셰이더를 설정합니다.
-     * 
+     *
      * @param shader_ 해당 렌더러가 사용할 셰이더
      */
     inline void SetShader(Shader* const shader_) noexcept
