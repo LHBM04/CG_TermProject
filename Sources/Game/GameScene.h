@@ -81,6 +81,7 @@ private:
 
     glm::vec3 startPosition;
     glm::vec3 goalPosition;
+    bool      isGoalReached = false;
 
     float rotatedAmountX = 0.0f;
     float rotatedAmountZ = 0.0f;

@@ -245,9 +245,12 @@ void GameScene::UpdateGameLogic()
 
     // 골인 체크
     glm::vec3 pPos = playerObject->GetTransform()->GetPosition();
-    if (glm::distance(pPos, goalPosition) < 0.5f)
+    if (glm::distance(pPos, goalPosition) < 0.75f && !isGoalReached)
     {
+        SPDLOG_INFO("goal in..!");
+        isGoalReached = true;
         goalSound->Play();
+
         // [TODO] 다음 레벨 로드 혹은 승리 처리
         // SceneManager::LoadScene("Title Scene"); // 예시: 타이틀로 복귀
     }
