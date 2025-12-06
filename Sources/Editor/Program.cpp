@@ -115,23 +115,25 @@ void LoadMap(const char* filename, MapData& map)
         return;
     }
 
-    int w, h;
-    if (!(in >> w >> h))
-        return; // 헤더 읽기 실패 시 중단
-
-    // 맵 리사이즈 (현재는 고정이지만 확장성을 위해)
-    map.width  = w;
-    map.height = h;
-    map.tiles.resize(w * h);
-
-    int val;
-    int count = 0;
-    while (in >> val && count < w * h)
-    {
-        map.tiles[count++] = (TileType)val;
-    }
+    // JSON 파싱
+    json j;
+    in >> j;
     in.close();
-    std::cout << "[System] Map Loaded: " << filename << " (" << w << "x" << h << ")" << std::endl;
+
+    // 데이터 적용
+    map.width  = j["width"];
+    map.height = j["height"];
+
+    // 타일 데이터 읽기
+    std::vector<int> tileInts = j["tiles"].get<std::vector<int>>();
+    map.tiles.resize(tileInts.size());
+
+    for (size_t i = 0; i < tileInts.size(); ++i)
+    {
+        map.tiles[i] = static_cast<TileType>(tileInts[i]);
+    }
+
+    std::cout << "[System] Map Loaded (JSON): " << filename << std::endl;
 }
 
 // ==========================================

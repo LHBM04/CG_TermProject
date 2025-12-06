@@ -30,7 +30,7 @@ void TitleScene::OnEnter() noexcept
 
     cameraSpline->AddPoint(glm::vec3(9.5f, 12.0f, 6.0f));
     cameraSpline->AddPoint(glm::vec3(9.0f, 13.0f, 12.0f));
-
+    
     cameraSpline->AddPoint(glm::vec3(7.0f, 14.0f, 13.0f));
     cameraSpline->AddPoint(glm::vec3(5.0f, 15.0f, 15.0f));
 
