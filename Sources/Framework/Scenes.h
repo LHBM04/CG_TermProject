@@ -178,7 +178,10 @@ private:
 
     static Shader*  loadingShader;
     static Mesh*    loadingMesh;
+
+    static Texture* backgroundTex;
     static Texture* loadingTex;
+
     static float    texAlpha;
     static float    loadingAngle;
 };

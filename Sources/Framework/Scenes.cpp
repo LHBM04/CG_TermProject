@@ -133,6 +133,7 @@ void SceneManager::Initialize() noexcept
 {
     loadingShader = ResourceManager::LoadResource<Shader>("Assets/Shaders/UIObject");
     loadingMesh   = ResourceManager::LoadResource<Mesh>("Assets/Meshes/Rect.obj");
+    backgroundTex = ResourceManager::LoadResource<Texture>("Assets/Textures/Black.png");
     loadingTex    = ResourceManager::LoadResource<Texture>("Assets/Textures/Loading.png");
 }
 
@@ -142,7 +143,6 @@ void SceneManager::Update() noexcept
 
     if (nextScene)
     {
-        
         texAlpha += TimeManager::GetUnscaledDeltaTime() * 2.0f;
         if (texAlpha >= 1.0f)
         {
@@ -180,18 +180,35 @@ void SceneManager::Render() noexcept
     glm::mat4 projection = glm::ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
     loadingShader->SetUniformMatrix4x4("projection", projection);
 
-    glm::mat4 model = glm::mat4(1.0f);
-    model           = glm::translate(model, glm::vec3(width - 100.0f, height - 100.0f, 0.0f));
-    model           = glm::rotate(model, glm::radians(loadingAngle), glm::vec3(0.0f, 0.0f, 1.0f));
-    model           = glm::scale(model, glm::vec3(width * 0.25f, height * 0.25f, 1.0f));
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+        model           = glm::translate(model, glm::vec3(width / 2.0f, height / 2.0f, 0.0f));
+        model           = glm::scale(model, glm::vec3(width, height, 1.0f));
 
-    loadingShader->SetUniformMatrix4x4("model", model);
+        loadingShader->SetUniformMatrix4x4("model", model);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, loadingTex->GetTextureID());
-    loadingShader->SetUniformInt("outTexture", 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, backgroundTex->GetTextureID());
+        loadingShader->SetUniformInt("outTexture", 0);
 
-    loadingShader->SetUniformVector4("color", glm::vec4(1.0f, 1.0f, 1.0f, texAlpha));
+        loadingShader->SetUniformVector4("color", glm::vec4(1.0f, 1.0f, 1.0f, texAlpha));
+    }
+    loadingMesh->Draw();
+
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+        model           = glm::translate(model, glm::vec3(width - 100.0f, height - 100.0f, 0.0f));
+        model           = glm::rotate(model, glm::radians(loadingAngle), glm::vec3(0.0f, 0.0f, 1.0f));
+        model           = glm::scale(model, glm::vec3(width * 0.25f, height * 0.25f, 1.0f));
+
+        loadingShader->SetUniformMatrix4x4("model", model);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, loadingTex->GetTextureID());
+        loadingShader->SetUniformInt("outTexture", 0);
+
+        loadingShader->SetUniformVector4("color", glm::vec4(1.0f, 1.0f, 1.0f, texAlpha));
+    }
 
     loadingMesh->Draw();
 }
@@ -235,6 +252,7 @@ Scene*   SceneManager::currentScene  = nullptr;
 Scene*   SceneManager::nextScene     = nullptr;
 Shader*  SceneManager::loadingShader = nullptr;
 Mesh*    SceneManager::loadingMesh   = nullptr;
+Texture* SceneManager::backgroundTex = nullptr;
 Texture* SceneManager::loadingTex    = nullptr;
 float    SceneManager::texAlpha      = 0.0f;
 float    SceneManager::loadingAngle  = 0.0f;
