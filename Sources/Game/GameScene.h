@@ -42,10 +42,41 @@ public:
 
         // 배경음악 및 효과음 로드
         SetupAudio();
+
+        
+    // 제목 설정
+        Font* testFont = ResourceManager::LoadResource<Font>("Assets\\Fonts\\Paperlogy-1Thin.ttf");
+
+        Object* timerViewObj = AddUIObject("Timer View", "UI");
+        timerViewObj->GetTransform()->SetPosition(glm::vec3(100.0f, 200.0f, 0.0f));
+        timerViewObj->GetTransform()->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+        
+        timerView = timerViewObj->AddComponent<TextRenderer>();
+        timerView->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Text"));
+        timerView->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
+        timerView->SetFont(testFont);
+
+        Object* deathCountViewObj = AddUIObject("Death Count View", "UI");
+        deathCountViewObj->GetTransform()->SetPosition(glm::vec3(100.0f, 500.0f, 0.0f));
+        deathCountViewObj->GetTransform()->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+        
+        deathCountView = deathCountViewObj->AddComponent<TextRenderer>();
+        deathCountView->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Text"));
+        deathCountView->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
+        deathCountView->SetFont(testFont);
     }
+
+    TextRenderer* deathCountView;
+    TextRenderer* timerView;
 
     void OnUpdate() noexcept
     {
+        if (deathCountView)
+            deathCountView->SetText(std::format("{}", GameManager::deathCount));
+
+        if (timerView)
+            timerView->SetText(std::format("{:.2f}", GameManager::playTime));
+
         mainCamera->GetOwner()->GetComponent<Camera>()->GetTransform()->SetPosition(glm::vec3(0.0f, 20.0f, 5.0f));
         mainCamera->GetOwner()->GetComponent<Camera>()->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 

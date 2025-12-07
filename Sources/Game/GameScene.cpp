@@ -274,6 +274,7 @@ void GameScene::UpdateGameLogic()
     {
         playerObject->GetTransform()->SetPosition(startPosition);
         playerController->setDir(glm::vec3(0));
+        GameManager::deathCount++;
         resurrection->Play();
     }
 
@@ -294,6 +295,10 @@ void GameScene::UpdateGameLogic()
         goalImage->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
         goalImage->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
         goalImage->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Congratulations.png"));
+    }
+    else
+    {
+        GameManager::playTime += TimeManager::GetDeltaTime();
     }
 
     // 골인하면 효과음 재생할 시간정도만 딜레이 후 다음 레벨 진입

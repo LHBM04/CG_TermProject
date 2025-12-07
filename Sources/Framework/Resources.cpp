@@ -18,6 +18,9 @@
 #define DR_FLAC_IMPLEMENTATION
 #include <dr_flac.h>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include "Debug.h"
 #include "IO.h"
 
@@ -256,7 +259,6 @@ bool Mesh::Load(const std::filesystem::path& path_) noexcept
     vertices.reserve(totalFaces * 3);
     indices.reserve(totalFaces * 3);
 
-    // [수정됨] 최소/최대값 계산 로직은 유지하되, 강제 스케일링은 제거합니다.
     glm::vec3 minP(FLT_MAX);
     glm::vec3 maxP(-FLT_MAX);
 
@@ -286,7 +288,6 @@ bool Mesh::Load(const std::filesystem::path& path_) noexcept
                                      attrib.vertices[3 * idx.vertex_index + 1],
                                      attrib.vertices[3 * idx.vertex_index + 2]);
 
-                    // min/max 갱신
                     minP = glm::min(minP, p[k]);
                     maxP = glm::max(maxP, p[k]);
                 }
@@ -324,15 +325,12 @@ bool Mesh::Load(const std::filesystem::path& path_) noexcept
         }
     }
 
-    // [수정됨] 중심점만 보정하고, 스케일(크기) 변경 로직은 삭제했습니다.
-    // 이렇게 해야 Cube.obj가 원래 크기(2.0)를 유지하여 맵이 정상적으로 보입니다.
     glm::vec3 center = (minP + maxP) * 0.5f;
     for (auto& v : vertices)
     {
         v.position -= center;
     }
 
-    // GL 버퍼 생성 및 데이터 전송
     if (vao == 0)
         glGenVertexArrays(1, &vao);
     if (vbo == 0)
@@ -380,18 +378,14 @@ AudioClip::~AudioClip() noexcept
 
 bool AudioClip::Load(const std::filesystem::path& path_) noexcept
 {
-    // [1] 파일 시스템 경로 처리
     std::string pathStr = path_.string();
     std::string ext     = path_.extension().string();
     for (auto& c : ext)
         c = std::tolower(c);
 
-    // [2] 파일을 바이너리로 메모리에 먼저 로드 (IO 분리)
-    // std::ifstream은 경로에 공백이 있어도, Unicode 경로라도 정확하게 처리합니다.
     std::ifstream file(path_, std::ios::binary | std::ios::ate);
     if (!file.is_open())
     {
-        // 여기가 뜨면: 경로가 잘못되었거나, 다른 프로그램이 파일을 잡고 있음(Lock)
         Logger::Error("File IO Error: Could not open file at {}", pathStr);
         return false;
     }
@@ -410,9 +404,8 @@ bool AudioClip::Load(const std::filesystem::path& path_) noexcept
         Logger::Error("File IO Error: Failed to read bytes {}", pathStr);
         return false;
     }
-    file.close(); // 파일 핸들 즉시 반환
+    file.close();
 
-    // [3] 메모리에서 디코딩 시작
     short*       pSampleData        = nullptr;
     unsigned int channels           = 0;
     unsigned int sampleRate         = 0;
@@ -436,20 +429,16 @@ bool AudioClip::Load(const std::filesystem::path& path_) noexcept
     }
     else if (ext == ".flac")
     {
-        // 여기서 실패하면 100% 포맷 문제 (Ogg-FLAC일 가능성 높음)
         pSampleData = drflac_open_memory_and_read_pcm_frames_s16(
                 fileBuffer.data(), fileBuffer.size(), &channels, &sampleRate, &totalPCMFrameCount, nullptr);
     }
 
-    // [4] 결과 확인
     if (!pSampleData)
     {
-        // IO는 성공했으나 디코딩 실패 -> 파일 포맷이 라이브러리와 맞지 않음
         Logger::Error("Decode Error: File loaded but failed to decode. Is it a valid Native FLAC? {}", pathStr);
         return false;
     }
 
-    // [5] OpenAL 버퍼링 (이하 동일)
     ALenum format = 0;
     if (channels == 1)
         format = AL_FORMAT_MONO16;
@@ -460,7 +449,7 @@ bool AudioClip::Load(const std::filesystem::path& path_) noexcept
     {
         Logger::Error("Unsupported channel count: {}", channels);
         if (ext == ".flac")
-            drflac_free(pSampleData, nullptr); // mp3/wav 생략
+            drflac_free(pSampleData, nullptr);
         return false;
     }
 
@@ -469,7 +458,6 @@ bool AudioClip::Load(const std::filesystem::path& path_) noexcept
     ALsizei dataSize = static_cast<ALsizei>(totalPCMFrameCount * channels * sizeof(short));
     alBufferData(bufferID, format, pSampleData, dataSize, sampleRate);
 
-    // 메모리 해제
     if (ext == ".mp3")
         drmp3_free(pSampleData, nullptr);
     else if (ext == ".wav")
@@ -482,3 +470,71 @@ bool AudioClip::Load(const std::filesystem::path& path_) noexcept
 #pragma endregion
 
 std::unordered_map<std::filesystem::path, std::unique_ptr<Resource>> ResourceManager::resources;
+
+Font::~Font() noexcept
+{
+}
+
+bool Font::Load(const std::filesystem::path& path_) noexcept
+{
+    FT_Library ft;
+    if (FT_Init_FreeType(&ft))
+    {
+        Logger::Error("FREETYPE: Could not init FreeType Library");
+        return false;
+    }
+
+    FT_Face face;
+    if (FT_New_Face(ft, path_.string().c_str(), 0, &face))
+    {
+        Logger::Error("FREETYPE: Failed to load font: {}", path_.string());
+        FT_Done_FreeType(ft);
+        return false;
+    }
+
+    FT_Set_Pixel_Sizes(face, 0, 48);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    for (unsigned char c = 0; c < 128; c++)
+    {
+        if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+        {
+            Logger::Warn("FREETYPE: Failed to load Glyph: {}", (int)c);
+            continue;
+        }
+
+        unsigned int texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        glTexImage2D(GL_TEXTURE_2D,
+                     0,
+                     GL_RED,
+                     face->glyph->bitmap.width,
+                     face->glyph->bitmap.rows,
+                     0,
+                     GL_RED,
+                     GL_UNSIGNED_BYTE,
+                     face->glyph->bitmap.buffer);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        Character character = {texture,
+                               glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+                               glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+                               static_cast<unsigned int>(face->glyph->advance.x)};
+        characters.insert(std::pair<char, Character>(c, character));
+    }
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+    FT_Done_Face(face);
+    FT_Done_FreeType(ft);
+
+    Logger::Info("Font loaded successfully: {}", path_.string());
+    return true;
+}
