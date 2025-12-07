@@ -387,7 +387,7 @@ void GameScene::UpdateGameLogic()
             {
                 isGameCleared = true;
                 GameManager::SaveScoreData();
-                SceneManager::LoadScene("Title Scene");
+                SceneManager::LoadScene("Credits Scene");
                 return;
             }
         }
