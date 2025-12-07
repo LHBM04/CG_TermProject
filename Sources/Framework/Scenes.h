@@ -180,4 +180,5 @@ private:
     static Mesh*    loadingMesh;
     static Texture* loadingTex;
     static float    texAlpha;
+    static float    loadingAngle;
 };

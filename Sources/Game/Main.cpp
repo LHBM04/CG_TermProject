@@ -22,7 +22,7 @@ int main(int, char**)
     SceneManager::AddScene("Title Scene", std::make_unique<TitleScene>());
     SceneManager::AddScene("Game Scene", std::make_unique<GameScene>());
     SceneManager::AddScene("Credits Scene", std::make_unique<CreditsScene>());
-    SceneManager::LoadScene("Credits Scene");
+    SceneManager::LoadScene("Title Scene");
 
     return Application::Run();
 }

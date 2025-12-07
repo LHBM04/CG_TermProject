@@ -138,8 +138,11 @@ void SceneManager::Initialize() noexcept
 
 void SceneManager::Update() noexcept
 {
+    loadingAngle += TimeManager::GetUnscaledDeltaTime() * 300.0f;
+
     if (nextScene)
     {
+        
         texAlpha += TimeManager::GetUnscaledDeltaTime() * 2.0f;
         if (texAlpha >= 1.0f)
         {
@@ -179,7 +182,8 @@ void SceneManager::Render() noexcept
 
     glm::mat4 model = glm::mat4(1.0f);
     model           = glm::translate(model, glm::vec3(width / 2.0f, height / 2.0f, 0.0f));
-    model           = glm::scale(model, glm::vec3(width, height, 1.0f));
+    model           = glm::rotate(model, glm::radians(loadingAngle), glm::vec3(0.0f, 0.0f, 1.0f));
+    model           = glm::scale(model, glm::vec3(width * 2.0f, height * 2.0f, 1.0f));
 
     loadingShader->SetUniformMatrix4x4("model", model);
 
@@ -233,3 +237,4 @@ Shader*  SceneManager::loadingShader = nullptr;
 Mesh*    SceneManager::loadingMesh   = nullptr;
 Texture* SceneManager::loadingTex    = nullptr;
 float    SceneManager::texAlpha      = 0.0f;
+float    SceneManager::loadingAngle  = 0.0f;
