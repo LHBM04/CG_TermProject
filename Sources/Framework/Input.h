@@ -303,6 +303,16 @@ public:
         return nowScrollOffset - lastScrollOffset;
     }
 
+    static inline void DisableCursor() noexcept
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+
+    static inline void EnableCursor() noexcept
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
 private:
     /**
      * @brief 입력 상태를 초기화합니다.
@@ -348,6 +358,8 @@ private:
      * @param y_ 마우스 Y 좌표
      */
     static void OnMouseScrolled(GLFWwindow* const window_, double x_, double y_) noexcept;
+
+    static GLFWwindow* window;
 
     /**
      * @brief 애플리케이션에서 처리할 수 있는 키의 최대 개수.

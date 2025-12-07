@@ -2,6 +2,7 @@
 
 void InputManager::Initialize(GLFWwindow* const window_) noexcept
 {
+    window = window_;
     glfwSetKeyCallback(window_, InputManager::OnKeyInteracted);
     glfwSetMouseButtonCallback(window_, InputManager::OnMouseButtonInteracted);
     glfwSetCursorPosCallback(window_, InputManager::OnMouseMoved);
@@ -81,6 +82,8 @@ void InputManager::OnMouseScrolled(GLFWwindow* const window_, double x_, double 
 {
     nowScrollOffset = static_cast<float>(y_);
 }
+
+GLFWwindow* InputManager::window = nullptr;
 
 std::array<bool, InputManager::MAX_KEYS> InputManager::lastKeyStates;
 
