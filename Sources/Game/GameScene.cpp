@@ -17,6 +17,7 @@ void GameScene::InitializeVariables()
     wallOBBs.clear();
 
     isGoalReached  = false;
+    isGameCleared  = false;
     goalDelayTimer = 0.0f;
 
     rotatedAmountX = 0.0f;
@@ -39,7 +40,7 @@ void GameScene::SetupCameraAndLight()
     mainCamera->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
 
     Object* lightObj = AddGameObject("Directional Light", "Light");
-    lightObj->GetTransform()->SetPosition(glm::vec3(0.0f, 10.0f, 0.0f));
+    lightObj->GetTransform()->SetPosition(glm::vec3(0.0f, 3.0f, 0.0f));
     lightObj->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
     mainLight = lightObj->AddComponent<Light>();
@@ -384,6 +385,7 @@ void GameScene::UpdateGameLogic()
             }
             else
             {
+                isGameCleared = true;
                 GameManager::SaveScoreData();
                 SceneManager::LoadScene("Title Scene");
                 return;

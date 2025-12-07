@@ -108,6 +108,7 @@ private:
     glm::vec3 goalPosition;
     ImageRenderer* goalImage = nullptr;
     bool      isGoalReached;
+    bool      isGameCleared;
     float     goalDelayTimer; // 골인 시 효과음 들릴 시간을 좀 주기 위한 용도
 
     float rotatedAmountX;
