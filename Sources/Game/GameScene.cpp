@@ -23,8 +23,15 @@ void GameScene::InitializeVariables()
     rotatedAmountZ = 0.0f;
     checkHitWall   = 0.0f;
 
-    goalImage      = nullptr;
-    spectatorImage = nullptr;
+    if (goalImage)
+    {
+        goalImage->Destroy();
+    }
+
+    if (spectatorImage)
+    {
+        spectatorImage->Destroy();
+    }
 }
 
 void GameScene::SetupCameraAndLight()
@@ -37,7 +44,7 @@ void GameScene::SetupCameraAndLight()
     mainCamera->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
 
     Object* lightObj = AddGameObject("Directional Light", "Light");
-    lightObj->GetTransform()->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
+    lightObj->GetTransform()->SetPosition(glm::vec3(0.0f, 10.0f, 0.0f));
     lightObj->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
     mainLight = lightObj->AddComponent<Light>();
@@ -70,73 +77,6 @@ void GameScene::SetupAudio()
     bgmPlayer->SetVolume(0.5f);
     bgmPlayer->SetClip(bgmClip);
     bgmPlayer->Play();
-}
-
-void GameScene::SetupFont()
-{
-    Font* conversationFont = ResourceManager::LoadResource<Font>("Assets\\Fonts\\Conversation.ttf");
-
-    // 클리어 시간
-    Object* timerViewObj = AddUIObject("Timer View", "UI");
-    timerViewObj->GetTransform()->SetPosition(glm::vec3(0.0f, 50.0f, 0.0f));
-    timerViewObj->GetTransform()->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
-
-    timerView = timerViewObj->AddComponent<TextRenderer>();
-    timerView->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Text"));
-    timerView->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
-    timerView->SetFont(conversationFont);
-
-    // 죽은 횟수
-    Object* deathCountViewObj = AddUIObject("Death Count View", "UI");
-    deathCountViewObj->GetTransform()->SetPosition(glm::vec3(0.0f, 100.0f, 0.0f));
-    deathCountViewObj->GetTransform()->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
-
-    deathCountView = deathCountViewObj->AddComponent<TextRenderer>();
-    deathCountView->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Text"));
-    deathCountView->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
-    deathCountView->SetFont(conversationFont);
-
-    // 대화
-    Object* conversationViewObj = AddUIObject("Conversation View", "UI");
-    conversationViewObj->GetTransform()->SetPosition(
-            glm::vec3(Application::GetWindowWidth() * 1.0f, Application::GetWindowHeight() * 1.0f, 0.0f));
-    conversationViewObj->GetTransform()->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
-
-    conversationView = conversationViewObj->AddComponent<TextRenderer>();
-    conversationView->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Text"));
-    conversationView->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
-    conversationView->SetFont(conversationFont);
-
-    switch (GameManager::currentLevel)
-    {
-        case 0:
-            conversation = "몸 풀기 단계야. 준비 됐어?";
-            break;
-        case 1:
-            conversation = "넌 할 수 있어";
-            break;
-        case 2:
-            conversation = "생각보다 어렵지?";
-            break;
-        case 3:
-            conversation = "이게 뭐야?";
-            break;
-        case 4:
-            conversation = "난이도를 높여볼게. 기대해도 좋아";
-            break;
-        case 5:
-            conversation = "포기하는게 어때?";
-            break;
-        case 6:
-            conversation = "넌 할 수 없어";
-            break;
-        case 7:
-            conversation = "...";
-            break;
-        default:
-            conversation = "에러";
-            break;
-    }
 }
 
 void GameScene::CreateLabyrinthBoard()
@@ -248,7 +188,7 @@ void GameScene::CreateLabyrinthLevel(int levelNum)
     spectatorImage->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
     spectatorImage->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
     spectatorImage->SetTexture(ResourceManager::LoadResource<Texture>(
-            std::string("Assets\\Textures\\level" + std::to_string(GameManager::currentLevel % 4)  + "Text.png")));
+            std::string("Assets\\Textures\\level" + std::to_string(GameManager::currentLevel % 4) + "Text.png")));
 }
 
 void GameScene::CreatePlayer()
@@ -259,7 +199,8 @@ void GameScene::CreatePlayer()
 
     playerObject->AddComponent<MeshRenderer>()->SetMesh(meshSphere);
     playerObject->GetComponent<MeshRenderer>()->SetTexture(texBall);
-    playerObject->GetComponent<MeshRenderer>()->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
+    playerObject->GetComponent<MeshRenderer>()->SetShader(
+            ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
 
     OBB* obb = playerObject->AddComponent<OBB>();
     obb->resize(glm::vec3(0.35f)); // 반지름
@@ -310,20 +251,6 @@ void GameScene::HandleInput()
     }
 }
 
-void GameScene::ChangeFontValue()
-{
-    if (deathCountView)
-        deathCountView->SetText(std::format("DEATH: {}", GameManager::deathCount - 1));
-
-    if (timerView)
-        timerView->SetText(std::format("{:.2f}", GameManager::playTime));
-
-    if (conversationView)
-    {
-        conversationView->SetText(std::format("{}", conversation));
-    }
-}
-
 void GameScene::UpdateGameLogic()
 {
     if (!playerController || !boardPivot)
@@ -364,14 +291,15 @@ void GameScene::UpdateGameLogic()
         Object* goalObj = AddUIObject("Goal Image", "UI");
         goalObj->GetTransform()->SetScale(glm::vec3(600.0f, 300.0f, 1.0f));
         goalImage = goalObj->AddComponent<ImageRenderer>();
-        goalImage->GetTransform()->SetPosition(glm::vec3(Application::GetWindowWidth() * 0.5f, Application::GetWindowHeight() * 0.5f, 0.0f));
+        goalImage->GetTransform()->SetPosition(
+                glm::vec3(Application::GetWindowWidth() * 0.5f, Application::GetWindowHeight() * 0.5f, 0.0f));
         goalImage->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
         goalImage->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
         goalImage->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Congratulations.png"));
     }
     else
     {
-        GameManager::playTime += TimeManager::GetDeltaTime();
+        GameManager::curScoreData.playTime += TimeManager::GetDeltaTime();
     }
 
     // 골인하면 효과음 재생할 시간정도만 딜레이 후 다음 레벨 진입
@@ -391,6 +319,7 @@ void GameScene::UpdateGameLogic()
             }
             else
             {
+                GameManager::SaveScoreData();
                 SceneManager::LoadScene("Title Scene");
                 return;
             }
