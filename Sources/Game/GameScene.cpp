@@ -27,11 +27,6 @@ void GameScene::InitializeVariables()
     {
         goalImage->Destroy();
     }
-
-    if (spectatorImage)
-    {
-        spectatorImage->Destroy();
-    }
 }
 
 void GameScene::SetupCameraAndLight()
@@ -117,31 +112,31 @@ void GameScene::SetupFont()
     switch (GameManager::currentLevel)
     {
         case 0:
-            conversation = "몸 풀기 단계야. 준비 됐어?";
+            conversation = "1-1";
             break;
         case 1:
-            conversation = "넌 할 수 있어";
+            conversation = "1-2";
             break;
         case 2:
-            conversation = "생각보다 어렵지?";
+            conversation = "1-3";
             break;
         case 3:
-            conversation = "이게 뭐야?";
+            conversation = "1-4";
             break;
         case 4:
-            conversation = "난이도를 높여볼게. 기대해도 좋아";
+            conversation = "2-1";
             break;
         case 5:
-            conversation = "포기하는게 어때?";
+            conversation = "2-2";
             break;
         case 6:
-            conversation = "넌 할 수 없어";
+            conversation = "2-3";
             break;
         case 7:
-            conversation = "...";
+            conversation = "2-4";
             break;
         default:
-            conversation = "에러";
+            conversation = "error";
             break;
     }
 }
@@ -247,15 +242,6 @@ void GameScene::CreateLabyrinthLevel(int levelNum)
             }
         }
     }
-
-    Object* tmp = AddUIObject("Spectator Image", "UI");
-    tmp->GetTransform()->SetScale(glm::vec3(600.0f, 300.0f, 1.0f));
-    spectatorImage = tmp->AddComponent<ImageRenderer>();
-    spectatorImage->GetTransform()->SetPosition(glm::vec3(200.0f, Application::GetWindowHeight() - 100.0f, 0.0f));
-    spectatorImage->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
-    spectatorImage->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
-    spectatorImage->SetTexture(ResourceManager::LoadResource<Texture>(
-            std::string("Assets\\Textures\\level" + std::to_string(GameManager::currentLevel % 4) + "Text.png")));
 }
 
 void GameScene::CreatePlayer()

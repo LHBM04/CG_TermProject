@@ -103,7 +103,6 @@ private:
 
     std::vector<OBB*> wallOBBs;
 
-    ImageRenderer* spectatorImage = nullptr;
 
     glm::vec3 startPosition;
     glm::vec3 goalPosition;
