@@ -369,7 +369,7 @@ void GameScene::UpdateGameLogic()
     }
 
     // 골인하면 효과음 재생할 시간정도만 딜레이 후 다음 레벨 진입
-    if (isGoalReached)
+    if (isGoalReached && !isGameCleared)
     {
         goalDelayTimer += TimeManager::GetDeltaTime();
 
