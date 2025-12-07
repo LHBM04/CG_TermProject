@@ -101,7 +101,7 @@ void GameScene::SetupFont()
     // 대화
     Object* conversationViewObj = AddUIObject("Conversation View", "UI");
     conversationViewObj->GetTransform()->SetPosition(
-            glm::vec3(Application::GetWindowWidth() * 1.0f, Application::GetWindowHeight() * 1.0f, 0.0f));
+            glm::vec3(0.0f, Application::GetWindowHeight() * 0.98f, 0.0f));
     conversationViewObj->GetTransform()->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 
     conversationView = conversationViewObj->AddComponent<TextRenderer>();
@@ -112,28 +112,28 @@ void GameScene::SetupFont()
     switch (GameManager::currentLevel)
     {
         case 0:
-            conversation = "1-1";
+            conversation = "It's easy";
             break;
         case 1:
-            conversation = "1-2";
+            conversation = "You can do it";
             break;
         case 2:
-            conversation = "1-3";
+            conversation = "don't fall bro";
             break;
         case 3:
-            conversation = "1-4";
+            conversation = "find the other path";
             break;
         case 4:
-            conversation = "2-1";
+            conversation = "can you make it?";
             break;
         case 5:
-            conversation = "2-2";
+            conversation = "You can't make it";
             break;
         case 6:
-            conversation = "2-3";
+            conversation = "turn off this game";
             break;
         case 7:
-            conversation = "2-4";
+            conversation = "please";
             break;
         default:
             conversation = "error";
