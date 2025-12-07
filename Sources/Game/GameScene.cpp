@@ -45,7 +45,7 @@ void GameScene::SetupCameraAndLight()
     mainCamera->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
 
     Object* lightObj = AddGameObject("Directional Light", "Light");
-    lightObj->GetTransform()->SetPosition(glm::vec3(0.0f, 10.0f, 0.0f));
+    lightObj->GetTransform()->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
     lightObj->GetTransform()->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
     mainLight = lightObj->AddComponent<Light>();
@@ -78,6 +78,73 @@ void GameScene::SetupAudio()
     bgmPlayer->SetVolume(0.5f);
     bgmPlayer->SetClip(bgmClip);
     bgmPlayer->Play();
+}
+
+void GameScene::SetupFont()
+{
+    Font* conversationFont = ResourceManager::LoadResource<Font>("Assets\\Fonts\\Conversation.ttf");
+
+    // 클리어 시간
+    Object* timerViewObj = AddUIObject("Timer View", "UI");
+    timerViewObj->GetTransform()->SetPosition(glm::vec3(0.0f, 50.0f, 0.0f));
+    timerViewObj->GetTransform()->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+
+    timerView = timerViewObj->AddComponent<TextRenderer>();
+    timerView->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Text"));
+    timerView->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
+    timerView->SetFont(conversationFont);
+
+    // 죽은 횟수
+    Object* deathCountViewObj = AddUIObject("Death Count View", "UI");
+    deathCountViewObj->GetTransform()->SetPosition(glm::vec3(0.0f, 100.0f, 0.0f));
+    deathCountViewObj->GetTransform()->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+
+    deathCountView = deathCountViewObj->AddComponent<TextRenderer>();
+    deathCountView->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Text"));
+    deathCountView->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
+    deathCountView->SetFont(conversationFont);
+
+    // 대화
+    Object* conversationViewObj = AddUIObject("Conversation View", "UI");
+    conversationViewObj->GetTransform()->SetPosition(
+            glm::vec3(Application::GetWindowWidth() * 1.0f, Application::GetWindowHeight() * 1.0f, 0.0f));
+    conversationViewObj->GetTransform()->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+
+    conversationView = conversationViewObj->AddComponent<TextRenderer>();
+    conversationView->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Text"));
+    conversationView->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
+    conversationView->SetFont(conversationFont);
+
+    switch (GameManager::currentLevel)
+    {
+        case 0:
+            conversation = "몸 풀기 단계야. 준비 됐어?";
+            break;
+        case 1:
+            conversation = "넌 할 수 있어";
+            break;
+        case 2:
+            conversation = "생각보다 어렵지?";
+            break;
+        case 3:
+            conversation = "이게 뭐야?";
+            break;
+        case 4:
+            conversation = "난이도를 높여볼게. 기대해도 좋아";
+            break;
+        case 5:
+            conversation = "포기하는게 어때?";
+            break;
+        case 6:
+            conversation = "넌 할 수 없어";
+            break;
+        case 7:
+            conversation = "...";
+            break;
+        default:
+            conversation = "에러";
+            break;
+    }
 }
 
 void GameScene::CreateLabyrinthBoard()
@@ -248,6 +315,20 @@ void GameScene::HandleInput()
         playerObject->GetTransform()->SetPosition(startPosition);
         playerController->setDir(glm::vec3(0));
         resurrection->Play();
+    }
+}
+
+void GameScene::ChangeFontValue()
+{
+    if (deathCountView)
+        deathCountView->SetText(std::format("DEATH: {}", GameManager::deathCount - 1));
+
+    if (timerView)
+        timerView->SetText(std::format("{:.2f}", GameManager::playTime));
+
+    if (conversationView)
+    {
+        conversationView->SetText(std::format("{}", conversation));
     }
 }
 
