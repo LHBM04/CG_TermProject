@@ -21,7 +21,13 @@ struct ScoreData final
 // 왜 문자열 변환 함수가 없냐;
 std::string ToString(const std::chrono::year_month_day& ymd)
 {
-    return std::format("{:%Y-%m-%d}", ymd);
+    int year  = int(ymd.year());
+    int month = unsigned(ymd.month());
+    int day   = unsigned(ymd.day());
+
+    char buf[11];
+    std::snprintf(buf, sizeof(buf), "%04d-%02u-%02u", year, m, d);
+    return std::string(buf);
 }
 
 // 왜 파싱 함수가 없냐;
