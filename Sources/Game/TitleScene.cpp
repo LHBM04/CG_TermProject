@@ -58,6 +58,11 @@ void TitleScene::OnEnter() noexcept
 
 void TitleScene::OnUpdate() noexcept
 {
+    if (InputManager::IsKeyPressed(Keyboard::Escape))
+    {
+        exit(0);
+    }
+
     // 음악에 맞춰서 드럼 나올 때 제목 띄워지게 해봄
     static float titleTimer = TimeManager::GetDeltaTime();
     if (titleTimer > 10.5f && !isTitleCreated)

@@ -73,6 +73,11 @@ public:
 
     void OnUpdate() noexcept
     {
+        if (InputManager::IsKeyPressed(Keyboard::Escape))
+        {
+            exit(0);
+        }
+
         if (deathCountView)
             deathCountView->SetText(std::format("{}", GameManager::deathCount));
 
