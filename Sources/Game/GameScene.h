@@ -25,6 +25,8 @@ public:
     {
         SPDLOG_INFO("GameScene Enter");
 
+        InputManager::DisableCursor();
+
         // 변수 초기화
         InitializeVariables();
 
