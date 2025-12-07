@@ -32,7 +32,6 @@ void GameScene::InitializeVariables()
     {
         spectatorImage->Destroy();
     }
-    
 }
 
 void GameScene::SetupCameraAndLight()
@@ -189,7 +188,7 @@ void GameScene::CreateLabyrinthLevel(int levelNum)
     spectatorImage->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
     spectatorImage->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
     spectatorImage->SetTexture(ResourceManager::LoadResource<Texture>(
-            std::string("Assets\\Textures\\level" + std::to_string(GameManager::currentLevel % 4)  + "Text.png")));
+            std::string("Assets\\Textures\\level" + std::to_string(GameManager::currentLevel % 4) + "Text.png")));
 }
 
 void GameScene::CreatePlayer()
@@ -200,7 +199,8 @@ void GameScene::CreatePlayer()
 
     playerObject->AddComponent<MeshRenderer>()->SetMesh(meshSphere);
     playerObject->GetComponent<MeshRenderer>()->SetTexture(texBall);
-    playerObject->GetComponent<MeshRenderer>()->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
+    playerObject->GetComponent<MeshRenderer>()->SetShader(
+            ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
 
     OBB* obb = playerObject->AddComponent<OBB>();
     obb->resize(glm::vec3(0.35f)); // 반지름
@@ -274,7 +274,7 @@ void GameScene::UpdateGameLogic()
     {
         playerObject->GetTransform()->SetPosition(startPosition);
         playerController->setDir(glm::vec3(0));
-        GameManager::deathCount++;
+        GameManager::curScoreData.deathCount++;
         resurrection->Play();
     }
 
@@ -291,14 +291,15 @@ void GameScene::UpdateGameLogic()
         Object* goalObj = AddUIObject("Goal Image", "UI");
         goalObj->GetTransform()->SetScale(glm::vec3(600.0f, 300.0f, 1.0f));
         goalImage = goalObj->AddComponent<ImageRenderer>();
-        goalImage->GetTransform()->SetPosition(glm::vec3(Application::GetWindowWidth() * 0.5f, Application::GetWindowHeight() * 0.5f, 0.0f));
+        goalImage->GetTransform()->SetPosition(
+                glm::vec3(Application::GetWindowWidth() * 0.5f, Application::GetWindowHeight() * 0.5f, 0.0f));
         goalImage->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
         goalImage->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
         goalImage->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\Congratulations.png"));
     }
     else
     {
-        GameManager::playTime += TimeManager::GetDeltaTime();
+        GameManager::curScoreData.playTime += TimeManager::GetDeltaTime();
     }
 
     // 골인하면 효과음 재생할 시간정도만 딜레이 후 다음 레벨 진입
@@ -318,6 +319,7 @@ void GameScene::UpdateGameLogic()
             }
             else
             {
+                GameManager::SaveScoreData();
                 SceneManager::LoadScene("Title Scene");
                 return;
             }

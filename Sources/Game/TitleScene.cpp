@@ -11,6 +11,8 @@ TitleScene::~TitleScene() noexcept
 
 void TitleScene::OnEnter() noexcept
 {
+    GameManager::Initialize();
+
     InputManager::EnableCursor();
 
     // 카메라
@@ -38,11 +40,11 @@ void TitleScene::OnEnter() noexcept
 
     // 조명
     Object* const lightObject = AddGameObject("Directional Light", "Light");
-    lightObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 3.0f, 0.0f));
+    lightObject->GetTransform()->SetPosition(glm::fvec3(0.0f, 0.0f, 0.0f));
     lightObject->GetTransform()->LookAt(glm::fvec3(0.0f, 0.0f, 0.0f));
     mainLight = lightObject->AddComponent<Light>();
     mainLight->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\Standard"));
-    mainLight->SetColor(glm::fvec3(1.0f, 1.0f, 1.0f));
+    mainLight->SetColor(glm::fvec3(0.0f, 0.0f, 0.0f));
 
     // 배경 미로
     CreateLabyrinthBackground();
@@ -58,6 +60,18 @@ void TitleScene::OnEnter() noexcept
 
 void TitleScene::OnUpdate() noexcept
 {
+    if (InputManager::IsKeyPressed(Keyboard::Escape))
+    {
+        exit(0);
+    }
+
+    static float colorDiff = 0.0f;
+    SPDLOG_INFO(colorDiff);
+    if (colorDiff < 5.0f)
+        colorDiff += 0.006f;
+    mainLight->SetColor(glm::fvec3(colorDiff, colorDiff, colorDiff));
+
+
     // 음악에 맞춰서 드럼 나올 때 제목 띄워지게 해봄
     static float titleTimer = TimeManager::GetDeltaTime();
     if (titleTimer > 10.5f && !isTitleCreated)
