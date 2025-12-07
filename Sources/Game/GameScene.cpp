@@ -347,7 +347,7 @@ void GameScene::UpdateGameLogic()
     {
         playerObject->GetTransform()->SetPosition(startPosition);
         playerController->setDir(glm::vec3(0));
-        GameManager::deathCount++;
+        GameManager::curScoreData.deathCount++;
         resurrection->Play();
     }
 

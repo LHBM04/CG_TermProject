@@ -11,6 +11,8 @@ TitleScene::~TitleScene() noexcept
 
 void TitleScene::OnEnter() noexcept
 {
+    GameManager::Initialize();
+
     InputManager::EnableCursor();
 
     // 카메라
