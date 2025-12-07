@@ -19,13 +19,13 @@ struct ScoreData final
 };
 
 // 왜 문자열 변환 함수가 없냐;
-std::string ToString(const std::chrono::year_month_day& ymd)
+static inline std::string ToString(const std::chrono::year_month_day& ymd)
 {
     return std::format("{:%Y-%m-%d}", ymd);
 }
 
 // 왜 파싱 함수가 없냐;
-std::chrono::year_month_day ParseDate(const std::string& dateStr_)
+static inline std::chrono::year_month_day ParseDate(const std::string& dateStr_)
 {
     int year, month, day;
     sscanf_s(dateStr_.c_str(), "%d-%d-%d", &year, &month, &day);
@@ -41,7 +41,7 @@ public:
     static inline ScoreData curScoreData   = {};
 
     static constexpr size_t                 scoreCount = 5;
-    static           std::vector<ScoreData> scores;
+    static           inline std::vector<ScoreData> scores;
 
     static void Initialize()
     {

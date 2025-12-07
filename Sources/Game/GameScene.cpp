@@ -79,6 +79,10 @@ void GameScene::SetupAudio()
     bgmPlayer->Play();
 }
 
+void GameScene::SetupFont()
+{
+}
+
 void GameScene::CreateLabyrinthBoard()
 {
     // 피봇 생성
@@ -249,6 +253,10 @@ void GameScene::HandleInput()
         playerController->setDir(glm::vec3(0));
         resurrection->Play();
     }
+}
+
+void GameScene::ChangeFontValue()
+{
 }
 
 void GameScene::UpdateGameLogic()
