@@ -3,6 +3,7 @@
 
 #include "TitleScene.h"
 #include "GameScene.h"
+#include "CreditsScene.h"
 
 int main(int, char**)
 {
@@ -20,8 +21,8 @@ int main(int, char**)
 
     SceneManager::AddScene("Title Scene", std::make_unique<TitleScene>());
     SceneManager::AddScene("Game Scene", std::make_unique<GameScene>());
-
-    SceneManager::LoadScene("Title Scene");
+    SceneManager::AddScene("Credits Scene", std::make_unique<CreditsScene>());
+    SceneManager::LoadScene("Credits Scene");
 
     return Application::Run();
 }
