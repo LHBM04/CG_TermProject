@@ -90,7 +90,7 @@ void GameScene::SetupFont()
 
     // 죽은 횟수
     Object* deathCountViewObj = AddUIObject("Death Count View", "UI");
-    deathCountViewObj->GetTransform()->SetPosition(glm::vec3(0.0f, 100.0f, 0.0f));
+    deathCountViewObj->GetTransform()->SetPosition(glm::vec3(0.f, 100.0f, 0.0f));
     deathCountViewObj->GetTransform()->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 
     deathCountView = deathCountViewObj->AddComponent<TextRenderer>();
@@ -101,7 +101,7 @@ void GameScene::SetupFont()
     // 대화
     Object* conversationViewObj = AddUIObject("Conversation View", "UI");
     conversationViewObj->GetTransform()->SetPosition(
-            glm::vec3(0.0f, Application::GetWindowHeight() * 0.98f, 0.0f));
+            glm::vec3(Application::GetWindowWidth() * 0.01f, Application::GetWindowHeight() * 0.98f, 0.0f));
     conversationViewObj->GetTransform()->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 
     conversationView = conversationViewObj->AddComponent<TextRenderer>();
@@ -112,31 +112,31 @@ void GameScene::SetupFont()
     switch (GameManager::currentLevel)
     {
         case 0:
-            conversation = "It's easy";
+            conversation = "Just a warm-up. Ready?";
             break;
         case 1:
-            conversation = "You can do it";
+            conversation = "You can do it.";
             break;
         case 2:
-            conversation = "don't fall bro";
+            conversation = "Harder than it looks?";
             break;
         case 3:
-            conversation = "find the other path";
+            conversation = "What is this?";
             break;
         case 4:
-            conversation = "can you make it?";
+            conversation = "Let's make it harder.";
             break;
         case 5:
-            conversation = "You can't make it";
+            conversation = "Why not give up?";
             break;
         case 6:
-            conversation = "turn off this game";
+            conversation = "You can't do this.";
             break;
         case 7:
-            conversation = "please";
+            conversation = "...";
             break;
         default:
-            conversation = "error";
+            conversation = "Error";
             break;
     }
 }
