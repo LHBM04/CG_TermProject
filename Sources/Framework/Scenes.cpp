@@ -98,6 +98,7 @@ void Scene::RenderUI() noexcept
 void Scene::Exit() noexcept
 {
     objects.clear();
+    uiObjects.clear();
 
     OnExit();
 }

@@ -202,10 +202,29 @@ private:
 class Font : public Resource
 {
 public:
+    struct Character
+    {
+        unsigned int textureID;
+        glm::ivec2   size;
+        glm::ivec2   bearing;
+        unsigned int advance;
+    };
+
     /**
      * @brief 생성자.
      */
     virtual ~Font() noexcept override;
+
+    /**
+     * @brief 문자 맵을 반환합니다.
+     *
+     * @return const std::map<char, Character>& 문자 맵
+     */
+    [[nodiscard]]
+    inline const std::map<char, Character>& GetCharacters() const noexcept
+    {
+        return characters;
+    }
 
 protected:
     /**
@@ -216,6 +235,10 @@ protected:
      * @return bool 머티리얼 로드 성공 여부
      */
     virtual bool Load(const std::filesystem::path& path_) noexcept override;
+
+private:
+    
+    std::map<char, Character> characters;
 };
 
 /**
@@ -351,60 +374,6 @@ private:
      * @brief 셰이더 프로그램 ID.
      */
     unsigned int programID;
-};
-
-class Material : public Resource
-{
-public:
-    /**
-     * @brief 생성자.
-     */
-    explicit Material() noexcept;
-
-    /**
-     * @brief 소멸자.
-     */
-    virtual ~Material() noexcept override;
-
-    inline void SetShader(Shader* shader_) noexcept
-    {
-        shader = shader_;
-    }
-
-    [[nodiscard]] Shader* GetShader() const noexcept
-    {
-        return shader;
-    }
-
-    void SetTexture(Texture* texture_) noexcept
-    {
-        texture = texture_;
-    }
-
-    [[nodiscard]] Texture* GetTexture() const noexcept
-    {
-        return texture;
-    }
-
-    void SetColor(const glm::vec4& color_) noexcept
-    {
-        color = color_;
-    }
-
-    [[nodiscard]] const glm::vec4& GetColor() const noexcept
-    {
-        return color;
-    }
-
-    void Bind() const noexcept;
-
-protected:
-    virtual bool Load(const std::filesystem::path& path_) noexcept override;
-
-private:
-    Shader*   shader  = nullptr;
-    Texture*  texture = nullptr;
-    glm::vec4 color   = glm::vec4(1.0f); // 기본값: 흰색
 };
 
 class Mesh final : public Resource

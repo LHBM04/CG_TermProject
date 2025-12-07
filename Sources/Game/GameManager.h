@@ -5,8 +5,10 @@
 class GameManager
 {
 public:
-    static int currentLevel;
-    static int maxLevel;
+    static inline int currentLevel   = 0;
+    static inline int maxLevel       = 7;
+    static inline int deathCount     = 0;
+    static inline float playTime     = 0.0f;
 
     static void Initialize()
     {
@@ -18,6 +20,3 @@ public:
         currentLevel++;
     }
 };
-
-inline int GameManager::currentLevel = 0;
-inline int GameManager::maxLevel     = 7;

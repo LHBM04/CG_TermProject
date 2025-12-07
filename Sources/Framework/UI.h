@@ -106,6 +106,36 @@ public:
         font = font_;
     }
 
+    [[nodiscard]]
+    inline float GetFontSize() const noexcept
+    {
+        return fontSize;
+    }
+    inline void SetFontSize(float fontSize_) noexcept
+    {
+        fontSize = fontSize_;
+    }
+
+    [[nodiscard]]
+    inline glm::vec4 GetColor() const noexcept
+    {
+        return color;
+    }
+    inline void SetColor(const glm::vec4& color_) noexcept
+    {
+        color = color_;
+    }
+    
+    [[nodiscard]]
+    inline std::string GetText() const noexcept
+    {
+        return text;
+    }
+    inline void SetText(std::string_view text_) noexcept
+    {
+        text = text_;
+    }
+
 protected:
     virtual void Render() noexcept override;
 
@@ -114,6 +144,10 @@ private:
     Mesh*   mesh;
     Font*   font;
     float   fontSize;
+    glm::vec4    color;
+    std::string text;
+    unsigned int VAO;
+    unsigned int VBO;
 };
 
 class Button : public Component

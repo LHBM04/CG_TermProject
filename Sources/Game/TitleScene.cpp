@@ -52,10 +52,6 @@ void TitleScene::OnEnter() noexcept
     bgmPlayer->SetVolume(0.5f);
     bgmPlayer->SetClip(bgmClip);
     bgmPlayer->Play();
-
-
-    // 제목 설정
-    
 }
 
 void TitleScene::OnUpdate() noexcept
