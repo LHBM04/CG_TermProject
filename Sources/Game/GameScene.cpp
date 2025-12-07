@@ -23,16 +23,8 @@ void GameScene::InitializeVariables()
     rotatedAmountZ = 0.0f;
     checkHitWall   = 0.0f;
 
-    if (goalImage)
-    {
-        goalImage->Destroy();
-    }
-
-    if (spectatorImage)
-    {
-        spectatorImage->Destroy();
-    }
-    
+    goalImage      = nullptr;
+    spectatorImage = nullptr;
 }
 
 void GameScene::SetupCameraAndLight()
