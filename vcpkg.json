@@ -11,6 +11,7 @@
         "docking-experimental"
       ]
     },
+    "imguizmo",
     "openal-soft",
     "stb",
     "tinyobjloader",
