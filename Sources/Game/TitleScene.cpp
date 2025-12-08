@@ -74,9 +74,8 @@ void TitleScene::OnUpdate() noexcept
 
     // 음악에 맞춰서 드럼 나올 때 제목 띄워지게 해봄
     static float titleTimer = TimeManager::GetDeltaTime();
-    if (titleTimer > 10.5f && !isTitleCreated)
+    if (titleTimer > 7.0f && !isTitleCreated)
     {
-        SPDLOG_INFO("hi");
         Object* titleObj = AddUIObject("Title Image", "UI");
 
         titleObj->GetTransform()->SetPosition(glm::vec3(Application::GetWindowWidth() * 0.5f, 100.0f, 0.0f));
@@ -87,7 +86,7 @@ void TitleScene::OnUpdate() noexcept
         {
             imageTitle->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
             imageTitle->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
-            imageTitle->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\TitleImage.png"));
+            imageTitle->SetTexture(titleImage);
         }
 
         Object* titleBarObj = AddUIObject("Title Image", "UI");
@@ -96,11 +95,11 @@ void TitleScene::OnUpdate() noexcept
         titleBarObj->GetTransform()->SetScale(glm::vec3(600.0f, 300.0f, 1.0f));
         imageTitleBar = titleBarObj->AddComponent<ImageRenderer>();
 
-        if (imageTitle)
+        if (imageTitleBar)
         {
             imageTitleBar->SetShader(ResourceManager::LoadResource<Shader>("Assets\\Shaders\\UIObject"));
             imageTitleBar->SetMesh(ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Rect.obj"));
-            imageTitleBar->SetTexture(ResourceManager::LoadResource<Texture>("Assets\\Textures\\TitleBar.png"));
+            imageTitleBar->SetTexture(titleBar);
         }
 
         isTitleCreated = true;

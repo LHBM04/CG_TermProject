@@ -64,15 +64,17 @@ private:
     // 텍스쳐를 실행 도중에 로드하면 렉 걸려서 처음 실행될 때 미리 다 로드하게 함
     Mesh* meshCube = ResourceManager::LoadResource<Mesh>("Assets\\Meshes\\Cube.obj");
 
-    Texture* wall      = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wall.png");
-    Texture* texWood1  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture1.png");
-    Texture* texWood2  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture2.png");
-    Texture* texWood3  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture3.png");
-    Texture* texWood4  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture4.png");
-    Texture* texWood5  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\mapBase.png");
-    Texture* texHandle = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle.png");
-    Texture* texBar    = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle_bar.png");
+    Texture* wall       = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wall.png");
+    Texture* texWood1   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture1.png");
+    Texture* texWood2   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture2.png");
+    Texture* texWood3   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture3.png");
+    Texture* texWood4   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\wood_texture4.png");
+    Texture* texWood5   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\mapBase.png");
+    Texture* texHandle  = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle.png");
+    Texture* texBar     = ResourceManager::LoadResource<Texture>("Assets\\Textures\\handle_bar.png");
+    Texture* titleImage = ResourceManager::LoadResource<Texture>("Assets\\Textures\\TitleImage.png");
+    Texture* titleBar   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\TitleBar.png");
 
-    Texture* texGreen = ResourceManager::LoadResource<Texture>("Assets\\Textures\\Green.png");
-    Texture* texRed   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\Red.png");
+    Texture* texGreen   = ResourceManager::LoadResource<Texture>("Assets\\Textures\\Green.png");
+    Texture* texRed     = ResourceManager::LoadResource<Texture>("Assets\\Textures\\Red.png");
 };
